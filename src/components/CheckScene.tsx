@@ -1,0 +1,173 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import type { Degree } from "@/engine/types";
+import { performCheck, type PerformedCheck } from "@/game/perform";
+import { PREGEN_HERO } from "@/game/hero";
+import type { CheckNode } from "@/content/types";
+import { DEGREE_ORDER, DEGREE_THEME } from "./degrees";
+
+type Phase = "ready" | "rolling" | "revealed" | "outcome";
+
+const ROLL_MS = 1100;
+
+export function CheckScene({
+  node,
+  onResolved,
+}: {
+  node: CheckNode;
+  onResolved: (degree: Degree, next: string, bonusXp?: number) => void;
+}) {
+  const [phase, setPhase] = useState<Phase>("ready");
+  const [face, setFace] = useState(20); // the number shown on the tumbling die
+  const [result, setResult] = useState<PerformedCheck | null>(null);
+  const tick = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => () => clearTimer(), []);
+
+  function clearTimer() {
+    if (tick.current) clearInterval(tick.current);
+    tick.current = null;
+  }
+
+  function roll() {
+    const outcome = performCheck(PREGEN_HERO, node.spec);
+    setResult(outcome);
+    setPhase("rolling");
+
+    // Spin the visible face for a beat, then settle on the real die.
+    tick.current = setInterval(() => setFace(Math.floor(Math.random() * 20) + 1), 70);
+    setTimeout(() => {
+      clearTimer();
+      setFace(outcome.die);
+      setPhase("revealed");
+    }, ROLL_MS);
+  }
+
+  const degree = result?.degree;
+  const theme = degree ? DEGREE_THEME[degree] : null;
+  const dieClass =
+    result && phase !== "rolling"
+      ? result.die === 20
+        ? "nat20"
+        : result.die === 1
+          ? "nat1"
+          : ""
+      : "";
+
+  return (
+    <div className="card">
+      <span className="speaker">Roll the dice</span>
+      <h2>{node.prompt}</h2>
+
+      <div className={`die ${phase === "rolling" ? "rolling" : ""} ${dieClass}`}>
+        {phase === "ready" ? "?" : face}
+      </div>
+      {result && result.die === 20 && phase !== "rolling" && (
+        <p className="shift-note">Natural 20! The die bumps your result up one band.</p>
+      )}
+      {result && result.die === 1 && phase !== "rolling" && (
+        <p className="shift-note">Natural 1! The die bumps your result down one band.</p>
+      )}
+
+      {phase === "ready" && (
+        <div className="actions">
+          <button className="btn primary" onClick={roll}>
+            Roll the d20
+          </button>
+        </div>
+      )}
+
+      {result && phase !== "ready" && phase !== "rolling" && (
+        <>
+          <div className="breakdown">
+            {result.breakdown.map((b, i) => (
+              <div key={i} className={`row ${b.dropped ? "dropped" : ""}`}>
+                <span>{b.label}</span>
+                <span className="val">
+                  {b.value >= 0 ? `+${b.value}` : b.value}
+                </span>
+              </div>
+            ))}
+            <div className="row total">
+              <span>Total vs DC {result.dc}</span>
+              <span className="val">{result.total}</span>
+            </div>
+          </div>
+
+          <div className="bands">
+            {DEGREE_ORDER.map((d) => {
+              const t = DEGREE_THEME[d];
+              const active = d === degree;
+              return (
+                <div
+                  key={d}
+                  className={`band ${active ? "active" : ""}`}
+                  style={active ? { background: `var(${t.varName})`, borderColor: `var(${t.varName})` } : undefined}
+                >
+                  <span className="sym">{t.symbol}</span>
+                  {t.label}
+                </div>
+              );
+            })}
+          </div>
+
+          {theme && (
+            <div
+              className="result-banner"
+              style={{ background: `var(${theme.varName})` }}
+            >
+              {theme.symbol} {theme.label}
+            </div>
+          )}
+          {result.shifted && (
+            <p className="shift-note">
+              Your total alone was a <b>{DEGREE_THEME[result.baseDegree].label}</b> — the
+              natural die shifted it {result.shifted}.
+            </p>
+          )}
+
+          <div className="actions">
+            <button className="btn primary" onClick={() => setPhase("outcome")} disabled={phase === "outcome"}>
+              See what happens →
+            </button>
+          </div>
+        </>
+      )}
+
+      {phase === "outcome" && result && degree && (
+        <Outcome
+          lines={node.outcomes[degree].lines}
+          onContinue={() =>
+            onResolved(
+              degree,
+              node.outcomes[degree].next,
+              node.outcomes[degree].bonusXp,
+            )
+          }
+        />
+      )}
+    </div>
+  );
+}
+
+function Outcome({
+  lines,
+  onContinue,
+}: {
+  lines: string[];
+  onContinue: () => void;
+}) {
+  return (
+    <div style={{ marginTop: 18, borderTop: "1px solid var(--border)", paddingTop: 18 }}>
+      {lines.map((l, i) => (
+        <p key={i}>{l}</p>
+      ))}
+      <div className="actions">
+        <button className="btn primary" onClick={onContinue}>
+          Continue
+        </button>
+      </div>
+    </div>
+  );
+}
