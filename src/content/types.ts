@@ -1,6 +1,7 @@
 import type { Degree } from "@/engine/types";
 import type { CheckSpec } from "@/game/perform";
 import type { EnemyConfig } from "@/game/combat";
+import type { CombatantSeed } from "@/game/encounter";
 
 export type NodeId = string;
 
@@ -81,6 +82,20 @@ export interface CombatNode extends BaseNode {
 }
 
 /**
+ * A multi-combatant encounter run by the initiative tracker: the hero, an ally
+ * who models good play, and two or more foes acting in initiative order. Teaches
+ * turn order, targeting, and the one-per-round reaction (Shield Block).
+ */
+export interface EncounterNode extends BaseNode {
+  kind: "encounter";
+  prompt: string;
+  intro: string[];
+  foes: CombatantSeed[];
+  victoryLines: string[];
+  next: NodeId;
+}
+
+/**
  * A unit milestone / graduation card. With `next`, it shows a "Continue" into
  * the following unit; without `next` it is the final course graduation.
  */
@@ -103,6 +118,7 @@ export type CourseNode =
   | QuizNode
   | CheckNode
   | CombatNode
+  | EncounterNode
   | EndNode;
 
 export interface Course {

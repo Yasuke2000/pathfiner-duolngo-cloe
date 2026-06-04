@@ -273,7 +273,108 @@ export const COURSE: Course = {
         "Roll a check, read its degree, and spend a turn well — that's the spine of the entire game, and it's yours now.",
       ],
       upNext:
-        "First Guided Combat with allies, then Conditions, Character Creation, and a capstone adventure that hands you off to a real table.",
+        "First Guided Combat — a real fight with turn order, an ally at your side, and your first reaction.",
+      next: "u3-intro",
+    },
+
+    // ---------------------------------------------------------------------
+    // UNIT 3 — First Guided Combat (initiative, allies, reactions)
+    // ---------------------------------------------------------------------
+    "u3-intro": {
+      kind: "narration",
+      speaker: "Bram",
+      xp: 5,
+      lines: [
+        "You press on — and the dark erupts. Two skulkers drop from the rafters, blades out, one lunging for you and one for Bram.",
+        "“Two of them, two of us,” Bram says, settling into a stance. “This is a real fight now. Watch the turn order, keep your shield ready, and trust me to set them up for you.”",
+      ],
+      next: "u3-teach-initiative",
+    },
+
+    "u3-teach-initiative": {
+      kind: "teach",
+      title: "Initiative & turn order",
+      body: [
+        "When a fight starts, everyone rolls initiative (usually a Perception check). Highest goes first, then down the list, then back to the top for the next round.",
+        "You only control your own turn — but what your allies and foes do on theirs matters, which is why you hold something in reserve...",
+      ],
+      points: [
+        "Roll initiative → act in that order, round after round.",
+        "Your three actions refresh at the start of each of your turns.",
+        "So does your one reaction.",
+      ],
+      next: "u3-teach-reaction",
+    },
+
+    "u3-teach-reaction": {
+      kind: "teach",
+      speaker: "Bram",
+      title: "Your reaction: Shield Block",
+      body: [
+        "You get one reaction per round, and it can fire on someone else's turn — when a specific trigger happens.",
+        "“You learned to Raise a Shield last fight,” Bram says. “Here's the payoff: while it's up and a blow lands, you can spend your reaction to Shield Block and soak some of the damage. One per round — so time it.”",
+      ],
+      points: [
+        "Raise a Shield (an action) → shield is up.",
+        "Get hit while it's up → you MAY Shield Block (a reaction) to reduce the damage.",
+        "One reaction per round. It refreshes on your turn.",
+      ],
+      next: "u3-encounter",
+    },
+
+    "u3-encounter": {
+      kind: "encounter",
+      xp: 10,
+      prompt: "Two-on-two: hold the line with Bram",
+      intro: [
+        "Roll initiative and watch the order at the top. On your turn, click a foe to target it. Raise your shield so you can Shield Block when struck — and let Bram trip a skulker to leave it off-guard for your strike.",
+      ],
+      foes: [
+        {
+          id: "skulker-a",
+          name: "Lurk",
+          role: "foe",
+          ac: 15,
+          maxHp: 15,
+          attackBonus: 7,
+          damageDie: 6,
+          damageBonus: 2,
+          willDC: 14,
+          reflexDC: 14,
+          initiativeBonus: 6,
+        },
+        {
+          id: "skulker-b",
+          name: "Skit",
+          role: "foe",
+          ac: 15,
+          maxHp: 15,
+          attackBonus: 7,
+          damageDie: 6,
+          damageBonus: 2,
+          willDC: 14,
+          reflexDC: 14,
+          initiativeBonus: 6,
+        },
+      ],
+      victoryLines: [
+        "The second skulker folds, and the hall goes quiet but for dripping water.",
+        "“That,” Bram says, sheathing her blade, “is a team fight. You read the order, you blocked when it counted, and you finished what I set up. You're ready for the real thing.”",
+      ],
+      next: "unit3-crown",
+    },
+
+    "unit3-crown": {
+      kind: "end",
+      xp: 25,
+      title: "Unit 3 Complete",
+      crown: "Initiative, Allies & Reactions",
+      body: [
+        "You've now fought a real encounter: rolled initiative, taken your turns in order, targeted the right foe, fought beside an ally, and spent a reaction at the right moment.",
+        "Checks, the three-action turn, and live combat with a party — that's the working core of Pathfinder 2e, and you can do all of it.",
+      ],
+      upNext:
+        "Conditions, Character Creation (build the hero you'll actually take to a table), and a capstone adventure with a real table hand-off.",
     },
   },
 };

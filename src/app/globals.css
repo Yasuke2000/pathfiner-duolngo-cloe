@@ -502,6 +502,86 @@ button.primary:hover {
   }
 }
 
+/* ---- Encounter (multi-combatant) ---- */
+.initiative {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.init-chip {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  color: var(--muted);
+}
+.init-chip.foe {
+  border-color: rgba(240, 85, 106, 0.35);
+}
+.init-chip.hero,
+.init-chip.ally {
+  border-color: rgba(56, 189, 248, 0.35);
+}
+.init-chip.active {
+  background: var(--gold);
+  color: #14101d;
+  border-color: var(--gold);
+}
+.init-chip.down {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.foe-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+@media (max-width: 520px) {
+  .foe-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.foe-card {
+  appearance: none;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+  color: var(--text);
+  width: 100%;
+}
+.foe-card.clickable {
+  cursor: pointer;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(231, 198, 107, 0.25);
+}
+.foe-card.clickable:hover {
+  background: #322a4d;
+}
+.combatant.down {
+  opacity: 0.5;
+}
+.cb-head .ac {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  min-height: 4px;
+}
+.badges .cond {
+  font-size: 11px;
+  padding: 1px 8px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .card,
   .die.rolling {
