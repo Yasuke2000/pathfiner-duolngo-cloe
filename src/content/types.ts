@@ -92,6 +92,23 @@ export interface EncounterNode extends BaseNode {
   intro: string[];
   foes: CombatantSeed[];
   victoryLines: string[];
+  /** Heading shown on the victory card (defaults to a generic one). */
+  victoryTitle?: string;
+  next: NodeId;
+}
+
+/**
+ * A hands-on dying/recovery loop. The learner rolls recovery checks (flat
+ * checks vs DC 10 + dying) and watches the dying meter move — the system's most
+ * confusing subsystem, taught by doing. Death is caught by an ally so the lesson
+ * lands without a real game over.
+ */
+export interface RecoveryNode extends BaseNode {
+  kind: "recovery";
+  prompt: string;
+  intro: string[];
+  startingDying: number;
+  stabilizedLines: string[];
   next: NodeId;
 }
 
@@ -119,6 +136,7 @@ export type CourseNode =
   | CheckNode
   | CombatNode
   | EncounterNode
+  | RecoveryNode
   | EndNode;
 
 export interface Course {

@@ -333,7 +333,7 @@ export function EncounterScene({
     return (
       <div className="card">
         <span className="speaker">Victory</span>
-        <h2>The skulkers are down</h2>
+        <h2>{node.victoryTitle ?? "Victory!"}</h2>
         {node.victoryLines.map((l, i) => (
           <p key={i}>{l}</p>
         ))}

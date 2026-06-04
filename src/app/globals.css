@@ -231,6 +231,12 @@ button.primary:hover {
   clip-path: polygon(50% 0, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
   box-shadow: 0 14px 30px -12px rgba(231, 198, 107, 0.6);
 }
+.die.small {
+  width: 84px;
+  height: 84px;
+  font-size: 34px;
+  margin: 14px auto 6px;
+}
 .die.rolling {
   animation: shake 0.12s linear infinite;
 }
@@ -580,6 +586,44 @@ button.primary:hover {
 .badges .cond {
   font-size: 11px;
   padding: 1px 8px;
+}
+
+/* ---- Dying meter ---- */
+.dying-meter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.dpip {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  color: #4a4168;
+  font-size: 20px;
+  transition: all 0.3s ease;
+}
+.dpip.on {
+  background: rgba(240, 85, 106, 0.18);
+  border-color: var(--crit-failure);
+  color: var(--crit-failure);
+  box-shadow: 0 0 14px -2px rgba(240, 85, 106, 0.6);
+}
+.dpip.death.on {
+  background: var(--crit-failure);
+  color: #fff;
+}
+.dying-label {
+  font-size: 13px;
+  color: var(--muted);
+  width: 100%;
+  text-align: center;
 }
 
 @media (prefers-reduced-motion: reduce) {

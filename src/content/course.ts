@@ -374,7 +374,122 @@ export const COURSE: Course = {
         "Checks, the three-action turn, and live combat with a party — that's the working core of Pathfinder 2e, and you can do all of it.",
       ],
       upNext:
-        "Conditions, Character Creation (build the hero you'll actually take to a table), and a capstone adventure with a real table hand-off.",
+        "Conditions — the levers that decide most fights, and the dying rules every player needs to understand.",
+      next: "u4-intro",
+    },
+
+    // ---------------------------------------------------------------------
+    // UNIT 4 — Conditions (incl. the dying/wounded/recovery loop)
+    // ---------------------------------------------------------------------
+    "u4-intro": {
+      kind: "narration",
+      speaker: "Bram",
+      xp: 5,
+      lines: [
+        "The passage ends at a vaulted chamber. A construct of fused stone and old armor grinds to life and levels a greatsword at you.",
+        "Bram whistles low. “That plating is thick — swing at it head-on and you'll mostly bounce off. We win this by stacking the deck: knock it Off-Guard, rattle it, make it easier to hit. Conditions, lass. This fight is a conditions lesson with a sword.”",
+      ],
+      next: "u4-teach-conditions",
+    },
+
+    "u4-teach-conditions": {
+      kind: "teach",
+      title: "Conditions: the levers of the game",
+      body: [
+        "Conditions are standardized status effects. Some are simple on/off (Prone, Blinded); others carry a number (Frightened 2, Clumsy 1). Same-named conditions don't stack — you keep the highest value.",
+        "You've already used two: Off-Guard (−2 to a creature's AC — from being flanked or tripped Prone) and Frightened (a penalty to ALL its checks and DCs, ticking down by 1 each turn).",
+      ],
+      points: [
+        "Valued (Frightened 2) vs binary (Prone). Keep the highest value, never add.",
+        "Off-Guard: −2 AC. Frightened X: −X to everything, and fades by 1 each turn.",
+        "Tripping a foe makes it Prone → Off-Guard. Demoralize makes it Frightened.",
+        "Stack a debuff or two and a 'too-tough' foe becomes very hittable.",
+      ],
+      next: "u4-boss",
+    },
+
+    "u4-boss": {
+      kind: "encounter",
+      xp: 15,
+      prompt: "Boss: bring down the Stone Sentinel",
+      victoryTitle: "The Sentinel falls",
+      intro: [
+        "Its AC is brutal — head-on swings will mostly miss. Let Bram Trip it (Off-Guard, −2 AC) and spend an action to Demoralize (Frightened, −more). Watch its effective AC drop, then strike while it's vulnerable.",
+      ],
+      foes: [
+        {
+          id: "sentinel",
+          name: "Stone Sentinel",
+          role: "foe",
+          ac: 21,
+          maxHp: 38,
+          attackBonus: 11,
+          damageDie: 10,
+          damageBonus: 5,
+          willDC: 16,
+          reflexDC: 15,
+          initiativeBonus: 2,
+        },
+      ],
+      victoryLines: [
+        "With a final crack the construct topples, its animating light winking out.",
+        "“See that?” Bram says. “We never out-muscled it. We made it easy to hit and THEN hit it. That's most hard fights in this game — find the lever, pull it.”",
+      ],
+      next: "u4-downed",
+    },
+
+    "u4-downed": {
+      kind: "narration",
+      speaker: "Bram",
+      lines: [
+        "As the Sentinel falls, a last reflex swings its blade — and catches you across the ribs. The room tilts. You hit the floor, the world going grey at the edges.",
+        "“Stay with me!” Bram is already moving. “You're Dying — but that's not the end. There's a way back. You have to fight for it. Roll.”",
+      ],
+      next: "u4-teach-dying",
+    },
+
+    "u4-teach-dying": {
+      kind: "teach",
+      title: "Dying, Wounded & the recovery check",
+      body: [
+        "Drop to 0 HP and you're knocked out with the Dying condition (Dying 1, or 2 from a crit). You die if Dying ever reaches 4.",
+        "At the start of each of your turns while Dying, you roll a recovery check — a flat d20 (no modifiers) against DC 10 + your Dying value. It's a normal four-degree check, so a nat 20 or nat 1 still swings it.",
+      ],
+      points: [
+        "Crit success: Dying −2.   Success: Dying −1.",
+        "Failure: Dying +1 (plus your Wounded value).   Crit failure: +2.",
+        "Reach Dying 0 → you're stable and conscious — but gain Wounded 1.",
+        "Wounded makes the NEXT knockout start higher. It's the silent killer.",
+      ],
+      next: "u4-recovery",
+    },
+
+    "u4-recovery": {
+      kind: "recovery",
+      xp: 10,
+      prompt: "Fight your way back: roll recovery checks",
+      startingDying: 1,
+      intro: [
+        "Bram is holding the room. It's on you to claw back to consciousness. Each roll is a flat d20 vs DC 10 + your Dying value — watch the meter.",
+      ],
+      stabilizedLines: [
+        "Your vision snaps back. You're up — battered, Wounded, but breathing.",
+        "“There you are,” Bram exhales. “Now you understand the scariest part of the game from the inside. You'll never misread the dying rules at a table again.”",
+      ],
+      next: "unit4-crown",
+    },
+
+    "unit4-crown": {
+      kind: "end",
+      xp: 30,
+      title: "Unit 4 Complete",
+      crown: "Conditions & the Dying Rules",
+      body: [
+        "You've learned the levers that decide fights — Off-Guard, Frightened, Prone — and survived the dying/wounded/recovery loop from the inside.",
+        "Checks, the three-action turn, party combat, conditions, and death-and-dying: that's the full rules core of Pathfinder 2e. The remaining units are about making it YOUR game.",
+      ],
+      upNext:
+        "Character Creation — build the hero you'll actually bring to a table — then a capstone adventure and the hand-off to a real group.",
     },
   },
 };
