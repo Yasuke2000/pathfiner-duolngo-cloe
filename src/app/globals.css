@@ -626,6 +626,118 @@ button.primary:hover {
   text-align: center;
 }
 
+/* ---- Character builder ---- */
+.text-input {
+  width: 100%;
+  font: inherit;
+  font-size: 18px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  color: var(--text);
+  margin-top: 8px;
+}
+.text-input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.boost-grid,
+.skill-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+.skill-grid {
+  grid-template-columns: 1fr 1fr;
+}
+@media (min-width: 540px) {
+  .skill-grid {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+  .boost-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.sheet {
+  margin-top: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #120f1b;
+  padding: 14px;
+}
+.sheet-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+.sheet-head strong {
+  font-size: 17px;
+  color: var(--gold);
+}
+.attr-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+.attr {
+  text-align: center;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 2px;
+}
+.attr .k {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.attr .v {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+}
+.stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.stat {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+.stat .k {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.stat .v {
+  font-weight: 800;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+.sheet-skills {
+  margin-top: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  font-size: 14px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .card,
   .die.rolling {

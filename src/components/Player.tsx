@@ -8,8 +8,9 @@ import { CheckScene } from "./CheckScene";
 import { CombatScene } from "./CombatScene";
 import { EncounterScene } from "./EncounterScene";
 import { RecoveryScene } from "./RecoveryScene";
+import { BuilderScene } from "./BuilderScene";
 
-const TOTAL_STEPS = 27; // length of the main story spine, for the progress bar
+const TOTAL_STEPS = 31; // length of the main story spine, for the progress bar
 
 export function Player() {
   const [nodeId, setNodeId] = useState(COURSE.start);
@@ -141,6 +142,9 @@ function NodeView({
 
     case "recovery":
       return <RecoveryScene node={node} onResolved={(next, bonus) => onGo(next, bonus)} />;
+
+    case "builder":
+      return <BuilderScene node={node} onResolved={(next, bonus) => onGo(next, bonus)} />;
 
     case "end":
       return (

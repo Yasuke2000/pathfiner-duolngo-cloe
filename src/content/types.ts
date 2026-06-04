@@ -113,6 +113,18 @@ export interface RecoveryNode extends BaseNode {
 }
 
 /**
+ * The guided character builder: one choice at a time (ancestry → background →
+ * class → boosts → skills → feat) with a live, correctly-computed sheet and a
+ * JSON export the learner takes to a real table.
+ */
+export interface BuilderNode extends BaseNode {
+  kind: "builder";
+  prompt: string;
+  intro: string[];
+  next: NodeId;
+}
+
+/**
  * A unit milestone / graduation card. With `next`, it shows a "Continue" into
  * the following unit; without `next` it is the final course graduation.
  */
@@ -137,6 +149,7 @@ export type CourseNode =
   | CombatNode
   | EncounterNode
   | RecoveryNode
+  | BuilderNode
   | EndNode;
 
 export interface Course {

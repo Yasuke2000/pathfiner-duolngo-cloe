@@ -489,7 +489,60 @@ export const COURSE: Course = {
         "Checks, the three-action turn, party combat, conditions, and death-and-dying: that's the full rules core of Pathfinder 2e. The remaining units are about making it YOUR game.",
       ],
       upNext:
-        "Character Creation — build the hero you'll actually bring to a table — then a capstone adventure and the hand-off to a real group.",
+        "Character Creation — build the hero you'll actually bring to a table.",
+      next: "u5-intro",
+    },
+
+    // ---------------------------------------------------------------------
+    // UNIT 5 — Character Creation
+    // ---------------------------------------------------------------------
+    "u5-intro": {
+      kind: "narration",
+      speaker: "Bram",
+      xp: 5,
+      lines: [
+        "Out in the daylight again, Bram sits you down on a fallen column. “You've borrowed my Wren long enough. Now you know how the game actually plays — so let's build YOUR hero. The one you'll bring to a real table.”",
+        "“We do it one choice at a time. No memorizing. I'll tell you what each pick does, and you'll watch the sheet fill itself in.”",
+      ],
+      next: "u5-teach-build",
+    },
+
+    "u5-teach-build": {
+      kind: "teach",
+      title: "How a character is built",
+      body: [
+        "You assemble a hero from a few interchangeable blocks, in order. Each one hands you some attribute boosts (+1 to a stat), trained skills, and abilities.",
+        "Attributes are just modifiers — everyone starts at +0. Boosts come in batches; within a batch each goes to a different attribute, but a stat can collect boosts across batches to reach its +4 cap. Your key attribute is the one your class leans on.",
+      ],
+      points: [
+        "Ancestry → Background → Class → free boosts → skills → a feat.",
+        "Each boost is +1; your key stat usually ends at +4.",
+        "The sheet's AC, HP, saves and attack all recompute as you choose.",
+      ],
+      next: "u5-builder",
+    },
+
+    "u5-builder": {
+      kind: "builder",
+      xp: 15,
+      prompt: "Build your hero",
+      intro: [
+        "Start with a name — anything you like. Then we'll choose the pieces together, and you'll be able to download the finished sheet to bring to your first game.",
+      ],
+      next: "unit5-crown",
+    },
+
+    "unit5-crown": {
+      kind: "end",
+      xp: 30,
+      title: "Unit 5 Complete",
+      crown: "Character Creation",
+      body: [
+        "You built a real, rules-legal level-1 hero — and you understand every number on the sheet, because you watched each choice put it there.",
+        "You can now resolve checks, run a turn, fight as a party, handle conditions and dying, and make your own character. That is, genuinely, everything you need to sit down and play.",
+      ],
+      upNext:
+        "The remaining steps are the hand-off: a short capstone adventure, a table-readiness checklist, and how to find your first real group.",
     },
   },
 };
