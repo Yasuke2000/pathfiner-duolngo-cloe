@@ -8,13 +8,13 @@ import {
   buildAttrs,
   derived,
   emptyBuild,
-  exportCharacter,
   isComplete,
   resolve,
   skillBudget,
   trainedSkills,
   type BuildState,
 } from "@/game/builder";
+import { downloadAppJson, downloadPathbuilderJson, downloadPdf } from "@/game/export";
 import type { BuilderNode } from "@/content/types";
 
 type Step = "name" | "ancestry" | "background" | "class" | "boosts" | "skills" | "feat" | "review";
@@ -35,9 +35,12 @@ const mod = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 export function BuilderScene({
   node,
   onResolved,
+  onBuilt,
 }: {
   node: BuilderNode;
   onResolved: (next: string, bonusXp?: number) => void;
+  /** Report the finished build up so later units (the hand-off) can re-export it. */
+  onBuilt?: (build: BuildState) => void;
 }) {
   const [build, setBuild] = useState<BuildState>(emptyBuild());
   const [i, setI] = useState(0);
@@ -73,16 +76,6 @@ export function BuilderScene({
     else if (build.skills.length < budget) set({ skills: [...build.skills, key] });
   }
 
-  function download() {
-    const data = exportCharacter(build);
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${(build.name.trim() || "character").replace(/\s+/g, "-").toLowerCase()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
 
   return (
     <div className="card">
@@ -190,6 +183,21 @@ export function BuilderScene({
       {/* ---- Live sheet (except on review, which shows the full one) ---- */}
       {step !== "review" && (ancestry || cls) && <Sheet build={build} />}
 
+      {/* ---- Exports (review only) ---- */}
+      {step === "review" && (
+        <div className="actions combat-actions" style={{ marginTop: 18 }}>
+          <button className="btn" onClick={() => downloadPdf(build)} disabled={!isComplete(build)}>
+            ⬇ PDF sheet <span className="hint">printable, bring-to-table</span>
+          </button>
+          <button className="btn" onClick={() => downloadAppJson(build)} disabled={!isComplete(build)}>
+            ⬇ JSON <span className="hint">this app&apos;s format</span>
+          </button>
+          <button className="btn" onClick={() => downloadPathbuilderJson(build)} disabled={!isComplete(build)}>
+            ⬇ Pathbuilder JSON <span className="hint">experimental · for VTT import</span>
+          </button>
+        </div>
+      )}
+
       {/* ---- Nav ---- */}
       <div className="actions combat-actions">
         {i > 0 && (
@@ -202,14 +210,16 @@ export function BuilderScene({
             Next →
           </button>
         ) : (
-          <>
-            <button className="btn" onClick={download} disabled={!isComplete(build)}>
-              ⬇ Download character (.json)
-            </button>
-            <button className="btn primary" onClick={() => onResolved(node.next, 20)} disabled={!isComplete(build)}>
-              Finish — this hero is yours
-            </button>
-          </>
+          <button
+            className="btn primary"
+            onClick={() => {
+              onBuilt?.(build);
+              onResolved(node.next, 20);
+            }}
+            disabled={!isComplete(build)}
+          >
+            Finish — this hero is yours
+          </button>
         )}
       </div>
     </div>

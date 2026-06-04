@@ -125,6 +125,20 @@ export interface BuilderNode extends BaseNode {
 }
 
 /**
+ * The "join a table" hand-off: a table-readiness checklist, the character
+ * exports (PDF / JSON / Pathbuilder), and the real-world resources for finding
+ * a first group. This is the product's whole purpose made concrete.
+ */
+export interface HandoffNode extends BaseNode {
+  kind: "handoff";
+  prompt: string;
+  intro: string[];
+  checklist: string[];
+  resources: { label: string; detail: string }[];
+  next: NodeId;
+}
+
+/**
  * A unit milestone / graduation card. With `next`, it shows a "Continue" into
  * the following unit; without `next` it is the final course graduation.
  */
@@ -150,6 +164,7 @@ export type CourseNode =
   | EncounterNode
   | RecoveryNode
   | BuilderNode
+  | HandoffNode
   | EndNode;
 
 export interface Course {

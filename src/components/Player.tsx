@@ -9,13 +9,16 @@ import { CombatScene } from "./CombatScene";
 import { EncounterScene } from "./EncounterScene";
 import { RecoveryScene } from "./RecoveryScene";
 import { BuilderScene } from "./BuilderScene";
+import { HandoffScene } from "./HandoffScene";
+import type { BuildState } from "@/game/builder";
 
-const TOTAL_STEPS = 31; // length of the main story spine, for the progress bar
+const TOTAL_STEPS = 36; // length of the main story spine, for the progress bar
 
 export function Player() {
   const [nodeId, setNodeId] = useState(COURSE.start);
   const [xp, setXp] = useState(0);
   const [step, setStep] = useState(1);
+  const [character, setCharacter] = useState<BuildState | null>(null);
   const awarded = useRef<Set<string>>(new Set());
 
   const node = COURSE.nodes[nodeId];
@@ -56,7 +59,7 @@ export function Player() {
         </div>
       </div>
 
-      <NodeView node={node} onGo={go} />
+      <NodeView node={node} onGo={go} character={character} onBuilt={setCharacter} />
     </>
   );
 }
@@ -64,8 +67,12 @@ export function Player() {
 function NodeView({
   node,
   onGo,
+  character,
+  onBuilt,
 }: {
   node: CourseNode;
+  character: BuildState | null;
+  onBuilt: (b: BuildState) => void;
   onGo: (next: string, bonus?: number) => void;
 }) {
   switch (node.kind) {
@@ -144,7 +151,22 @@ function NodeView({
       return <RecoveryScene node={node} onResolved={(next, bonus) => onGo(next, bonus)} />;
 
     case "builder":
-      return <BuilderScene node={node} onResolved={(next, bonus) => onGo(next, bonus)} />;
+      return (
+        <BuilderScene
+          node={node}
+          onResolved={(next, bonus) => onGo(next, bonus)}
+          onBuilt={onBuilt}
+        />
+      );
+
+    case "handoff":
+      return (
+        <HandoffScene
+          node={node}
+          character={character}
+          onResolved={(next, bonus) => onGo(next, bonus)}
+        />
+      );
 
     case "end":
       return (

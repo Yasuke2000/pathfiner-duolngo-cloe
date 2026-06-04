@@ -541,8 +541,100 @@ export const COURSE: Course = {
         "You built a real, rules-legal level-1 hero — and you understand every number on the sheet, because you watched each choice put it there.",
         "You can now resolve checks, run a turn, fight as a party, handle conditions and dying, and make your own character. That is, genuinely, everything you need to sit down and play.",
       ],
+      upNext: "The capstone — and your hand-off to a real table.",
+      next: "u6-intro",
+    },
+
+    // ---------------------------------------------------------------------
+    // UNIT 6 — Capstone & the Table Hand-off
+    // ---------------------------------------------------------------------
+    "u6-intro": {
+      kind: "narration",
+      speaker: "Bram",
+      xp: 5,
+      lines: [
+        "Evening. You and Bram make camp at the mouth of the ruin you've cleared together. She looks at you differently now.",
+        "“Think about what you just did. You read checks, ran your turns, fought as a team, clawed back from dying, and built a hero of your own. That WAS an adventure — a whole dungeon, start to finish.”",
+        "“One last test, then I'm sending you to a real table. The way home is blocked by a rockfall and a nervous young drake guarding its nest. How do you want to handle it?”",
+      ],
+      next: "u6-capstone",
+    },
+
+    "u6-capstone": {
+      kind: "choice",
+      speaker: "Bram",
+      prompt: "The drake blocks the path. What's your approach?",
+      options: [
+        { label: "Fight through it", hint: "Combat — you know how", next: "u6-cap-fight" },
+        { label: "Sneak past while it's distracted", hint: "Exploration & Stealth", next: "u6-cap-sneak" },
+        { label: "Calm it and coax it aside", hint: "A social approach", next: "u6-cap-talk" },
+      ],
+    },
+
+    "u6-cap-fight": {
+      kind: "narration",
+      lines: [
+        "You square up, Bram at your side — initiative, three actions, conditions, the works. The drake is fierce but you've done this; it yields and flees.",
+        "“Direct. Effective. You've got the combat cold,” Bram nods.",
+      ],
+      next: "u6-handoff",
+    },
+    "u6-cap-sneak": {
+      kind: "narration",
+      lines: [
+        "You wait, watch its patrol, and slip past in Avoid Notice while it's turned away — a clean exploration solution, no blood spilled.",
+        "“Smart. Not every problem is a fight — that's a lesson some players take years to learn,” Bram says.",
+      ],
+      next: "u6-handoff",
+    },
+    "u6-cap-talk": {
+      kind: "narration",
+      lines: [
+        "You lower your weapon, speak low and steady, and toss it the dried meat from your pack. The drake huffs, settles, and lets you pass.",
+        "“Now THAT'S roleplay. Diplomacy is a real tool, and you reached for it,” Bram grins.",
+      ],
+      next: "u6-handoff",
+    },
+
+    "u6-handoff": {
+      kind: "handoff",
+      xp: 20,
+      prompt: "You're table-ready",
+      intro: [
+        "Bram presses a folded map into your hands. “My part's done. Here's everything you need to find a real table — and your character, ready to bring along.”",
+        "Tick off what feels solid (it's just for you), grab your sheet, and note where to find your first game.",
+      ],
+      checklist: [
+        "I can resolve a check: roll d20 + modifiers vs a DC, and read the degree of success.",
+        "I can run a turn: three actions, one reaction, and the multiple attack penalty.",
+        "I can fight as a party: initiative order, targeting, and helping allies.",
+        "I understand conditions and the dying / wounded / recovery loop.",
+        "I have a character built, and I know my AC, HP, saves, and key actions.",
+        "I know table etiquette: share the spotlight, don't metagame, it's OK to ask and to make mistakes.",
+        "I know what a session zero is, and that safety tools (like an X-card, lines & veils) exist.",
+      ],
+      resources: [
+        { label: "Pathfinder Society (organized play)", detail: "Beginner-friendly worldwide campaign. Make a free Organized Play ID, start at level 1, and try a short Quest (2–3 hrs). Tables expect newcomers." },
+        { label: "Official Pathfinder Discord", detail: "Very active #lfg (looking-for-group) and rules-help channels — a great first stop for online games." },
+        { label: "r/Pathfinder2e LFG", detail: "The subreddit's LFG threads are good for finding online games at your pace." },
+        { label: "Local game stores & conventions", detail: "Ask about PF2e nights or Pathfinder Society events — in-person tables love teaching new players." },
+        { label: "Your first-session script", detail: "Try: \"Hi, I'm new, I built a level-1 [class], and I'm excited to learn.\" GMs and PFS tables genuinely welcome beginners." },
+      ],
+      next: "graduation",
+    },
+
+    graduation: {
+      kind: "end",
+      xp: 50,
+      title: "You're Ready to Play",
+      crown: "Pathfinder 2e — Ready for a Table",
+      body: [
+        "Bram shoulders her pack and offers a hand. “You came in never having rolled a d20. You're leaving with the rules, a character, and the nerve to use them. That's the whole journey.”",
+        "“Go find your table. They're lucky to have you. And hey — make some mistakes. That's where the best stories come from.”",
+        "That's the end of the course. You did it. Now go play.",
+      ],
       upNext:
-        "The remaining steps are the hand-off: a short capstone adventure, a table-readiness checklist, and how to find your first real group.",
+        "There is no next — this is your graduation. Bring your sheet, find a group, and roll some dice for real.",
     },
   },
 };
