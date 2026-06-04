@@ -176,20 +176,104 @@ export const COURSE: Course = {
             "Not quite — 26 is well above the DC of 15, so you definitely succeeded. The only question is how well. Try again.",
         },
       ],
-      next: "end",
+      next: "unit1-crown",
     },
 
-    end: {
+    "unit1-crown": {
       kind: "end",
       xp: 15,
-      title: "Lesson Complete",
+      title: "Unit 1 Complete",
       crown: "Degrees of Success",
       body: [
         "Bram claps you on the shoulder. “That's the engine the whole game runs on. Roll, add, compare to the DC, read the degree. Everything else is detail.”",
         "You can now resolve any check in Pathfinder 2e — and you know that failing is just the story's next turn, not a wall.",
       ],
       upNext:
-        "The Three-Action Economy — the heart of every Pathfinder turn, where most new players stumble.",
+        "The Three-Action Economy — the heart of every Pathfinder turn, and where most new players stumble.",
+      next: "u2-intro",
+    },
+
+    // ---------------------------------------------------------------------
+    // UNIT 2 — The Three-Action Economy
+    // ---------------------------------------------------------------------
+    "u2-intro": {
+      kind: "narration",
+      speaker: "Bram",
+      xp: 5,
+      lines: [
+        "Deeper in, the passage opens into a flooded hall — and a figure rises from behind a fallen pillar: a marauder who's been looting the place, axe already in hand.",
+        "“No talking our way out of this one,” Bram mutters, drawing steel. “Time you learned how a fight actually works. Stay close.”",
+      ],
+      next: "u2-teach-actions",
+    },
+
+    "u2-teach-actions": {
+      kind: "teach",
+      title: "Three actions. That's your turn.",
+      body: [
+        "Combat happens in rounds. On YOUR turn you get exactly three actions, plus one reaction you can use even on someone else's turn.",
+        "Most things cost one action: Strike (attack), Stride (move), Raise a Shield, Demoralize a foe. You spend your three however you like.",
+      ],
+      points: [
+        "3 actions per turn — spend them in any order.",
+        "1 reaction, usable on anyone's turn.",
+        "The whole game's tactics live in how you spend those three.",
+      ],
+      next: "u2-teach-map",
+    },
+
+    "u2-teach-map": {
+      kind: "teach",
+      speaker: "Bram",
+      title: "Why you don't just swing three times",
+      body: [
+        "Here's the trap every newcomer falls into: spending all three actions on Strikes. Each attack after your first takes a stacking Multiple Attack Penalty (MAP).",
+        "“Your second swing is at −5, your third at −10,” Bram says. “That third one almost never lands. The masters spend that action setting up instead — moving, raising a shield, or scaring the enemy so the NEXT hit counts.”",
+      ],
+      points: [
+        "1st Strike: no penalty.",
+        "2nd Strike: −5.",
+        "3rd Strike: −10 (a near-guaranteed whiff).",
+        "Demoralize, Raise a Shield, Stride: NOT attacks — no penalty.",
+      ],
+      next: "u2-combat",
+    },
+
+    "u2-combat": {
+      kind: "combat",
+      xp: 10,
+      prompt: "Duel: defeat the marauder",
+      intro: [
+        "Watch the action pips at the bottom — each thing you do spends one. Notice the penalty climb if you keep Striking, and try spending an action on Demoralize to soften the foe up.",
+      ],
+      enemy: {
+        name: "the marauder",
+        blurb: "A scarred looter with a heavy axe.",
+        ac: 16,
+        maxHp: 22,
+        attackBonus: 8,
+        attackDamageDie: 6,
+        attackDamageBonus: 3,
+        willDC: 15,
+      },
+      victoryLines: [
+        "The marauder drops the axe and slumps against the pillar, beaten.",
+        "“See that?” Bram says, breathing hard. “The fights you win aren't the ones where you swing the most — they're the ones where every action earns its keep.”",
+      ],
+      next: "unit2-crown",
+    },
+
+    "unit2-crown": {
+      kind: "end",
+      xp: 20,
+      title: "Unit 2 Complete",
+      crown: "The Three-Action Economy",
+      body: [
+        "You can now run a turn the way Pathfinder intends: three deliberate actions, a reaction held in reserve, and the wisdom to not throw away a −10 swing.",
+        "Roll a check, read its degree, and spend a turn well — that's the spine of the entire game, and it's yours now.",
+      ],
+      upNext:
+        "First Guided Combat with allies, then Conditions, Character Creation, and a capstone adventure that hands you off to a real table.",
     },
   },
 };

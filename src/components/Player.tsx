@@ -5,8 +5,9 @@ import type { Degree } from "@/engine/types";
 import { COURSE } from "@/content/course";
 import type { CourseNode } from "@/content/types";
 import { CheckScene } from "./CheckScene";
+import { CombatScene } from "./CombatScene";
 
-const TOTAL_STEPS = 10; // length of the main story spine, for the progress bar
+const TOTAL_STEPS = 15; // length of the main story spine, for the progress bar
 
 export function Player() {
   const [nodeId, setNodeId] = useState(COURSE.start);
@@ -130,6 +131,9 @@ function NodeView({
         />
       );
 
+    case "combat":
+      return <CombatScene node={node} onResolved={(next, bonus) => onGo(next, bonus)} />;
+
     case "end":
       return (
         <div className="card">
@@ -142,14 +146,22 @@ function NodeView({
             <p key={i}>{l}</p>
           ))}
           <div className="upnext">
-            <div className="k">Up next in the full course</div>
+            <div className="k">Up next</div>
             <p style={{ margin: "6px 0 0" }}>{node.upNext}</p>
           </div>
-          <p className="muted" style={{ marginTop: 18, textAlign: "center" }}>
-            This is the Phase 0 vertical slice — one complete teach-by-playing loop.
-            The full course continues from here to character creation and a capstone
-            adventure that hands you off to a real table.
-          </p>
+          {node.next ? (
+            <div className="actions">
+              <button className="btn primary" onClick={() => onGo(node.next!)}>
+                Continue to the next unit →
+              </button>
+            </div>
+          ) : (
+            <p className="muted" style={{ marginTop: 18, textAlign: "center" }}>
+              That's the end of the current build — two complete teach-by-playing units.
+              The full course continues from here to character creation and a capstone
+              adventure that hands you off to a real table.
+            </p>
+          )}
         </div>
       );
   }

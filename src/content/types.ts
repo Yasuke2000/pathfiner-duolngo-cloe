@@ -1,5 +1,6 @@
 import type { Degree } from "@/engine/types";
 import type { CheckSpec } from "@/game/perform";
+import type { EnemyConfig } from "@/game/combat";
 
 export type NodeId = string;
 
@@ -65,15 +66,34 @@ export interface CheckNode extends BaseNode {
   outcomes: Record<Degree, { lines: string[]; next: NodeId; bonusXp?: number }>;
 }
 
-/** The graduation / end-of-lesson card. */
+/**
+ * A guided combat encounter run by the combat layer. Built to teach the
+ * three-action economy: every degree resolves into the shared tracker, and the
+ * narration coaches the learner toward spending actions well.
+ */
+export interface CombatNode extends BaseNode {
+  kind: "combat";
+  prompt: string;
+  intro: string[];
+  enemy: EnemyConfig;
+  victoryLines: string[];
+  next: NodeId;
+}
+
+/**
+ * A unit milestone / graduation card. With `next`, it shows a "Continue" into
+ * the following unit; without `next` it is the final course graduation.
+ */
 export interface EndNode extends BaseNode {
   kind: "end";
   title: string;
   body: string[];
   /** What the learner has earned (a "crown"/mastery marker). */
   crown: string;
-  /** A teaser for the next unit in the full course. */
+  /** A teaser for what comes next in the full course. */
   upNext: string;
+  /** If set, this is a unit milestone that continues into the next unit. */
+  next?: NodeId;
 }
 
 export type CourseNode =
@@ -82,6 +102,7 @@ export type CourseNode =
   | ChoiceNode
   | QuizNode
   | CheckNode
+  | CombatNode
   | EndNode;
 
 export interface Course {
