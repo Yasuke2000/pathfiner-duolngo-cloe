@@ -80,32 +80,55 @@ body::after {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 42%, #000 6%, transparent 32%),
-    conic-gradient(
-      from 0deg at 50% 42%,
-      hsl(265 80% 55% / 0),
-      hsl(265 85% 60% / 0.55),
-      hsl(190 85% 55% / 0.3),
-      hsl(280 80% 45% / 0.5),
-      hsl(265 80% 55% / 0)
-    );
-  filter: blur(2px);
-  animation: swirl 9s linear infinite;
+  overflow: hidden;
+  /* deep space falloff toward the edges */
+  background: radial-gradient(120% 120% at 50% 44%, transparent 0%, rgba(9, 6, 16, 0.55) 68%, #06040c 100%);
 }
+/* the swirling accretion disk — a big, heavily-blurred ring */
+.finale-aura::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 150vmax;
+  height: 150vmax;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    hsl(265 85% 62% / 0),
+    hsl(282 90% 64% / 0.5),
+    hsl(200 90% 62% / 0.28),
+    hsl(265 85% 62% / 0),
+    hsl(305 85% 58% / 0.42),
+    hsl(265 85% 62% / 0)
+  );
+  filter: blur(48px);
+  -webkit-mask: radial-gradient(circle, transparent 17%, #000 31%, #000 54%, transparent 73%);
+  mask: radial-gradient(circle, transparent 17%, #000 31%, #000 54%, transparent 73%);
+  animation: swirl 22s linear infinite;
+  opacity: 0.85;
+}
+/* the black core, with a soft violet event-horizon glow */
 .finale-aura::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 42%, rgba(0, 0, 0, 0.9) 4%, transparent 26%);
-  animation: portal-pulse 3s ease-in-out infinite;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%);
+  width: 36vmax;
+  height: 36vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle, #000 42%, rgba(0, 0, 0, 0.9) 58%, transparent 74%);
+  box-shadow: 0 0 90px 24px rgba(0, 0, 0, 0.75), 0 0 140px 48px hsl(268 85% 55% / 0.35);
+  animation: portal-pulse 6s ease-in-out infinite;
 }
 @keyframes swirl {
-  to { transform: rotate(360deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 @keyframes portal-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.85; }
-  50% { transform: scale(1.12); opacity: 1; }
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+  50% { transform: translate(-50%, -50%) scale(1.06); opacity: 1; }
 }
 .finale-card {
   border-color: hsl(265 70% 60%);
