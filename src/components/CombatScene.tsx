@@ -41,6 +41,7 @@ export function CombatScene({
   onResolved: (next: string, bonusXp?: number) => void;
 }) {
   const [phase, setPhase] = useState<Phase>("intro");
+  const [fled, setFled] = useState(false);
   const [enemy, setEnemy] = useState<EnemyState>(() => spawnEnemy(node.enemy));
   const [hp, setHp] = useState(hero.combat.maxHp);
   const [turn, setTurn] = useState<TurnState>(() => startTurn());
@@ -110,6 +111,12 @@ export function CombatScene({
     setShieldRaised(true);
     setTurn(spendAction(turn, 1, false));
     pushLog("You raise your shield (+2 AC until your next turn).", "hero");
+  }
+
+  function onRetreat() {
+    pushLog("“Go on, fall back — I've got this one.” Tahar steps in past you, and a few heartbeats later the marauder is down.", "system");
+    setFled(true);
+    setPhase("won");
   }
 
   function onEndTurn() {
@@ -192,13 +199,18 @@ export function CombatScene({
   if (phase === "won") {
     return (
       <div className="card">
-        <span className="speaker">Victory</span>
-        <h2>{enemy.name.replace(/^the /, "The ")} is defeated</h2>
-        {node.victoryLines.map((l, i) => (
-          <p key={i}>{l}</p>
-        ))}
+        <span className="speaker">{fled ? "You fell back" : "Victory"}</span>
+        <h2>{fled ? "Tahar handled it" : `${enemy.name.replace(/^the /, "The ")} is defeated`}</h2>
+        {fled ? (
+          <>
+            <p>You step back and let Tahar close it out — no fuss, no judgment.</p>
+            <p>“Knowing when not to swing is a skill too,” he says. “Live to fight another day.”</p>
+          </>
+        ) : (
+          node.victoryLines.map((l, i) => <p key={i}>{l}</p>)
+        )}
         <div className="actions">
-          <button className="btn primary" onClick={() => onResolved(node.next, 15)}>
+          <button className="btn primary" onClick={() => onResolved(node.next, fled ? 0 : 15)}>
             Continue
           </button>
         </div>
@@ -273,6 +285,9 @@ export function CombatScene({
         </button>
         <button className="btn" onClick={onRaiseShield} disabled={!canAct || shieldRaised}>
           Raise a Shield <span className="hint">+2 AC until your next turn</span>
+        </button>
+        <button className="btn" onClick={onRetreat} disabled={phase !== "player"}>
+          Fall back <span className="hint">let Tahar finish this fight</span>
         </button>
         <button
           className="btn primary"

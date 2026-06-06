@@ -53,6 +53,7 @@ export function EncounterScene({
   const [ptr, setPtr] = useState(0);
   const [round, setRound] = useState(1);
   const [phase, setPhase] = useState<Phase>("intro");
+  const [fled, setFled] = useState(false);
   const [heroActions, setHeroActions] = useState(3);
   const [heroAttacks, setHeroAttacks] = useState(0);
   const [targeting, setTargeting] = useState<Targeting>(null);
@@ -220,6 +221,15 @@ export function EncounterScene({
     setTargeting(null);
   }
 
+  function heroRetreat() {
+    pushLog(
+      "“Go — fall back, I've got this!” Tahar shoulders past you into the fray. Steel rings, the dark heaves, and it's over before you've caught your breath.",
+      "ally",
+    );
+    setFled(true);
+    setPhase("won");
+  }
+
   function heroRaiseShield() {
     if (!heroC) return;
     setCombatants((cs) => patch(cs, heroC.id, { shieldRaised: true }));
@@ -354,13 +364,18 @@ export function EncounterScene({
   if (phase === "won") {
     return (
       <div className="card">
-        <span className="speaker">Victory</span>
-        <h2>{node.victoryTitle ?? "Victory!"}</h2>
-        {node.victoryLines.map((l, i) => (
-          <p key={i}>{l}</p>
-        ))}
+        <span className="speaker">{fled ? "You fell back" : "Victory"}</span>
+        <h2>{fled ? "Tahar handled it" : node.victoryTitle ?? "Victory!"}</h2>
+        {fled ? (
+          <>
+            <p>You step back and let Tahar finish the fight. He does — efficiently, and without a word of judgment.</p>
+            <p>“No shame in knowing when to let someone else swing,” he says, wiping his blade. “Living to fight another day is its own kind of smart.”</p>
+          </>
+        ) : (
+          node.victoryLines.map((l, i) => <p key={i}>{l}</p>)
+        )}
         <div className="actions">
-          <button className="btn primary" onClick={() => onResolved(node.next, 20)}>
+          <button className="btn primary" onClick={() => onResolved(node.next, fled ? 0 : 20)}>
             Continue
           </button>
         </div>
@@ -499,6 +514,9 @@ export function EncounterScene({
             </button>
             <button className="btn" onClick={heroRaiseShield} disabled={!canAct || heroC?.shieldRaised}>
               Raise a Shield <span className="hint">enables Shield Block</span>
+            </button>
+            <button className="btn" onClick={heroRetreat} disabled={phase !== "hero"}>
+              Fall back <span className="hint">let Tahar finish this fight</span>
             </button>
             <button className="btn primary" onClick={() => { setTargeting(null); endTurn(combatants); }}>
               {heroActions > 0 ? "End turn (skip remaining)" : "End turn"}
