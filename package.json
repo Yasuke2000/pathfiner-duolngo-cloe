@@ -1,0 +1,26 @@
+{
+  "name": "pathfinder-learn-and-play",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A single-playthrough, teach-by-playing course that takes a true beginner from never-having-rolled-a-d20 to ready-to-join a real Pathfinder 2e (Remaster) table.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "jspdf": "^2.5.2",
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.8"
+  }
+}
