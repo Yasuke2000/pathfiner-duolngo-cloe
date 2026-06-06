@@ -71,7 +71,7 @@ export function RecoveryScene({
         // Death is caught by the companion so the lesson lands without a game over.
         rescued.current = true;
         push(
-          "You slip under — but Bram spends a Hero Point, hauls you upright and pours a healing draught down your throat. You're stable, and you gain Wounded 1.",
+          "You slip under — but Yasuke spends a Hero Point, hauls you upright and pours a healing draught down your throat. You're stable, and you gain Wounded 1.",
           undefined,
           true,
         );

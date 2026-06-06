@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { setSettings, useSettings, type TextSpeed } from "@/lib/settings";
 import { isMuted, sfx, toggleMuted } from "@/lib/sound";
+import { COMMUNITY_USE_NOTICE } from "@/lib/config";
+import { SupportButton } from "./SupportButton";
 
 const SPEEDS: { id: TextSpeed; label: string }[] = [
   { id: "slow", label: "Slow" },
@@ -89,6 +91,14 @@ export function SettingsPanel({ onRestart }: { onRestart: () => void }) {
               >
                 Restart course <span className="hint">clears saved progress</span>
               </button>
+            </div>
+
+            <div className="setting about">
+              <span className="setting-label">About</span>
+            </div>
+            <p className="about-notice">{COMMUNITY_USE_NOTICE}</p>
+            <div style={{ marginTop: 10 }}>
+              <SupportButton />
             </div>
 
             <div className="actions">

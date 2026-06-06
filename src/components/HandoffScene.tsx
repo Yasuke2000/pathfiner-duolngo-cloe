@@ -4,6 +4,8 @@ import { useState } from "react";
 import type { HandoffNode } from "@/content/types";
 import type { BuildState } from "@/game/builder";
 import { downloadAppJson, downloadPathbuilderJson, downloadPdf } from "@/game/export";
+import { hasSupport } from "@/lib/config";
+import { SupportButton } from "./SupportButton";
 
 export function HandoffScene({
   node,
@@ -73,6 +75,19 @@ export function HandoffScene({
           </li>
         ))}
       </ul>
+
+      {hasSupport() && (
+        <>
+          <h3 className="section-h">Enjoyed this?</h3>
+          <p className="muted">
+            This course is free and always will be. If it helped you get to a table, a small
+            tip keeps it running and ad-free.
+          </p>
+          <div style={{ marginTop: 8 }}>
+            <SupportButton label="♥ Buy me a coffee" />
+          </div>
+        </>
+      )}
 
       <div className="actions">
         <button className="btn primary" onClick={() => onResolved(node.next, 0)}>

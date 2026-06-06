@@ -5,7 +5,7 @@ interface AvatarDef {
 
 /** Recurring characters get a portrait medallion; everything else is a chip. */
 const AVATARS: Record<string, AvatarDef> = {
-  Bram: { glyph: "🛡️", tone: "26 80% 60%" },
+  Yasuke: { glyph: "🛡️", tone: "26 80% 60%" },
 };
 
 export function Speaker({ name }: { name: string }) {

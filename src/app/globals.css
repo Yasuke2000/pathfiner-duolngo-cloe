@@ -1233,6 +1233,34 @@ button.setting.toggle {
   font-family: var(--font-display);
 }
 
+/* ---------- Support / donations ---------- */
+.support-link {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--accent) / 0.5);
+  background: hsl(var(--accent) / 0.12);
+  color: hsl(var(--accent));
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.08s ease;
+}
+.support-link:hover {
+  background: hsl(var(--accent) / 0.22);
+  transform: translateY(-1px);
+}
+.about-notice {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 4px 0 0;
+}
+.setting.about {
+  border-top: 1px solid var(--border-soft);
+  padding-bottom: 4px;
+}
+
 /* ---------- Reduced motion (OS setting OR in-app toggle) ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

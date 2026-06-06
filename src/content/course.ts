@@ -14,11 +14,11 @@ export const COURSE: Course = {
   nodes: {
     welcome: {
       kind: "narration",
-      speaker: "Bram",
+      speaker: "Yasuke",
       xp: 5,
       lines: [
         "Rain ticks off your hood. Ahead, half-swallowed by the hillside, leans the broken gate of an old watchtower — the place the village calls the Sunken Threshold.",
-        "A broad-shouldered woman with a lantern grins at you. “First time out, eh? Name's Bram. I'll walk you through it.”",
+        "A broad-shouldered warrior with a lantern grins at you. “First time out, eh? Name's Yasuke. I'll walk you through it.”",
         "“Here's the whole game in one breath: I describe the world, you decide what your hero does, and dice settle anything uncertain. That's it. You can't break it, and you can't lose me.”",
       ],
       next: "intro-choice",
@@ -26,7 +26,7 @@ export const COURSE: Course = {
 
     "intro-choice": {
       kind: "choice",
-      speaker: "Bram",
+      speaker: "Yasuke",
       prompt: "Before we step inside — what kind of adventurer are you, deep down?",
       options: [
         { label: "Bold and brash", hint: "Charge in first, think later", next: "intro-bold", set: ({ set }) => set({ temperament: "bold" }) },
@@ -36,19 +36,19 @@ export const COURSE: Course = {
     },
     "intro-bold": {
       kind: "narration",
-      speaker: "Bram",
+      speaker: "Yasuke",
       lines: ["“Ha — a charger! We'll temper that with a little sense, but courage is half this game. Come on.”"],
       next: "what-is-ttrpg",
     },
     "intro-careful": {
       kind: "narration",
-      speaker: "Bram",
+      speaker: "Yasuke",
       lines: ["“Careful keeps you breathing. Smart. The dice tend to punish the reckless… most of the time. Let's go.”"],
       next: "what-is-ttrpg",
     },
     "intro-curious": {
       kind: "narration",
-      speaker: "Bram",
+      speaker: "Yasuke",
       lines: ["“Curiosity is the finest trait an adventurer can carry. Ask away — that's exactly how you'll learn. After me.”"],
       next: "what-is-ttrpg",
     },
@@ -58,7 +58,7 @@ export const COURSE: Course = {
       title: "What you're actually doing",
       body: [
         "Pathfinder is a story you build together by talking and rolling dice. There's no script you have to memorize.",
-        "For this lesson you'll play Wren, a green-but-game frontier scout. Bram is your companion — she'll never let the story strand you.",
+        "For this lesson you'll play Wren, a green-but-game frontier scout. Yasuke is your companion — he'll never let the story strand you.",
       ],
       points: [
         "The GM describes the situation.",
@@ -70,12 +70,12 @@ export const COURSE: Course = {
 
     door: {
       kind: "teach",
-      speaker: "Bram",
+      speaker: "Yasuke",
       title: "Not everything needs a roll",
       xp: 5,
       body: [
         "The gate's stuck. You set your shoulder to it and shove — and it grinds open with a groan. No dice needed.",
-        "“When a task is trivial, the GM just tells you it works,” Bram says. “We only roll when failure is interesting. Keep that in your pocket.”",
+        "“When a task is trivial, the GM just tells you it works,” Yasuke says. “We only roll when failure is interesting. Keep that in your pocket.”",
       ],
       points: ["Trivial tasks: no roll, you just succeed."],
       next: "teach-d20",
@@ -114,10 +114,10 @@ export const COURSE: Course = {
 
     "chasm-setup": {
       kind: "narration",
-      speaker: "Bram",
+      speaker: "Yasuke",
       lines: [
         "Inside, the floor has collapsed into a black chasm. The far ledge is a long jump away.",
-        "Bram wedges a broken beam across part of the gap. “There — a running start. That's a circumstance bonus to your jump. Watch how it stacks onto your roll.”",
+        "Yasuke wedges a broken beam across part of the gap. “There — a running start. That's a circumstance bonus to your jump. Watch how it stacks onto your roll.”",
         "“This one we roll for. How do you want to take it?”",
       ],
       next: "chasm-approach",
@@ -142,7 +142,7 @@ export const COURSE: Course = {
         attr: "str",
         dc: 15,
         modifiers: [
-          { type: "circumstance", value: 1, source: "Bram's beam (running start)" },
+          { type: "circumstance", value: 1, source: "Yasuke's beam (running start)" },
         ],
       },
       outcomes: {
@@ -152,28 +152,28 @@ export const COURSE: Course = {
           lines: [
             "You hit the beam at a dead sprint and FLY — clearing the gap with room to spare and landing in a clean roll.",
             "Your hand closes on something in the rubble: a small pouch of old coins.",
-            "“That's a critical success — you beat the DC by ten or more,” Bram calls, hopping across after you. “The world gives you a little extra when you blow the doors off.”",
+            "“That's a critical success — you beat the DC by ten or more,” Yasuke calls, hopping across after you. “The world gives you a little extra when you blow the doors off.”",
           ],
         },
         success: {
           next: "after-chasm",
           lines: [
             "You jump, catch the far ledge with both hands, and haul yourself up, breathing hard.",
-            "“Clean success — you met the DC,” Bram says. “No drama, just done. Most of the game lives right here.”",
+            "“Clean success — you met the DC,” Yasuke says. “No drama, just done. Most of the game lives right here.”",
           ],
         },
         failure: {
           next: "after-chasm",
           lines: [
-            "You leap a beat too early. Your boots scrabble at the edge — and Bram's hand clamps your wrist and yanks you up onto the ledge.",
-            "“Missed the DC, so: failure. Happens constantly,” she says, unbothered. “Failing isn't the end of the story — it's just the next thing that happens. Up you get.”",
+            "You leap a beat too early. Your boots scrabble at the edge — and Yasuke's hand clamps your wrist and yanks you up onto the ledge.",
+            "“Missed the DC, so: failure. Happens constantly,” Yasuke says, unbothered. “Failing isn't the end of the story — it's just the next thing that happens. Up you get.”",
           ],
         },
         "critical-failure": {
           next: "after-chasm",
           lines: [
             "You misjudge it badly and drop short, sliding down to a lower shelf in a clatter of loose stone and bruised pride.",
-            "Bram tosses you a rope, grinning. “Missed by ten or more — critical failure. The worst band, and you know what? Still fine. Climb up, we keep going.”",
+            "Yasuke tosses you a rope, grinning. “Missed by ten or more — critical failure. The worst band, and you know what? Still fine. Climb up, we keep going.”",
           ],
         },
       },
@@ -181,11 +181,11 @@ export const COURSE: Course = {
 
     "after-chasm": {
       kind: "narration",
-      speaker: "Bram",
+      speaker: "Yasuke",
       lines: (ctx) => [
         ctx.flags.crossedBoldly
-          ? "On the far ledge, Bram grins. “All-or-nothing on the jump — I like the nerve.”"
-          : "On the far ledge, Bram nods. “Measured, ready to catch yourself. Smart crossing.”",
+          ? "On the far ledge, Yasuke grins. “All-or-nothing on the jump — I like the nerve.”"
+          : "On the far ledge, Yasuke nods. “Measured, ready to catch yourself. Smart crossing.”",
         "“See what just happened? Same jump, same dice — but the result had texture. That's the four degrees doing their work.”",
         "“Let's make sure it stuck.”",
       ],
@@ -194,7 +194,7 @@ export const COURSE: Course = {
 
     quiz: {
       kind: "quiz",
-      speaker: "Bram",
+      speaker: "Yasuke",
       xp: 10,
       prompt:
         "Quick check: you roll a 14 on the die, your modifiers bring the total to 26, and the DC was 15. What's the result?",
@@ -228,7 +228,7 @@ export const COURSE: Course = {
       title: "Unit 1 Complete",
       crown: "Degrees of Success",
       body: [
-        "Bram claps you on the shoulder. “That's the engine the whole game runs on. Roll, add, compare to the DC, read the degree. Everything else is detail.”",
+        "Yasuke claps you on the shoulder. “That's the engine the whole game runs on. Roll, add, compare to the DC, read the degree. Everything else is detail.”",
         "You can now resolve any check in Pathfinder 2e — and you know that failing is just the story's next turn, not a wall.",
       ],
       upNext:
@@ -241,11 +241,11 @@ export const COURSE: Course = {
     // ---------------------------------------------------------------------
     "u2-intro": {
       kind: "narration",
-      speaker: "Bram",
+      speaker: "Yasuke",
       xp: 5,
       lines: [
         "Deeper in, the passage opens into a flooded hall — and a figure rises from behind a fallen pillar: a marauder who's been looting the place, axe already in hand.",
-        "“No talking our way out of this one,” Bram mutters, drawing steel. “Time you learned how a fight actually works. Stay close.”",
+        "“No talking our way out of this one,” Yasuke mutters, drawing steel. “Time you learned how a fight actually works. Stay close.”",
       ],
       next: "u2-teach-actions",
     },
@@ -267,11 +267,11 @@ export const COURSE: Course = {
 
     "u2-teach-map": {
       kind: "teach",
-      speaker: "Bram",
+      speaker: "Yasuke",
       title: "Why you don't just swing three times",
       body: [
         "Here's the trap every newcomer falls into: spending all three actions on Strikes. Each attack after your first takes a stacking Multiple Attack Penalty (MAP).",
-        "“Your second swing is at −5, your third at −10,” Bram says. “That third one almost never lands. The masters spend that action setting up instead — moving, raising a shield, or scaring the enemy so the NEXT hit counts.”",
+        "“Your second swing is at −5, your third at −10,” Yasuke says. “That third one almost never lands. The masters spend that action setting up instead — moving, raising a shield, or scaring the enemy so the NEXT hit counts.”",
       ],
       points: [
         "1st Strike: no penalty.",
@@ -301,7 +301,7 @@ export const COURSE: Course = {
       },
       victoryLines: [
         "The marauder drops the axe and slumps against the pillar, beaten.",
-        "“See that?” Bram says, breathing hard. “The fights you win aren't the ones where you swing the most — they're the ones where every action earns its keep.”",
+        "“See that?” Yasuke says, breathing hard. “The fights you win aren't the ones where you swing the most — they're the ones where every action earns its keep.”",
       ],
       next: "unit2-crown",
     },
@@ -326,11 +326,11 @@ export const COURSE: Course = {
     // ---------------------------------------------------------------------
     "u3-intro": {
       kind: "narration",
-      speaker: "Bram",
+      speaker: "Yasuke",
       xp: 5,
       lines: [
-        "You press on — and the dark erupts. Two skulkers drop from the rafters, blades out, one lunging for you and one for Bram.",
-        "“Two of them, two of us,” Bram says, settling into a stance. “This is a real fight now. Watch the turn order, keep your shield ready, and trust me to set them up for you.”",
+        "You press on — and the dark erupts. Two skulkers drop from the rafters, blades out, one lunging for you and one for Yasuke.",
+        "“Two of them, two of us,” Yasuke says, settling into a stance. “This is a real fight now. Watch the turn order, keep your shield ready, and trust me to set them up for you.”",
       ],
       next: "u3-teach-initiative",
     },
@@ -352,11 +352,11 @@ export const COURSE: Course = {
 
     "u3-teach-reaction": {
       kind: "teach",
-      speaker: "Bram",
+      speaker: "Yasuke",
       title: "Your reaction: Shield Block",
       body: [
         "You get one reaction per round, and it can fire on someone else's turn — when a specific trigger happens.",
-        "“You learned to Raise a Shield last fight,” Bram says. “Here's the payoff: while it's up and a blow lands, you can spend your reaction to Shield Block and soak some of the damage. One per round — so time it.”",
+        "“You learned to Raise a Shield last fight,” Yasuke says. “Here's the payoff: while it's up and a blow lands, you can spend your reaction to Shield Block and soak some of the damage. One per round — so time it.”",
       ],
       points: [
         "Raise a Shield (an action) → shield is up.",
@@ -369,9 +369,9 @@ export const COURSE: Course = {
     "u3-encounter": {
       kind: "encounter",
       xp: 10,
-      prompt: "Two-on-two: hold the line with Bram",
+      prompt: "Two-on-two: hold the line with Yasuke",
       intro: [
-        "Roll initiative and watch the order at the top. On your turn, click a foe to target it. Raise your shield so you can Shield Block when struck — and let Bram trip a skulker to leave it off-guard for your strike.",
+        "Roll initiative and watch the order at the top. On your turn, click a foe to target it. Raise your shield so you can Shield Block when struck — and let Yasuke trip a skulker to leave it off-guard for your strike.",
       ],
       foes: [
         {
@@ -403,7 +403,7 @@ export const COURSE: Course = {
       ],
       victoryLines: [
         "The second skulker folds, and the hall goes quiet but for dripping water.",
-        "“That,” Bram says, sheathing her blade, “is a team fight. You read the order, you blocked when it counted, and you finished what I set up. You're ready for the real thing.”",
+        "“That,” Yasuke says, sheathing his blade, “is a team fight. You read the order, you blocked when it counted, and you finished what I set up. You're ready for the real thing.”",
       ],
       next: "unit3-crown",
     },
@@ -428,11 +428,11 @@ export const COURSE: Course = {
     // ---------------------------------------------------------------------
     "u4-intro": {
       kind: "narration",
-      speaker: "Bram",
+      speaker: "Yasuke",
       xp: 5,
       lines: [
         "The passage ends at a vaulted chamber. A construct of fused stone and old armor grinds to life and levels a greatsword at you.",
-        "Bram whistles low. “That plating is thick — swing at it head-on and you'll mostly bounce off. We win this by stacking the deck: knock it Off-Guard, rattle it, make it easier to hit. Conditions, lass. This fight is a conditions lesson with a sword.”",
+        "Yasuke whistles low. “That plating is thick — swing at it head-on and you'll mostly bounce off. We win this by stacking the deck: knock it Off-Guard, rattle it, make it easier to hit. Conditions, lass. This fight is a conditions lesson with a sword.”",
       ],
       next: "u4-teach-conditions",
     },
@@ -459,7 +459,7 @@ export const COURSE: Course = {
       prompt: "Boss: bring down the Stone Sentinel",
       victoryTitle: "The Sentinel falls",
       intro: [
-        "Its AC is brutal — head-on swings will mostly miss. Let Bram Trip it (Off-Guard, −2 AC) and spend an action to Demoralize (Frightened, −more). Watch its effective AC drop, then strike while it's vulnerable.",
+        "Its AC is brutal — head-on swings will mostly miss. Let Yasuke Trip it (Off-Guard, −2 AC) and spend an action to Demoralize (Frightened, −more). Watch its effective AC drop, then strike while it's vulnerable.",
       ],
       foes: [
         {
@@ -478,17 +478,17 @@ export const COURSE: Course = {
       ],
       victoryLines: [
         "With a final crack the construct topples, its animating light winking out.",
-        "“See that?” Bram says. “We never out-muscled it. We made it easy to hit and THEN hit it. That's most hard fights in this game — find the lever, pull it.”",
+        "“See that?” Yasuke says. “We never out-muscled it. We made it easy to hit and THEN hit it. That's most hard fights in this game — find the lever, pull it.”",
       ],
       next: "u4-downed",
     },
 
     "u4-downed": {
       kind: "narration",
-      speaker: "Bram",
+      speaker: "Yasuke",
       lines: [
         "As the Sentinel falls, a last reflex swings its blade — and catches you across the ribs. The room tilts. You hit the floor, the world going grey at the edges.",
-        "“Stay with me!” Bram is already moving. “You're Dying — but that's not the end. There's a way back. You have to fight for it. Roll.”",
+        "“Stay with me!” Yasuke is already moving. “You're Dying — but that's not the end. There's a way back. You have to fight for it. Roll.”",
       ],
       next: "u4-teach-dying",
     },
@@ -515,11 +515,11 @@ export const COURSE: Course = {
       prompt: "Fight your way back: roll recovery checks",
       startingDying: 1,
       intro: [
-        "Bram is holding the room. It's on you to claw back to consciousness. Each roll is a flat d20 vs DC 10 + your Dying value — watch the meter.",
+        "Yasuke is holding the room. It's on you to claw back to consciousness. Each roll is a flat d20 vs DC 10 + your Dying value — watch the meter.",
       ],
       stabilizedLines: [
         "Your vision snaps back. You're up — battered, Wounded, but breathing.",
-        "“There you are,” Bram exhales. “Now you understand the scariest part of the game from the inside. You'll never misread the dying rules at a table again.”",
+        "“There you are,” Yasuke exhales. “Now you understand the scariest part of the game from the inside. You'll never misread the dying rules at a table again.”",
       ],
       next: "unit4-crown",
     },
@@ -544,10 +544,10 @@ export const COURSE: Course = {
     // ---------------------------------------------------------------------
     "u5-intro": {
       kind: "narration",
-      speaker: "Bram",
+      speaker: "Yasuke",
       xp: 5,
       lines: [
-        "Out in the daylight again, Bram sits you down on a fallen column. “You've borrowed my Wren long enough. Now you know how the game actually plays — so let's build YOUR hero. The one you'll bring to a real table.”",
+        "Out in the daylight again, Yasuke sits you down on a fallen column. “You've borrowed my Wren long enough. Now you know how the game actually plays — so let's build YOUR hero. The one you'll bring to a real table.”",
         "“We do it one choice at a time. No memorizing. I'll tell you what each pick does, and you'll watch the sheet fill itself in.”",
       ],
       next: "u5-teach-build",
@@ -597,10 +597,10 @@ export const COURSE: Course = {
     // ---------------------------------------------------------------------
     "u6-intro": {
       kind: "narration",
-      speaker: "Bram",
+      speaker: "Yasuke",
       xp: 5,
       lines: [
-        "Evening. You and Bram make camp at the mouth of the ruin you've cleared together. She looks at you differently now.",
+        "Evening. You and Yasuke make camp at the mouth of the ruin you've cleared together. He looks at you differently now.",
         "“Think about what you just did. You read checks, ran your turns, fought as a team, clawed back from dying, and built a hero of your own. That WAS an adventure — a whole dungeon, start to finish.”",
         "“One last test, then I'm sending you to a real table. The way home is blocked by a rockfall and a nervous young drake guarding its nest. How do you want to handle it?”",
       ],
@@ -609,7 +609,7 @@ export const COURSE: Course = {
 
     "u6-capstone": {
       kind: "choice",
-      speaker: "Bram",
+      speaker: "Yasuke",
       prompt: "The drake blocks the path. What's your approach?",
       options: [
         { label: "Fight through it", hint: "Combat — with YOUR hero", next: "u6-fight", set: ({ set }) => set({ capstoneApproach: "fight" }) },
@@ -633,7 +633,7 @@ export const COURSE: Course = {
       victoryTitle: "The drake yields",
       useBuiltHero: true,
       intro: [
-        "This is the real thing — these are YOUR character's numbers now, not Wren's. Bram fights at your side. Everything you've learned, all at once: initiative, your three actions, conditions, your reaction.",
+        "This is the real thing — these are YOUR character's numbers now, not Wren's. Yasuke fights at your side. Everything you've learned, all at once: initiative, your three actions, conditions, your reaction.",
       ],
       foes: [
         {
@@ -652,7 +652,7 @@ export const COURSE: Course = {
       ],
       victoryLines: [
         "The drake screeches, beats its wings, and breaks off — the path is yours.",
-        "“That was all you,” Bram says, grinning. “Your hero, your tactics, a real win. You're ready.”",
+        "“That was all you,” Yasuke says, grinning. “Your hero, your tactics, a real win. You're ready.”",
       ],
       next: "u6-handoff",
     },
@@ -660,7 +660,7 @@ export const COURSE: Course = {
       kind: "narration",
       lines: [
         "You wait, watch its patrol, and slip past in Avoid Notice while it's turned away — a clean exploration solution, no blood spilled.",
-        "“Smart. Not every problem is a fight — that's a lesson some players take years to learn,” Bram says.",
+        "“Smart. Not every problem is a fight — that's a lesson some players take years to learn,” Yasuke says.",
       ],
       next: "u6-handoff",
     },
@@ -668,7 +668,7 @@ export const COURSE: Course = {
       kind: "narration",
       lines: [
         "You lower your weapon, speak low and steady, and toss it the dried meat from your pack. The drake huffs, settles, and lets you pass.",
-        "“Now THAT'S roleplay. Diplomacy is a real tool, and you reached for it,” Bram grins.",
+        "“Now THAT'S roleplay. Diplomacy is a real tool, and you reached for it,” Yasuke grins.",
       ],
       next: "u6-handoff",
     },
@@ -676,7 +676,7 @@ export const COURSE: Course = {
       kind: "narration",
       lines: [
         "Your eye catches a moss-choked winch bolted to the wall — the old builders' work. You crank it, and a counterweight shifts the rubble aside, opening a clear path the drake won't follow.",
-        "Bram laughs, delighted. “That curiosity of yours just turned a fight into a non-event. The best adventurers always find the third option.”",
+        "Yasuke laughs, delighted. “That curiosity of yours just turned a fight into a non-event. The best adventurers always find the third option.”",
       ],
       next: "u6-handoff",
     },
@@ -686,7 +686,7 @@ export const COURSE: Course = {
       xp: 20,
       prompt: "You're table-ready",
       intro: [
-        "Bram presses a folded map into your hands. “My part's done. Here's everything you need to find a real table — and your character, ready to bring along.”",
+        "Yasuke presses a folded map into your hands. “My part's done. Here's everything you need to find a real table — and your character, ready to bring along.”",
         "Tick off what feels solid (it's just for you), grab your sheet, and note where to find your first game.",
       ],
       checklist: [
@@ -717,12 +717,12 @@ export const COURSE: Course = {
         const t = ctx.flags.temperament;
         const temperamentLine =
           t === "bold"
-            ? "“You charged in bold from the very first step,” Bram says, “and you never lost that nerve.”"
+            ? "“You charged in bold from the very first step,” Yasuke says, “and you never lost that nerve.”"
             : t === "careful"
-              ? "“Careful and clever, just like you said at the gate,” Bram says. “It kept you breathing the whole way.”"
+              ? "“Careful and clever, just like you said at the gate,” Yasuke says. “It kept you breathing the whole way.”"
               : t === "curious"
-                ? "“That curiosity you walked in with? It found doors the rest would've missed,” Bram says."
-                : "“You found your own way through every step,” Bram says.";
+                ? "“That curiosity you walked in with? It found doors the rest would've missed,” Yasuke says."
+                : "“You found your own way through every step,” Yasuke says.";
         const a = ctx.flags.capstoneApproach;
         const approachLine =
           a === "fight"
@@ -736,7 +736,7 @@ export const COURSE: Course = {
                   : "You found your way past the drake.";
         const m = Number(ctx.flags.mastery) || 0;
         return [
-          `Bram shoulders her pack and offers a hand. “You came in never having rolled a d20, ${ctx.hero}. You're leaving with the rules, a character, and the nerve to use them.”`,
+          `Yasuke shoulders his pack and offers a hand. “You came in never having rolled a d20, ${ctx.hero}. You're leaving with the rules, a character, and the nerve to use them.”`,
           temperamentLine,
           approachLine,
           `Five crowns of mastery${m >= 5 ? "" : ` (${m} earned)`}, and a hero of your own making. “Go find your table. They're lucky to have you — and hey, make some mistakes. That's where the best stories come from.”`,

@@ -1,4 +1,5 @@
 import { ALL_CHAPTERS } from "@/lib/chapters";
+import { SupportButton } from "./SupportButton";
 
 export function TitleScreen({ onStart }: { onStart: () => void }) {
   return (
@@ -28,6 +29,7 @@ export function TitleScreen({ onStart }: { onStart: () => void }) {
         Begin your journey
       </button>
       <p className="muted title-foot">A solo, single-playthrough course · about 20–30 minutes · no account needed</p>
+      <SupportButton />
     </div>
   );
 }
