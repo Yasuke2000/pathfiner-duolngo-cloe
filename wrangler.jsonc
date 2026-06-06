@@ -1,0 +1,10 @@
+{
+  // Cloudflare deployment config for a fully static site.
+  // `next build` (with output: "export") emits ./out, which Cloudflare serves
+  // directly as static assets — no Worker code, no adapter needed.
+  "name": "pathfiner-duolngo-cloe",
+  "compatibility_date": "2025-06-01",
+  "assets": {
+    "directory": "./out"
+  }
+}
