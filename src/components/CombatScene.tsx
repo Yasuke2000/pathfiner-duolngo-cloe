@@ -84,16 +84,23 @@ export function CombatScene({
 
   function onDemoralize() {
     if (!canAct) return;
+    // 10-minute per-target immunity: you can only rattle the marauder once.
+    if (enemy.demoralizeImmune) {
+      pushLog("The marauder's already rattled — it's immune to your Demoralize for now (10 min).", "system");
+      return;
+    }
     const out = heroDemoralize(hero, enemy);
     const roll = `🎲 ${out.result.die} → ${out.result.total} vs Will DC ${enemy.willDC}`;
+    let next = { ...enemy, demoralizeImmune: true };
     let text: string;
     if (out.frightened > 0) {
       const value = Math.max(enemy.frightened, out.frightened);
-      setEnemy({ ...enemy, frightened: value });
+      next = { ...next, frightened: value };
       text = `You roar a threat and the marauder flinches — Frightened ${value}! Its AC and attacks drop. ${roll}`;
     } else {
       text = `Your threat doesn't land; it just sneers. ${roll}`;
     }
+    setEnemy(next);
     setTurn(spendAction(turn, 1, false)); // Demoralize has no attack trait — no MAP
     pushLog(text, "hero", out.result.degree);
   }
@@ -261,8 +268,8 @@ export function CombatScene({
         <button className="btn" onClick={onStrike} disabled={!canAct}>
           Strike <span className="hint">+{nextStrikeBonus} vs AC {targetAc}{nextMap ? ` · MAP ${nextMap}` : " · no penalty"}</span>
         </button>
-        <button className="btn" onClick={onDemoralize} disabled={!canAct}>
-          Demoralize <span className="hint">+{hero.combat.intimidationBonus} vs Will DC {enemy.willDC} · no attack penalty</span>
+        <button className="btn" onClick={onDemoralize} disabled={!canAct || enemy.demoralizeImmune}>
+          Demoralize <span className="hint">{enemy.demoralizeImmune ? "immune for now (10 min)" : `+${hero.combat.intimidationBonus} vs Will DC ${enemy.willDC} · no attack penalty`}</span>
         </button>
         <button className="btn" onClick={onRaiseShield} disabled={!canAct || shieldRaised}>
           Raise a Shield <span className="hint">+2 AC until your next turn</span>

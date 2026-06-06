@@ -20,10 +20,12 @@ export interface EnemyConfig {
 export interface EnemyState extends EnemyConfig {
   hp: number;
   frightened: number;
+  /** Temporarily immune to your Demoralize (PF2e: 10 minutes). */
+  demoralizeImmune: boolean;
 }
 
 export function spawnEnemy(cfg: EnemyConfig): EnemyState {
-  return { ...cfg, hp: cfg.maxHp, frightened: 0 };
+  return { ...cfg, hp: cfg.maxHp, frightened: 0, demoralizeImmune: false };
 }
 
 /** Damage from a hit; a critical success doubles the rolled total. */
@@ -75,7 +77,8 @@ export interface DemoralizeOutcome {
 export function heroDemoralize(hero: Hero, enemy: EnemyState): DemoralizeOutcome {
   const die = rollD20();
   const total = die + hero.combat.intimidationBonus;
-  const result = resolveCheck(die, total, enemy.willDC);
+  // vs Will DC (not an attack); frightened lowers the foe's DCs, Will included.
+  const result = resolveCheck(die, total, enemy.willDC - enemy.frightened);
   let frightened = 0;
   if (result.degree === "critical-success") frightened = 2;
   else if (result.degree === "success") frightened = 1;

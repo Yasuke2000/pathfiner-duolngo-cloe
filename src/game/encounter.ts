@@ -28,6 +28,8 @@ export interface Combatant {
   offGuard: boolean;
   shieldRaised: boolean;
   reactionAvailable: boolean;
+  /** Temporarily immune to this combatant's Demoralize (PF2e: 10 minutes). */
+  demoralizeImmune: boolean;
   defeated: boolean;
 }
 
@@ -59,6 +61,7 @@ export function makeCombatant(seed: CombatantSeed): Combatant {
     offGuard: false,
     shieldRaised: false,
     reactionAvailable: true,
+    demoralizeImmune: false,
     defeated: false,
     ...seed,
   };
@@ -108,7 +111,10 @@ export interface DemoralizeOutcome {
 
 export function makeDemoralize(attacker: Combatant, defender: Combatant): DemoralizeOutcome {
   const die = rollD20();
-  const result = resolveCheck(die, die + attacker.intimidationBonus, defender.willDC);
+  // Demoralize is an Intimidation check vs the target's Will DC (not an attack
+  // roll, so no MAP). Frightened lowers all of the target's DCs, Will included.
+  const willDc = defender.willDC - defender.frightened;
+  const result = resolveCheck(die, die + attacker.intimidationBonus, willDc);
   let frightened = 0;
   if (result.degree === "critical-success") frightened = 2;
   else if (result.degree === "success") frightened = 1;
@@ -120,9 +126,16 @@ export interface TripOutcome {
   proned: boolean;
 }
 
-export function makeTrip(attacker: Combatant, defender: Combatant): TripOutcome {
+/**
+ * Trip: Athletics vs the target's Reflex DC. It has the ATTACK trait, so it's
+ * subject to (and contributes to) the Multiple Attack Penalty. Frightened
+ * lowers the target's Reflex DC too.
+ */
+export function makeTrip(attacker: Combatant, defender: Combatant, priorAttacks = 0): TripOutcome {
+  const map = multipleAttackPenalty(priorAttacks);
   const die = rollD20();
-  const result = resolveCheck(die, die + attacker.athleticsBonus, defender.reflexDC);
+  const reflexDc = defender.reflexDC - defender.frightened;
+  const result = resolveCheck(die, die + attacker.athleticsBonus + map, reflexDc);
   const proned = result.degree === "success" || result.degree === "critical-success";
   return { result, proned };
 }
@@ -137,8 +150,8 @@ export function rollInitiative(combatants: Combatant[]): {
     initiative: rollD20() + c.initiativeBonus,
   }));
   const order = [...rolled]
-    // Ties: party before foes (a common, beginner-friendly default).
-    .sort((a, b) => b.initiative - a.initiative || (a.role === "foe" ? 1 : -1))
+    // Highest initiative first; on a tie the adversary goes first (PF2e RAW).
+    .sort((a, b) => b.initiative - a.initiative || (a.role === "foe" ? -1 : 1))
     .map((c) => c.id);
   return { combatants: rolled, order };
 }

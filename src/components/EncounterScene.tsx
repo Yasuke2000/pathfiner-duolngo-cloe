@@ -198,8 +198,16 @@ export function EncounterScene({
   function heroDemoralizeAt(foeId: string) {
     if (!heroC) return;
     const foe = byId(foeId)!;
+    // PF2e: a target is temporarily immune to your Demoralize for 10 minutes —
+    // so within a single fight you can only rattle a given foe once. Don't spend
+    // the action on an immune target; just teach the rule.
+    if (foe.demoralizeImmune) {
+      pushLog(`${foe.name} is already rattled — immune to your Demoralize for now (10 min).`, "system");
+      setTargeting(null);
+      return;
+    }
     const out = makeDemoralize(heroC, foe);
-    let cs = combatants;
+    let cs = patch(combatants, foeId, { demoralizeImmune: true });
     if (out.frightened > 0) {
       const value = Math.max(foe.frightened, out.frightened);
       cs = patch(cs, foeId, { frightened: value });
@@ -247,8 +255,12 @@ export function EncounterScene({
       return;
     }
     let cs = combatants;
+    // Trip has the attack trait, so it raises the Multiple Attack Penalty:
+    // Tahar's follow-up Strike is his 2nd attack action and takes −5.
+    let priorAttacks = 0;
     if (!target.offGuard) {
-      const trip = makeTrip(current, target);
+      const trip = makeTrip(current, target, priorAttacks);
+      priorAttacks += 1;
       if (trip.proned) {
         cs = patch(cs, target.id, { offGuard: true });
         pushLog(`Tahar sweeps ${target.name} off its feet — it's Off-Guard (−2 AC). “Hit it now!” ${rollLabel(trip, "Reflex DC")}`, "ally", trip.result.degree);
@@ -257,7 +269,7 @@ export function EncounterScene({
       }
     }
     const refreshed = cs.find((c) => c.id === target.id)!;
-    const strike = makeStrike(current, refreshed, 0);
+    const strike = makeStrike(current, refreshed, priorAttacks);
     if (strike.damage > 0) {
       cs = applyDamage(cs, target.id, strike.damage);
       pushLog(`Tahar strikes ${target.name} for ${strike.damage}. ${rollLabel(strike, "AC")}`, "ally", strike.result.degree);
@@ -394,6 +406,7 @@ export function EncounterScene({
               <div className="badges">
                 {f.frightened > 0 && <span className="cond">✕ Frightened {f.frightened}</span>}
                 {f.offGuard && <span className="cond">↯ Off-Guard</span>}
+                {f.demoralizeImmune && !f.defeated && <span className="cond">⊘ Rattled (immune)</span>}
                 {f.defeated && <span className="cond">Defeated</span>}
               </div>
             </button>
