@@ -470,7 +470,47 @@ export const COURSE: Course = {
         "Checks, the three-action turn, and live combat with a party — that's the working core of Pathfinder 2e, and you can do all of it.",
       ],
       upNext:
-        "Conditions — the levers that decide most fights, and the dying rules every player needs to understand.",
+        "A sealed door, a builder's riddle — and the guardian beyond it.",
+      next: "u4-puzzle-intro",
+    },
+
+    // ---------------------------------------------------------------------
+    // TRIAL — a puzzle door (the trick before the climax)
+    // ---------------------------------------------------------------------
+    "u4-puzzle-intro": {
+      kind: "narration",
+      speaker: "Tahar",
+      lines: [
+        "The way deeper is sealed: a slab of black stone set with three worn glyphs — a sun, a wave, a key — and a line of the builders' script chiseled above them. Water laps cold around your ankles here; the silt-line on the wall is well over your head.",
+        "“A builder's lock,” Tahar says, running a thumb along the script. “They always hid the key in plain sight, for their own kind to read. No brute-forcing this one — read the room, and choose.”",
+      ],
+      next: "u4-puzzle",
+    },
+    "u4-puzzle": {
+      kind: "quiz",
+      speaker: "Tahar",
+      prompt:
+        "The inscription reads: “Only the drowned may pass.” Which glyph do you press?",
+      options: [
+        {
+          label: "The wave",
+          correct: true,
+          feedback:
+            "The wave sinks under your palm. Stone grinds, water sluices through old channels, and the door rolls aside. “Drowned — water. You read it true. THAT'S the exploration pillar: the dungeon tells you how to beat it, if you look.”",
+        },
+        {
+          label: "The sun",
+          correct: false,
+          feedback:
+            "You press the sun — a sharp click, a hiss of old darts that clatter harmlessly off the far wall. No harm done. “Think it through,” Tahar says. “'Drowned.' What drowns a place? Try again.”",
+        },
+        {
+          label: "The key",
+          correct: false,
+          feedback:
+            "The key glyph won't budge — wrong answer, but no harm. “Too literal,” Tahar chuckles. “The riddle's the key. 'Only the drowned may pass' — what claimed this whole dungeon? Try again.”",
+        },
+      ],
       next: "u4-intro",
     },
 
