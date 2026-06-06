@@ -62,10 +62,13 @@ export function BuilderScene({
   node,
   onResolved,
   onBuilt,
+  standalone = false,
 }: {
   node: BuilderNode;
   onResolved: (next: string, bonusXp?: number) => void;
   onBuilt?: (build: BuildState) => void;
+  /** Standalone (outside the story): no "Finish" hand-off, just build + export. */
+  standalone?: boolean;
 }) {
   const [build, setBuild] = useState<BuildState>(emptyBuild());
   const [i, setI] = useState(0);
@@ -348,6 +351,12 @@ export function BuilderScene({
           <button className="btn primary" onClick={() => setI(i + 1)} disabled={!stepValid(step)}>
             Next →
           </button>
+        ) : standalone ? (
+          <span className="muted" style={{ alignSelf: "center" }}>
+            {isComplete(build)
+              ? "Your hero is ready — download a sheet above."
+              : "Finish the steps to export your hero."}
+          </span>
         ) : (
           <button
             className="btn primary"

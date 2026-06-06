@@ -18,7 +18,7 @@ export const COURSE: Course = {
       xp: 5,
       lines: [
         "You are no one in particular — a villager, a traveler, a normal person — drawn for reasons you can't name to a broken gate in the hills the locals call the Sunken Threshold.",
-        "The moment you cross it, something buried there answers. A shard of cold light sinks into your chest, and the world sharpens: strength you never had, instinct you never earned. You came here as no one. You stand up as… something. (Call it level 1.)",
+        "The moment you cross it, something buried there answers. A shard of cold light sinks into your chest, and the world sharpens: strength you never had, instinct you never earned. You came here as no one. You stand up as… something.",
         "A lean figure in a tool-strung coat steps out of the dark, lantern raised, eyes bright with recognition. “THERE you are. Felt that spark catch from three worlds away.” He grins. “Tahar — artificer, tinkerer, and the closest thing to a guide you're getting.”",
         "“Here's the deal: I'll teach you to use what just woke up in you. I describe the world, you decide what you do, the dice settle the rest. You can't break it, and you can't lose me. Ready to find out what you've become?”",
       ],

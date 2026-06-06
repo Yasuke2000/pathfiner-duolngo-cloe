@@ -51,7 +51,10 @@ export function TitleScreen({
           <span className="hint">just the rules, taught by playing — no long story · ~15 min</span>
         </button>
       </div>
-      <p className="muted title-foot">A solo, single-playthrough course · no account needed</p>
+      <p className="title-foot">
+        <a className="text-btn" href="/create">Just want to build a character? →</a>
+      </p>
+      <p className="muted">A solo, single-playthrough course · no account needed</p>
       <SupportButton />
     </div>
   );
