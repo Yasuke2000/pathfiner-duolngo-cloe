@@ -17,7 +17,7 @@ export const COURSE: Course = {
       speaker: "Tahar",
       xp: 5,
       lines: [
-        "You are no one in particular — a villager, a traveler, a normal person — drawn for reasons you can't name to a black cave-mouth in the hills. The locals call it the Sunken Threshold: the throat of an old dungeon the earth swallowed and the water claimed, ages ago.",
+        "You are no one in particular — a villager, a traveler, a normal person — drawn for reasons you can't name to a black cave-mouth in the hills. Cold air breathes up from it, smelling of brine and old stone, and far below, water drips in a slow, patient rhythm, like something counting. The locals call it the Sunken Threshold: the throat of an old dungeon the earth swallowed and the water claimed, ages ago.",
         "The moment you step inside, something buried in the dark answers. A shard of cold light rises from the deep stone and sinks into your chest, and the world sharpens: strength you never had, instinct you never earned. You came here as no one. You stand up as… something.",
         "A lean figure in a tool-strung coat steps out of the dark, lantern raised, eyes bright with recognition. “THERE you are. Felt that spark catch from three worlds away.” He grins. “Tahar — artificer, tinkerer, and the closest thing to a guide you're getting.”",
         "“Here's the deal: I'll teach you to use what just woke up in you. I describe the world, you decide what you do, the dice settle the rest. You can't break it, and you can't lose me. Ready to find out what you've become?”",
@@ -233,7 +233,57 @@ export const COURSE: Course = {
         "You can now resolve any check in Pathfinder 2e — and you know that failing is just the story's next turn, not a wall.",
       ],
       upNext:
-        "The Three-Action Economy — the heart of every Pathfinder turn, and where most new players stumble.",
+        "Down into the dark — and the other half of the game.",
+      next: "u1-social-intro",
+    },
+
+    // ---------------------------------------------------------------------
+    // INTERLUDE — Exploration & Social (the game isn't only combat)
+    // ---------------------------------------------------------------------
+    "u1-social-intro": {
+      kind: "narration",
+      speaker: "Tahar",
+      lines: [
+        "The passage narrows and drops. Behind a fang of dripping stone, something flinches — a ragged scavenger, wide-eyed, clutching a splinter of cold light to their chest like it's the only warm thing left in the world.",
+        "“Easy now,” Tahar breathes, lowering a hand. Then, low, to you: “Here's the half of the game nobody warns you about — not every problem is a fight. Talk, sneak, look closer. Combat, exploration, conversation: three ways through almost any door. Your call.”",
+      ],
+      next: "u1-social",
+    },
+    "u1-social": {
+      kind: "choice",
+      speaker: "Tahar",
+      prompt: "The scavenger is terrified, not hostile. How do you handle it?",
+      options: [
+        { label: "Reassure them — talk it out", hint: "the social pillar", next: "u1-soc-talk" },
+        { label: "Slip past quietly, leave them be", hint: "the exploration pillar", next: "u1-soc-sneak" },
+        { label: "Study the carvings on the walls here", hint: "look closer — Seek & Recall Knowledge", next: "u1-soc-search" },
+      ],
+    },
+    "u1-soc-talk": {
+      kind: "narration",
+      speaker: "Tahar",
+      lines: [
+        "You crouch, soften your voice, and the scavenger's grip loosens. “Th-there's a brute ahead,” they stammer, “stripping the old hall for scrap. And below that — the deep vault. It SINGS. Cold light, like…” they glance at your chest and bolt for the surface.",
+        "“No blade drawn, and you learned the whole road ahead,” Tahar murmurs. “That's the social pillar. Worth as much as any sword.”",
+      ],
+      next: "u2-intro",
+    },
+    "u1-soc-sneak": {
+      kind: "narration",
+      speaker: "Tahar",
+      lines: [
+        "You ghost past without a sound, leaving the poor wretch their corner. From the shadows ahead you catch it: a heavy-shouldered marauder in the flooded hall, axe out, methodically prying the place apart — and no idea you're here.",
+        "“THAT,” Tahar whispers, “is exploration. You chose when the fight starts, not them. Half of staying alive is seeing first.”",
+      ],
+      next: "u2-intro",
+    },
+    "u1-soc-search": {
+      kind: "narration",
+      speaker: "Tahar",
+      lines: [
+        "You run your fingers over the wall — a maker's mark, and beneath the silt-line a faded mural: robed builders prising open a vault of cold light… and the dark water rushing in to answer. They fled. They left something behind to guard it.",
+        "“Now you understand this place,” Tahar says quietly. “They dug too deep, breached that light, and drowned for it. The shard in your chest? A splinter of what they found. Everything down here is circling it — including us.”",
+      ],
       next: "u2-intro",
     },
 
@@ -432,7 +482,7 @@ export const COURSE: Course = {
       speaker: "Tahar",
       xp: 5,
       lines: [
-        "The passage ends in a vaulted chamber, its air dead and dusty. With a grind of stone on stone, a construct of fused rubble and ancient armor hauls itself upright and levels a greatsword the size of a door at you.",
+        "The passage ends in a vaulted chamber, its air dead and dusty, the deep vault's cold light pulsing faintly through a cracked door beyond. With a grind of stone on stone, the builders' last guardian — a construct of fused rubble and ancient armor — hauls itself upright and levels a greatsword the size of a door at you.",
         "Tahar whistles low, almost admiring. “Ohh, I've met its cousins. That plating's too thick to just hack through — swing head-on and you'll bounce off all day. So we cheat: knock it Off-Guard, rattle its nerve, stack every advantage until it's easy to hit. That's the secret the great ones know — most hard fights are really a conditions puzzle wearing a sword.”",
       ],
       next: "u4-teach-conditions",

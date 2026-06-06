@@ -8,9 +8,16 @@ every path concludes).
 
 ## The spine (branch-and-bottleneck)
 
+Setting: a cave-mouth descending into a **sunken / drowned dungeon** (a built
+complex the earth swallowed and water claimed). The descent escalates: skill →
+exploration/social → combat → harder combat → boss → deep vault. Ecology is
+seeded (the builders breached a vault of cold light and drowned, leaving a
+guardian; squatters and a drake circle the shard).
+
 ```
 welcome ─▶ intro-choice ─▶ what-is-ttrpg ─▶ door
   ▶ Unit 1  teach d20 ▸ degrees ▸ chasm-setup ▸ [chasm-approach] ▸ chasm(check) ▸ after-chasm ▸ quiz ▸ unit1-crown
+  ▶ Interlude  [u1-social] talk / sneak / search — the exploration & social pillar; telegraphs the next fight and seeds the shard/ecology
   ▶ Unit 2  three-action economy ▸ duel (combat) ▸ unit2-crown
   ▶ Unit 3  initiative ▸ reactions ▸ two-on-two (encounter) ▸ unit3-crown
   ▶ Unit 4  conditions ▸ Stone Sentinel (encounter) ▸ downed ▸ dying ▸ recovery ▸ unit4-crown
