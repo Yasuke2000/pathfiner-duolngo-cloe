@@ -152,14 +152,13 @@ export function EncounterScene({
       return patch(cs, id, { hp });
     }
     if (hp <= 0) {
-      const defeated = target.role === "ally";
       pushLog(
         target.role === "ally"
           ? `${target.name} is knocked out! Keep fighting — you can still win this.`
           : `${target.name} is defeated.`,
         "system",
       );
-      return patch(cs, id, { hp: 0, defeated });
+      return patch(cs, id, { hp: 0, defeated: true });
     }
     return patch(cs, id, { hp });
   }
