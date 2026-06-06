@@ -10,11 +10,16 @@ import { EncounterScene } from "./EncounterScene";
 import { RecoveryScene } from "./RecoveryScene";
 import { BuilderScene } from "./BuilderScene";
 import { HandoffScene } from "./HandoffScene";
+import { TitleScreen } from "./TitleScreen";
+import { Typed } from "./Typed";
+import { Speaker } from "./Speaker";
+import { chapterFor } from "@/lib/chapters";
 import type { BuildState } from "@/game/builder";
 
 const TOTAL_STEPS = 36; // length of the main story spine, for the progress bar
 
 export function Player() {
+  const [started, setStarted] = useState(false);
   const [nodeId, setNodeId] = useState(COURSE.start);
   const [xp, setXp] = useState(0);
   const [step, setStep] = useState(1);
@@ -22,6 +27,7 @@ export function Player() {
   const awarded = useRef<Set<string>>(new Set());
 
   const node = COURSE.nodes[nodeId];
+  const chapter = chapterFor(nodeId);
 
   function award(id: string, bonus = 0) {
     const target = COURSE.nodes[id];
@@ -39,23 +45,35 @@ export function Player() {
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  // Award XP for the very first node, once, after mount.
-  useEffect(() => {
+  function begin() {
     award(COURSE.start);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setStarted(true);
+  }
+
+  // Shift the whole scene's ambient color with the current chapter.
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.style.setProperty("--accent", chapter.accent);
+    }
+  }, [chapter.accent]);
+
+  if (!started) return <TitleScreen onStart={begin} />;
 
   const progress = Math.round((step / TOTAL_STEPS) * 100);
 
   return (
     <>
-      <div className="topbar">
-        <h1>{COURSE.title}</h1>
+      <div className="hud">
+        <div className="hud-chapter">
+          <span className="hud-act">Chapter {chapter.index}</span>
+          <span className="hud-title">{chapter.title}</span>
+        </div>
         <div className="progress" aria-label={`Progress ${progress}%`}>
           <span style={{ width: `${progress}%` }} />
         </div>
-        <div className="xp">
-          <b>{xp}</b> XP
+        <div className="xp" title="Experience">
+          <span className="xp-icon" aria-hidden>✦</span>
+          <b>{xp}</b>
         </div>
       </div>
 
@@ -79,10 +97,8 @@ function NodeView({
     case "narration":
       return (
         <div className="card">
-          {node.speaker && <span className="speaker">{node.speaker}</span>}
-          {node.lines.map((l, i) => (
-            <p key={i}>{l}</p>
-          ))}
+          {node.speaker && <Speaker name={node.speaker} />}
+          <Typed paragraphs={node.lines} />
           <div className="actions">
             <button className="btn primary" onClick={() => onGo(node.next)}>
               Continue
@@ -94,11 +110,9 @@ function NodeView({
     case "teach":
       return (
         <div className="card">
-          {node.speaker && <span className="speaker">{node.speaker}</span>}
+          {node.speaker && <Speaker name={node.speaker} />}
           <h2>{node.title}</h2>
-          {node.body.map((l, i) => (
-            <p key={i}>{l}</p>
-          ))}
+          <Typed paragraphs={node.body} />
           {node.points && (
             <ul className="points">
               {node.points.map((p, i) => (
@@ -117,7 +131,7 @@ function NodeView({
     case "choice":
       return (
         <div className="card">
-          {node.speaker && <span className="speaker">{node.speaker}</span>}
+          {node.speaker && <Speaker name={node.speaker} />}
           <h2>{node.prompt}</h2>
           <div className="actions">
             {node.options.map((o, i) => (
@@ -176,9 +190,7 @@ function NodeView({
             <div className="label">Mastered: {node.crown}</div>
           </div>
           <h2 style={{ textAlign: "center" }}>{node.title}</h2>
-          {node.body.map((l, i) => (
-            <p key={i}>{l}</p>
-          ))}
+          <Typed paragraphs={node.body} />
           <div className="upnext">
             <div className="k">Up next</div>
             <p style={{ margin: "6px 0 0" }}>{node.upNext}</p>
@@ -213,7 +225,7 @@ function Quiz({
 
   return (
     <div className="card">
-      {node.speaker && <span className="speaker">{node.speaker}</span>}
+      {node.speaker && <Speaker name={node.speaker} />}
       <h2>{node.prompt}</h2>
       <div className="actions">
         {node.options.map((o, i) => {
