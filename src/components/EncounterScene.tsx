@@ -99,8 +99,10 @@ export function EncounterScene({
   /** Set up whichever combatant's turn it is at `index`. */
   function enterTurn(cs: Combatant[], ord: string[], index: number, rnd: number) {
     const c = cs.find((x) => x.id === ord[index])!;
-    // Reaction refreshes at the start of each creature's own turn.
-    const refreshed = patch(cs, c.id, { reactionAvailable: true });
+    // At the start of a creature's own turn its reaction refreshes, and Raise a
+    // Shield expires (it only lasts "until the start of your next turn" — you
+    // must re-raise it each turn).
+    const refreshed = patch(cs, c.id, { reactionAvailable: true, shieldRaised: false });
     setCombatants(refreshed);
     if (c.role === "hero") {
       setHeroActions(3);
