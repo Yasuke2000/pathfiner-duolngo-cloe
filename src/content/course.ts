@@ -21,6 +21,35 @@ export const COURSE: Course = {
         "A broad-shouldered woman with a lantern grins at you. “First time out, eh? Name's Bram. I'll walk you through it.”",
         "“Here's the whole game in one breath: I describe the world, you decide what your hero does, and dice settle anything uncertain. That's it. You can't break it, and you can't lose me.”",
       ],
+      next: "intro-choice",
+    },
+
+    "intro-choice": {
+      kind: "choice",
+      speaker: "Bram",
+      prompt: "Before we step inside — what kind of adventurer are you, deep down?",
+      options: [
+        { label: "Bold and brash", hint: "Charge in first, think later", next: "intro-bold" },
+        { label: "Careful and clever", hint: "Look before you leap", next: "intro-careful" },
+        { label: "Curious about everything", hint: "Ask all the questions", next: "intro-curious" },
+      ],
+    },
+    "intro-bold": {
+      kind: "narration",
+      speaker: "Bram",
+      lines: ["“Ha — a charger! We'll temper that with a little sense, but courage is half this game. Come on.”"],
+      next: "what-is-ttrpg",
+    },
+    "intro-careful": {
+      kind: "narration",
+      speaker: "Bram",
+      lines: ["“Careful keeps you breathing. Smart. The dice tend to punish the reckless… most of the time. Let's go.”"],
+      next: "what-is-ttrpg",
+    },
+    "intro-curious": {
+      kind: "narration",
+      speaker: "Bram",
+      lines: ["“Curiosity is the finest trait an adventurer can carry. Ask away — that's exactly how you'll learn. After me.”"],
       next: "what-is-ttrpg",
     },
 
@@ -89,9 +118,18 @@ export const COURSE: Course = {
       lines: [
         "Inside, the floor has collapsed into a black chasm. The far ledge is a long jump away.",
         "Bram wedges a broken beam across part of the gap. “There — a running start. That's a circumstance bonus to your jump. Watch how it stacks onto your roll.”",
-        "“This one we roll for. Leap when you're ready.”",
+        "“This one we roll for. How do you want to take it?”",
       ],
-      next: "chasm",
+      next: "chasm-approach",
+    },
+
+    "chasm-approach": {
+      kind: "choice",
+      prompt: "The gap yawns below. How do you cross?",
+      options: [
+        { label: "A full running leap", hint: "Commit — speed off the beam", next: "chasm" },
+        { label: "A measured jump, ready to grab the ledge", hint: "Play it safe", next: "chasm" },
+      ],
     },
 
     chasm: {

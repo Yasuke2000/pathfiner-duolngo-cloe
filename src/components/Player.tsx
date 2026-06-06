@@ -13,10 +13,12 @@ import { HandoffScene } from "./HandoffScene";
 import { TitleScreen } from "./TitleScreen";
 import { Typed } from "./Typed";
 import { Speaker } from "./Speaker";
+import { MuteButton } from "./MuteButton";
 import { chapterFor } from "@/lib/chapters";
+import { sfx } from "@/lib/sound";
 import type { BuildState } from "@/game/builder";
 
-const TOTAL_STEPS = 36; // length of the main story spine, for the progress bar
+const TOTAL_STEPS = 40; // length of the main story spine, for the progress bar
 
 export function Player() {
   const [started, setStarted] = useState(false);
@@ -40,12 +42,15 @@ export function Player() {
 
   function go(next: string, bonus = 0) {
     award(next, bonus);
+    if (COURSE.nodes[next].kind === "end") sfx.level();
     setNodeId(next);
     setStep((s) => Math.min(TOTAL_STEPS, s + 1));
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function begin() {
+    sfx.unlock();
+    sfx.click();
     award(COURSE.start);
     setStarted(true);
   }
@@ -75,6 +80,7 @@ export function Player() {
           <span className="xp-icon" aria-hidden>✦</span>
           <b>{xp}</b>
         </div>
+        <MuteButton />
       </div>
 
       <NodeView node={node} onGo={go} character={character} onBuilt={setCharacter} />

@@ -225,6 +225,27 @@ body::after {
   color: var(--gold);
   font-variant-numeric: tabular-nums;
 }
+.mute-btn {
+  appearance: none;
+  cursor: pointer;
+  border: 1px solid var(--border-soft);
+  background: var(--bg-2);
+  color: var(--text);
+  border-radius: 10px;
+  width: 36px;
+  height: 32px;
+  font-size: 16px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  transition: border-color 0.15s ease, transform 0.08s ease;
+}
+.mute-btn:hover {
+  border-color: hsl(var(--accent) / 0.7);
+}
+.mute-btn:active {
+  transform: scale(0.94);
+}
 
 /* ---------- Cards ---------- */
 .card {

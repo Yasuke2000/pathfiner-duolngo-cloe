@@ -5,6 +5,7 @@ import { rollD20 } from "@/engine/dice";
 import { recoveryCheck, type DyingState } from "@/engine/dying";
 import type { Degree } from "@/engine/types";
 import type { RecoveryNode } from "@/content/types";
+import { sfx } from "@/lib/sound";
 import { DEGREE_THEME } from "./degrees";
 
 type Phase = "rolling" | "stable";
@@ -46,6 +47,7 @@ export function RecoveryScene({
   function roll() {
     if (busy || phase === "stable") return;
     setBusy(true);
+    sfx.roll();
     spin.current = setInterval(() => setFace(Math.floor(Math.random() * 20) + 1), 70);
 
     setTimeout(() => {
@@ -53,6 +55,7 @@ export function RecoveryScene({
       const die = rollD20();
       setFace(die);
       const r = recoveryCheck(state, die);
+      sfx.degree(r.degree);
 
       const delta =
         r.degree === "critical-success"

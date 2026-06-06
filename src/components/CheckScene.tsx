@@ -5,6 +5,7 @@ import type { Degree } from "@/engine/types";
 import { performCheck, type PerformedCheck } from "@/game/perform";
 import { PREGEN_HERO } from "@/game/hero";
 import type { CheckNode } from "@/content/types";
+import { sfx } from "@/lib/sound";
 import { DEGREE_ORDER, DEGREE_THEME } from "./degrees";
 
 type Phase = "ready" | "rolling" | "revealed" | "outcome";
@@ -34,6 +35,7 @@ export function CheckScene({
     const outcome = performCheck(PREGEN_HERO, node.spec);
     setResult(outcome);
     setPhase("rolling");
+    sfx.roll();
 
     // Spin the visible face for a beat, then settle on the real die.
     tick.current = setInterval(() => setFace(Math.floor(Math.random() * 20) + 1), 70);
@@ -41,6 +43,7 @@ export function CheckScene({
       clearTimer();
       setFace(outcome.die);
       setPhase("revealed");
+      sfx.degree(outcome.degree);
     }, ROLL_MS);
   }
 

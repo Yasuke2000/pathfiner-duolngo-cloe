@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cinzel, Inter, Spectral } from "next/font/google";
+import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import "./globals.css";
 
 // Fonts are self-hosted at build time (downloaded and bundled into the static
@@ -13,6 +14,13 @@ export const metadata: Metadata = {
   title: "The Sunken Threshold — Learn Pathfinder 2e by Playing",
   description:
     "A single-playthrough, teach-by-playing course that takes a true beginner from their first d20 roll to ready-to-join a real Pathfinder 2e table.",
+  manifest: "./manifest.webmanifest",
+  icons: { icon: "./icon.svg", apple: "./icon.svg" },
+  appleWebApp: { capable: true, title: "Sunken Threshold", statusBarStyle: "black-translucent" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0f0c17",
 };
 
 export default function RootLayout({
@@ -22,7 +30,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${cinzel.variable} ${inter.variable} ${spectral.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ServiceWorkerRegister />
+      </body>
     </html>
   );
 }

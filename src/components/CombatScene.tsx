@@ -12,6 +12,7 @@ import {
   type EnemyState,
 } from "@/game/combat";
 import type { CombatNode } from "@/content/types";
+import { sfx } from "@/lib/sound";
 import { DEGREE_THEME } from "./degrees";
 
 type Phase = "intro" | "player" | "enemy" | "won";
@@ -70,11 +71,15 @@ export function CombatScene({
     else if (out.result.degree === "critical-failure") text = `You overextend and miss badly. ${roll}`;
     else text = `Your swing goes wide.${out.map ? " That attack penalty stung." : ""} ${roll}`;
 
+    out.damage > 0 ? sfx.hit() : sfx.miss();
     const nextHp = Math.max(0, enemy.hp - out.damage);
     setEnemy({ ...enemy, hp: nextHp });
     setTurn(spendAction(turn, 1, true));
     pushLog(text, "hero", out.result.degree);
-    if (nextHp <= 0) setPhase("won");
+    if (nextHp <= 0) {
+      sfx.victory();
+      setPhase("won");
+    }
   }
 
   function onDemoralize() {

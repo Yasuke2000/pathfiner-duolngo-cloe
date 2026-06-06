@@ -1,0 +1,14 @@
+{
+  "name": "The Sunken Threshold — Learn Pathfinder 2e",
+  "short_name": "Sunken Threshold",
+  "description": "A single-playthrough, teach-by-playing course that takes a true beginner to a real Pathfinder 2e table.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f0c17",
+  "theme_color": "#0f0c17",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

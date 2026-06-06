@@ -16,6 +16,7 @@ import {
 } from "@/game/encounter";
 import { multipleAttackPenalty } from "@/engine/actions";
 import type { EncounterNode } from "@/content/types";
+import { sfx } from "@/lib/sound";
 import { DEGREE_THEME } from "./degrees";
 
 type Phase = "intro" | "hero" | "auto" | "reaction" | "won";
@@ -177,12 +178,16 @@ export function EncounterScene({
             ? `You badly miss ${foe.name}.`
             : `You miss ${foe.name}.`;
     pushLog(`${verb} ${rollLabel(out, "AC")}${out.map ? ` (MAP ${out.map})` : ""}`, "hero", out.result.degree);
+    out.damage > 0 ? sfx.hit() : sfx.miss();
     if (out.damage > 0) cs = applyDamage(cs, foeId, out.damage);
     setCombatants(cs);
     setHeroActions((a) => a - 1);
     setHeroAttacks((n) => n + 1);
     setTargeting(null);
-    if (cs.filter((c) => c.role === "foe" && !c.defeated).length === 0) setPhase("won");
+    if (cs.filter((c) => c.role === "foe" && !c.defeated).length === 0) {
+      sfx.victory();
+      setPhase("won");
+    }
   }
 
   function heroDemoralizeAt(foeId: string) {
