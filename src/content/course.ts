@@ -862,19 +862,20 @@ export const COURSE: Course = {
     departure: {
       kind: "end",
       portal: true,
-      title: "Goodbye, and Good Luck",
+      title: "The Spark, Locked Away",
       crown: "",
       body: (ctx) => {
-        const crossLine = ctx.flags.crossedBoldly
-          ? "“You crossed that first chasm without a heartbeat's hesitation,” he adds. “Cross this one the same way — don't look down.”"
-          : "“You crossed that first chasm measured, ready to catch the ledge,” he adds. “This one you can't plan for. So just breathe… and step.”";
+        const lockLine = ctx.flags.corrupted
+          ? `Tahar works for a long while, sweat on his brow. “This one fights me — of course it does, you fed it your own flesh. I can't cage it, ${ctx.address}. Only… quiet it. It'll stir again the moment your story truly needs it. Sooner, if you're not careful.”`
+          : ctx.flags.darkPath
+            ? `Tahar's tools click and turn against your chest. “There. The spark sleeps. What you DID with it doesn't sleep so easy — but that's a weight for the road, not for tonight, ${ctx.address}.”`
+            : `Tahar presses a humming brass device to your chest and turns a dial, gentle as a key in a lock. “There. The spark sleeps. Still yours — just… quiet, until the day your story needs it again.”`;
         return [
-          `“Here's the one thing I didn't tell you at the gate, ${ctx.address}. I said you couldn't lose me.” Tahar's smile turns rueful. “Half-true. Where you're going, you won't REMEMBER me — not this ruin, not the spark, not a word I taught you. It'll sink past memory and become instinct. You'll simply know how to be who you are.”`,
-          "The brass dial on his belt spins up, and behind him the air tears open into a slow, silent whorl of dark — a hole in the world, its edges bleeding violet light, pulling at your coat, your breath, your name.",
-          crossLine,
-          `“That's the whole point — you step into your story clean, and let it surprise you.” He flicks you a small brass token already dissolving into sparks. “Good luck out there, ${ctx.hero}. Give them a tale worth telling.”`,
-          "The dark takes you — a lurch, a fall with no floor — and the watchtower, the rain, and the artificer with the knowing smile all stream away into nothing…",
-          "…and you wake somewhere new, the way every hero wakes: at the start of the story, with no memory of how you got here — only who you are. Your adventure begins now.",
+          `“Here's the thing I didn't tell you at the gate, ${ctx.address},” Tahar says. “You can't keep this lit. A spark like yours, blazing, draws things — things you're not ready for yet. So I'm going to lock it down. Not take it. Lock it.”`,
+          lockLine,
+          "The light under your skin dims and folds inward until it's just a warmth behind the ribs, easy to forget. Around you the ruin is only a ruin again; the rain is only rain.",
+          `“Now — go home. Back to whatever life you had this morning. Live it.” He shoulders his pack and starts away, then glances back. “What happens between tonight and the day the spark wakes? The town you return to, the people you owe, the years in between? That's yours to write, ${ctx.hero}. Make it a good one.”`,
+          "And then he's gone, the way he came — between one breath and the next. You walk home under a clearing sky, an ordinary person again, carrying a quiet light and a story only you can fill in.",
         ];
       },
       upNext: "",

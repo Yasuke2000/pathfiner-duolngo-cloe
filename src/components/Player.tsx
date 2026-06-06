@@ -464,7 +464,7 @@ function NodeView({
             ) : (
               <p className="muted" style={{ marginTop: 18, textAlign: "center" }}>
                 {node.portal
-                  ? "This origin is complete. Your hero — and their story — are yours to carry from here."
+                  ? "Your origin is set, and the spark sleeps. The years between this night and your first session — your home, your ties, who you've been — are yours to write. That's your backstory."
                   : "That's the end of the current build."}
               </p>
             )}

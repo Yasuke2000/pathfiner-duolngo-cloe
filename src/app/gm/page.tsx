@@ -101,6 +101,10 @@ export default function GmPage() {
                   <p>{cb.curse.effect}</p>
                 </div>
                 <p className="muted" style={{ marginTop: 10 }}>{cb.note}</p>
+                <p className="muted">
+                  <b>Hook:</b> their spark was locked away at the end and they returned to ordinary
+                  life — your campaign is the natural place for it to reawaken.
+                </p>
                 <p className="muted">These are starting points — reskin or rebalance freely for your campaign.</p>
               </>
             )}
