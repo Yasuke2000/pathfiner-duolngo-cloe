@@ -70,6 +70,46 @@ body::after {
   max-width: 720px;
   margin: 0 auto;
   padding: 22px 18px 110px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Black-hole portal finale ---------- */
+.portal-vortex {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 42%, #000 6%, transparent 32%),
+    conic-gradient(
+      from 0deg at 50% 42%,
+      hsl(265 80% 55% / 0),
+      hsl(265 85% 60% / 0.55),
+      hsl(190 85% 55% / 0.3),
+      hsl(280 80% 45% / 0.5),
+      hsl(265 80% 55% / 0)
+    );
+  filter: blur(2px);
+  animation: swirl 9s linear infinite;
+}
+.portal-vortex::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 42%, rgba(0, 0, 0, 0.9) 4%, transparent 26%);
+  animation: portal-pulse 3s ease-in-out infinite;
+}
+@keyframes swirl {
+  to { transform: rotate(360deg); }
+}
+@keyframes portal-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+.portal-card {
+  border-color: hsl(265 70% 60%);
+  box-shadow: 0 0 60px -10px hsl(265 80% 55% / 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 /* ---------- Title screen ---------- */
@@ -79,21 +119,14 @@ body::after {
   animation: rise 0.6s ease both;
 }
 .title-emblem {
-  width: 104px;
-  height: 104px;
-  margin: 8px auto 22px;
+  margin: 8px auto 18px;
   display: grid;
   place-items: center;
-  clip-path: polygon(50% 0, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
-  background: linear-gradient(180deg, hsl(var(--accent) / 0.95), hsl(var(--accent) / 0.55));
-  box-shadow: 0 0 50px -6px hsl(var(--accent) / 0.7);
   animation: float 5s ease-in-out infinite;
 }
 .title-emblem .d20 {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 34px;
-  color: #1a1206;
+  width: 116px;
+  height: 116px;
 }
 @keyframes float {
   0%, 100% { transform: translateY(0) rotate(-2deg); }

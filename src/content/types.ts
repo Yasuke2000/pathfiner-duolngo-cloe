@@ -192,6 +192,8 @@ export interface EndNode extends BaseNode {
   upNext: string;
   /** If set, this is a unit milestone that continues into the next unit. */
   next?: NodeId;
+  /** Render the dramatic black-hole portal finale instead of a crown card. */
+  portal?: boolean;
 }
 
 export type CourseNode =

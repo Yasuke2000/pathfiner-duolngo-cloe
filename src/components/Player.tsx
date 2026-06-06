@@ -413,31 +413,38 @@ function NodeView({
 
     case "end":
       return (
-        <div className="card">
-          <div className="crown">
-            <div className="badge">👑</div>
-            <div className="label">Mastered: {node.crown}</div>
+        <>
+          {node.portal && <div className="portal-vortex" aria-hidden />}
+          <div className={`card ${node.portal ? "portal-card" : ""}`}>
+            {!node.portal && (
+              <div className="crown">
+                <div className="badge">👑</div>
+                <div className="label">Mastered: {node.crown}</div>
+              </div>
+            )}
+            <h2 style={{ textAlign: "center" }}>{node.title}</h2>
+            <Typed paragraphs={resolve(node.body)} />
+            {node.upNext && (
+              <div className="upnext">
+                <div className="k">Up next</div>
+                <p style={{ margin: "6px 0 0" }}>{node.upNext}</p>
+              </div>
+            )}
+            {node.next ? (
+              <div className="actions">
+                <button className="btn primary" onClick={() => onGo(node.next!)}>
+                  Continue →
+                </button>
+              </div>
+            ) : (
+              <p className="muted" style={{ marginTop: 18, textAlign: "center" }}>
+                {node.portal
+                  ? "This origin is complete. Your hero — and their story — are yours to carry from here."
+                  : "That's the end of the current build."}
+              </p>
+            )}
           </div>
-          <h2 style={{ textAlign: "center" }}>{node.title}</h2>
-          <Typed paragraphs={resolve(node.body)} />
-          <div className="upnext">
-            <div className="k">Up next</div>
-            <p style={{ margin: "6px 0 0" }}>{node.upNext}</p>
-          </div>
-          {node.next ? (
-            <div className="actions">
-              <button className="btn primary" onClick={() => onGo(node.next!)}>
-                Continue to the next unit →
-              </button>
-            </div>
-          ) : (
-            <p className="muted" style={{ marginTop: 18, textAlign: "center" }}>
-              That's the end of the current build — two complete teach-by-playing units.
-              The full course continues from here to character creation and a capstone
-              adventure that hands you off to a real table.
-            </p>
-          )}
-        </div>
+        </>
       );
   }
 }

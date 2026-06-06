@@ -17,9 +17,10 @@ export const COURSE: Course = {
       speaker: "Tahar",
       xp: 5,
       lines: [
-        "Rain ticks off your hood. Ahead, half-swallowed by the hillside, leans the broken gate of an old watchtower — the place the village calls the Sunken Threshold.",
-        "A lean figure in a coat strung with brass tools and softly humming gadgets turns, lantern in hand, and gives you an easy, knowing smile. “Ah — there you are. Tahar. Artificer, tinkerer, and reluctant tour guide.”",
-        "“I've walked more worlds than I can count — and one rule holds in every single one: I describe the world, you decide what your hero does, and the dice settle anything in doubt. That's the whole game. You can't break it, and you certainly can't lose me.”",
+        "You are no one in particular — a villager, a traveler, a normal person — drawn for reasons you can't name to a broken gate in the hills the locals call the Sunken Threshold.",
+        "The moment you cross it, something buried there answers. A shard of cold light sinks into your chest, and the world sharpens: strength you never had, instinct you never earned. You came here as no one. You stand up as… something. (Call it level 1.)",
+        "A lean figure in a tool-strung coat steps out of the dark, lantern raised, eyes bright with recognition. “THERE you are. Felt that spark catch from three worlds away.” He grins. “Tahar — artificer, tinkerer, and the closest thing to a guide you're getting.”",
+        "“Here's the deal: I'll teach you to use what just woke up in you. I describe the world, you decide what you do, the dice settle the rest. You can't break it, and you can't lose me. Ready to find out what you've become?”",
       ],
       next: "intro-choice",
     },
@@ -58,7 +59,7 @@ export const COURSE: Course = {
       title: "What you're actually doing",
       body: [
         "Pathfinder is a story you build together by talking and rolling dice. There's no script you have to memorize.",
-        "For this lesson you'll play Wren, a green-but-game frontier scout. Tahar is your companion — he'll never let the story strand you.",
+        "Your spark is fresh and you haven't decided who you are yet — so Tahar just calls you “Wren” for now. Later, you'll forge your real self. He's your guide; he'll never let the story strand you.",
       ],
       points: [
         "The GM describes the situation.",
@@ -547,8 +548,8 @@ export const COURSE: Course = {
       speaker: "Tahar",
       xp: 5,
       lines: [
-        "Out in the daylight again, Tahar sits you down on a fallen column. “You've borrowed my Wren long enough. Now you know how the game actually plays — so let's build YOUR hero. The one you'll bring to a real table.”",
-        "“We do it one choice at a time. No memorizing. I'll tell you what each pick does, and you'll watch the sheet fill itself in.”",
+        "Out in the daylight, Tahar sits you down on a fallen column. “The spark's settled into you now. You're not 'Wren' the placeholder anymore — it's time to decide who you actually became when that light went in.”",
+        "“This is the hero you'll be from here on: your name, your shape, your strengths. One choice at a time. I'll tell you what each pick does, and you'll watch the sheet fill itself in.”",
       ],
       next: "u5-teach-build",
     },
@@ -829,31 +830,47 @@ export const COURSE: Course = {
             `Tahar offers a hand, but his eyes keep flicking to the planar light still moving under your skin. “You came in never having rolled a d20, ${ctx.hero}. You're leaving with the rules, a character, the nerve to use them — and something I can't quite measure.”`,
             temperamentLine,
             approachLine,
-            `${masteryLine} “Go find your table. They're lucky to have you — and watch yourself. Power like that wants to spend you. I'll be a world or two away if it does.”`,
-            "He's gone before morning. That's the end of the course — you're ready. Whatever you've become, go play.",
+            `${masteryLine} “You're ready — make no mistake. But that power you took? It wants to spend you. Watch yourself out there.”`,
+            "He studies you a moment longer than is comfortable. “One last thing before you go… and you won't like the catch.”",
           ];
         }
         if (ctx.flags.darkPath) {
           return [
-            `Tahar shoulders his pack and offers a hand — a beat slower than before. “You came in never having rolled a d20, ${ctx.hero}. You're leaving with the rules, a character, and the nerve to use them. All of it real.”`,
+            `Tahar offers a hand — a beat slower than before. “You came in as no one, ${ctx.hero}. You're leaving with the rules, a hero, and the nerve to use them. All of it real.”`,
             temperamentLine,
             approachLine,
-            `${masteryLine} “Go find your table. They'll see who you choose to be when it's easier not to — they always do. So choose well out there. I hope you do.”`,
-            "That's the end of the course. You did it. Now go play — and remember the fire.",
+            `${masteryLine} “They'll see who you choose to be when it's easier not to — they always do. So choose well.”`,
+            "He almost smiles. “One last thing before you go.”",
           ];
         }
 
         // ---- The bright ending ----
         return [
-          `Tahar shoulders his pack and offers a hand. “You came in never having rolled a d20, ${ctx.hero}. You're leaving with the rules, a character, and the nerve to use them.”`,
+          `Tahar claps you on the shoulder. “You came in as no one, ${ctx.hero}. You're leaving with the rules, a hero of your own making, and the nerve to use them.”`,
           temperamentLine,
           approachLine,
-          `${masteryLine} “Go find your table. They're lucky to have you — and hey, make some mistakes. That's where the best stories come from.”`,
-          "That's the end of the course. You did it. Now go play.",
+          `${masteryLine} “You're ready — truly. Go make some mistakes; that's where the best stories live.”`,
+          "Then his grin turns sly. “Ah — but there's one last thing, and you won't see it coming.”",
         ];
       },
+      next: "departure",
       upNext:
-        "There is no next — this is your graduation. Bring your sheet, find a group, and roll some dice for real.",
+        "You've learned to play, and forged the hero you'll carry. One step remains.",
+    },
+
+    departure: {
+      kind: "end",
+      portal: true,
+      title: "Goodbye, and Good Luck",
+      crown: "",
+      body: (ctx) => [
+        "“Where you're going,” Tahar says, almost gently, “you won't remember me. Not this ruin, not the spark, not a single word I taught you. It'll all sink down past memory and become instinct — you'll simply know how to be who you are.”",
+        "The brass dial on his belt spins up. Behind him the air tears open into a slow, silent whorl of dark — a hole in the world, its edges bleeding violet light, pulling at your coat, your breath, your name.",
+        `“That's the point. You step into your story clean, and let it surprise you.” He flicks you a small brass token already dissolving into sparks. “Good luck out there, ${ctx.hero}. Give them a tale worth telling.”`,
+        "He steps back. The dark takes you — a lurch, a fall with no floor — and the watchtower, the rain, and the artificer with the knowing smile all stream away into nothing…",
+        "…and you wake somewhere new, the way every hero wakes: at the start of the story, with no memory of how you got here, only who you are. Your adventure begins now.",
+      ],
+      upNext: "",
     },
   },
 };

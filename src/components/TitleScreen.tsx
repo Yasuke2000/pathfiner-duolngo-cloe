@@ -1,4 +1,5 @@
 import { ALL_CHAPTERS } from "@/lib/chapters";
+import { Die } from "./Die";
 import { SupportButton } from "./SupportButton";
 
 export function TitleScreen({
@@ -13,7 +14,7 @@ export function TitleScreen({
   return (
     <div className="title-screen">
       <div className="title-emblem" aria-hidden>
-        <span className="d20">20</span>
+        <Die value={20} />
       </div>
       <h1 className="title-logo">The Sunken Threshold</h1>
       <p className="title-sub">Learn Pathfinder 2e — by playing it</p>
