@@ -11,12 +11,26 @@ const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"], 
 const spectral = Spectral({ subsets: ["latin"], weight: ["400", "500"], style: ["normal", "italic"], variable: "--font-prose", display: "swap" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://pathfiner-duolngo-cloe.delportedavid21.workers.dev"),
   title: "The Sunken Threshold — Learn Pathfinder 2e by Playing",
   description:
-    "A single-playthrough, teach-by-playing course that takes a true beginner from their first d20 roll to ready-to-join a real Pathfinder 2e table.",
+    "A free, solo, play-in-your-browser origin adventure that teaches Pathfinder 2e by playing — from your first d20 roll to a built hero, ready for a real table.",
   manifest: "./manifest.webmanifest",
   icons: { icon: "./icon.svg", apple: "./icon.svg" },
   appleWebApp: { capable: true, title: "Sunken Threshold", statusBarStyle: "black-translucent" },
+  openGraph: {
+    title: "The Sunken Threshold — Learn Pathfinder 2e by Playing",
+    description:
+      "A free, solo, play-in-your-browser origin adventure that teaches Pathfinder 2e by playing.",
+    type: "website",
+    images: [{ url: "/og.svg", width: 1200, height: 630, alt: "The Sunken Threshold" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Sunken Threshold — Learn Pathfinder 2e by Playing",
+    description: "A free, solo, browser adventure that teaches Pathfinder 2e by playing.",
+    images: ["/og.svg"],
+  },
 };
 
 export const viewport: Viewport = {

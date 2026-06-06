@@ -53,6 +53,8 @@ export function TitleScreen({
       </div>
       <p className="title-foot">
         <a className="text-btn" href="/create">Just want to build a character? →</a>
+        {"  ·  "}
+        <a className="text-btn" href="/about">About</a>
       </p>
       <p className="muted">A solo, single-playthrough course · no account needed</p>
       <SupportButton />

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a1430"/>
+      <stop offset="1" stop-color="#0b0814"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="30%" r="60%">
+      <stop offset="0" stop-color="#e7c66b" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#e7c66b" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff4d4"/>
+      <stop offset="1" stop-color="#b89a45"/>
+    </linearGradient>
+    <linearGradient id="die" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7fd4ec"/>
+      <stop offset="1" stop-color="#2f8fb0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <g transform="translate(600,232)">
+    <polygon points="0,-120 104,-60 104,60 0,120 -104,60 -104,-60" fill="url(#die)" stroke="#dff3fb" stroke-width="6" stroke-linejoin="round"/>
+    <text x="0" y="26" font-family="Georgia, serif" font-size="96" font-weight="800" text-anchor="middle" fill="#0b2733">20</text>
+  </g>
+  <text x="600" y="430" font-family="Georgia, 'Times New Roman', serif" font-size="76" font-weight="800" text-anchor="middle" fill="url(#gold)">The Sunken Threshold</text>
+  <text x="600" y="492" font-family="Georgia, serif" font-size="32" text-anchor="middle" fill="#cfc7e6">Learn Pathfinder 2e — by playing it</text>
+  <text x="600" y="556" font-family="Verdana, sans-serif" font-size="24" text-anchor="middle" fill="#9b93bd" letter-spacing="2">A free, solo, play-in-your-browser origin adventure</text>
+</svg>
