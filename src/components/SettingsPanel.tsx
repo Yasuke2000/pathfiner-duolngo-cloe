@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { setSettings, useSettings, type TextSpeed } from "@/lib/settings";
 import { isMuted, sfx, toggleMuted } from "@/lib/sound";
 import { COMMUNITY_USE_NOTICE } from "@/lib/config";
@@ -32,7 +33,7 @@ export function SettingsPanel({ onRestart }: { onRestart: () => void }) {
         ⚙
       </button>
 
-      {open && (
+      {open && typeof document !== "undefined" && createPortal(
         <div className="modal-scrim" onClick={() => setOpen(false)}>
           <div className="modal" role="dialog" aria-label="Settings" onClick={(e) => e.stopPropagation()}>
             <h2>Settings</h2>
@@ -107,7 +108,8 @@ export function SettingsPanel({ onRestart }: { onRestart: () => void }) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );
