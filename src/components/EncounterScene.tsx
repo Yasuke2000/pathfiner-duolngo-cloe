@@ -8,6 +8,8 @@ import {
   heroCombatant,
   makeCombatant,
   makeDemoralize,
+  makeSpellAttack,
+  makeSpellSave,
   makeStrike,
   makeTrip,
   rollInitiative,
@@ -21,7 +23,8 @@ import { sfx } from "@/lib/sound";
 import { DEGREE_THEME } from "./degrees";
 
 type Phase = "intro" | "hero" | "auto" | "reaction" | "won";
-type Targeting = "strike" | "demoralize" | null;
+type Targeting = "strike" | "demoralize" | "spell" | null;
+type SpellChoice = NonNullable<Hero["combat"]["caster"]>["spells"][number];
 
 interface LogEntry {
   id: number;
@@ -57,6 +60,8 @@ export function EncounterScene({
   const [heroActions, setHeroActions] = useState(3);
   const [heroAttacks, setHeroAttacks] = useState(0);
   const [targeting, setTargeting] = useState<Targeting>(null);
+  const [castOpen, setCastOpen] = useState(false);
+  const [spell, setSpell] = useState<SpellChoice | null>(null);
   const [pending, setPending] = useState<PendingReaction | null>(null);
   const [log, setLog] = useState<LogEntry[]>([]);
   const logId = useRef(0);
@@ -65,6 +70,7 @@ export function EncounterScene({
 
   const byId = (id: string) => combatants.find((c) => c.id === id);
   const heroC = combatants.find((c) => c.role === "hero");
+  const caster = hero?.combat.caster;
   const foes = combatants.filter((c) => c.role === "foe");
   const aliveFoes = foes.filter((c) => !c.defeated);
   const current = byId(order[ptr]);
@@ -237,9 +243,49 @@ export function EncounterScene({
     pushLog("You raise your shield. Now you can Shield Block a hit.", "hero");
   }
 
+  function heroCastAt(foeId: string) {
+    if (!caster || !spell) return;
+    const foe = byId(foeId)!;
+    const profile = { attack: caster.attack, dc: caster.dc, bonus: caster.bonus };
+    let cs = combatants;
+    let degree;
+    if (spell.kind === "attack") {
+      const out = makeSpellAttack(profile, foe, spell.die, heroAttacks);
+      degree = out.result.degree;
+      const verb =
+        degree === "critical-success" ? `blasts ${foe.name} for ${out.damage}!`
+          : degree === "success" ? `hits ${foe.name} for ${out.damage}.`
+            : `misses ${foe.name}.`;
+      pushLog(`You cast ${spell.name} — it ${verb} ${rollLabel(out, "AC")}${out.map ? ` (MAP ${out.map})` : ""}`, "hero", degree);
+      out.damage > 0 ? sfx.hit() : sfx.miss();
+      if (out.damage > 0) cs = applyDamage(cs, foeId, out.damage);
+      setHeroAttacks((n) => n + 1); // spell attacks have the attack trait → MAP
+    } else {
+      const out = makeSpellSave(profile, foe, spell.die, spell.save ?? "reflex");
+      degree = out.result.degree;
+      const saved = degree === "critical-success" || degree === "success";
+      pushLog(
+        `You cast ${spell.name}! ${foe.name} ${saved ? "resists" : "is caught"} — ${spell.save} save 🎲 ${out.result.die} → ${out.result.total} vs your DC ${out.dc}. Takes ${out.damage}.`,
+        "hero",
+        degree,
+      );
+      out.damage > 0 ? sfx.hit() : sfx.miss();
+      if (out.damage > 0) cs = applyDamage(cs, foeId, out.damage);
+    }
+    setCombatants(cs);
+    setHeroActions((a) => a - 1);
+    setTargeting(null);
+    setSpell(null);
+    if (cs.filter((c) => c.role === "foe" && !c.defeated).length === 0) {
+      sfx.victory();
+      setPhase("won");
+    }
+  }
+
   function onFoeClick(foeId: string) {
     if (targeting === "strike") heroStrikeAt(foeId);
     else if (targeting === "demoralize") heroDemoralizeAt(foeId);
+    else if (targeting === "spell") heroCastAt(foeId);
   }
 
   // --- Auto turns (ally + foes) -------------------------------------------
@@ -493,8 +539,35 @@ export function EncounterScene({
 
           {targeting && (
             <p className="muted" style={{ textAlign: "center" }}>
-              Choose a foe to {targeting === "strike" ? "Strike" : "Demoralize"} — or pick another action.
+              {targeting === "spell"
+                ? `Choose a foe to target with ${spell?.name}`
+                : `Choose a foe to ${targeting === "strike" ? "Strike" : "Demoralize"}`}{" "}
+              — or pick another action.
             </p>
+          )}
+
+          {castOpen && caster && (
+            <div className="actions" style={{ marginBottom: 6 }}>
+              {caster.spells.map((sp) => (
+                <button
+                  key={sp.id}
+                  className="btn"
+                  disabled={!canAct}
+                  onClick={() => {
+                    setSpell(sp);
+                    setTargeting("spell");
+                    setCastOpen(false);
+                  }}
+                >
+                  {sp.name}
+                  <span className="hint">
+                    {sp.kind === "attack"
+                      ? `spell attack +${caster.attack} vs AC · d${sp.die}+${caster.bonus} · counts as an attack (MAP)`
+                      : `${sp.save} save vs your DC ${caster.dc} · d${sp.die}+${caster.bonus} basic save · no MAP`}
+                  </span>
+                </button>
+              ))}
+            </div>
           )}
 
           <div className="actions combat-actions">
@@ -512,6 +585,15 @@ export function EncounterScene({
             >
               Demoralize <span className="hint">+{heroC?.intimidationBonus} vs Will · no attack penalty</span>
             </button>
+            {caster && caster.spells.length > 0 && (
+              <button
+                className={`btn ${castOpen ? "correct" : ""}`}
+                onClick={() => { setCastOpen((o) => !o); setTargeting(null); }}
+                disabled={!canAct}
+              >
+                Cast a Spell <span className="hint">your cantrips ({caster.spells.length})</span>
+              </button>
+            )}
             <button className="btn" onClick={heroRaiseShield} disabled={!canAct || heroC?.shieldRaised}>
               Raise a Shield <span className="hint">enables Shield Block</span>
             </button>

@@ -11,6 +11,14 @@ export interface HeroCombat {
   agile: boolean;
   /** Bonus to the Demoralize check (Intimidation). */
   intimidationBonus: number;
+  /** Present for spellcasters: lets them Cast a Spell in combat. */
+  caster?: {
+    dc: number;
+    attack: number;
+    /** Key-attribute modifier added to cantrip damage. */
+    bonus: number;
+    spells: { id: string; name: string; kind: "attack" | "save"; save?: "reflex" | "will" | "fortitude"; die: number }[];
+  };
 }
 
 export interface Hero {

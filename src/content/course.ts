@@ -724,7 +724,7 @@ export const COURSE: Course = {
       victoryTitle: "The drake yields",
       useBuiltHero: true,
       intro: [
-        "This is the real thing — these are YOUR hero's own numbers now, the character you just forged. Tahar fights at your side. Everything you've learned, all at once: initiative, your three actions, conditions, your reaction.",
+        "This is the real thing — these are YOUR hero's own numbers now, the character you just forged. Tahar fights at your side. Everything you've learned, all at once: initiative, your three actions, conditions, your reaction — and if you're a caster, your spells.",
       ],
       foes: [
         {

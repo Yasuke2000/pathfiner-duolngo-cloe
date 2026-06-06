@@ -1,4 +1,5 @@
 import { proficiencyBonus } from "@/engine/proficiency";
+import { CLASS_SPELLS } from "@/content/srd";
 import { buildAttrs, derived, resolve, trainedSkills, type BuildState } from "./builder";
 import { PREGEN_HERO, type Hero } from "./hero";
 
@@ -17,6 +18,20 @@ export function combatHeroFromBuild(b: BuildState): Hero {
   if (!cls || !stats) return PREGEN_HERO;
 
   const trainedIntim = trainedSkills(b).includes("intimidation");
+
+  // Spellcasters can Cast a Spell in combat: their chosen offensive cantrips.
+  const sc = CLASS_SPELLS[cls.id];
+  let caster: Hero["combat"]["caster"];
+  if (sc && stats.spellDc !== undefined && stats.spellAttack !== undefined) {
+    const spells = b.cantrips
+      .map((id) => sc.cantrips.find((s) => s.id === id))
+      .filter((s): s is NonNullable<typeof s> => !!s && !!s.combat)
+      .map((s) => ({ id: s.id, name: s.name, kind: s.combat!.kind, save: s.combat!.save, die: s.combat!.die }));
+    if (spells.length) {
+      caster = { dc: stats.spellDc, attack: stats.spellAttack, bonus: attrs[cls.keyAttr], spells };
+    }
+  }
+
   return {
     name: b.name.trim() || "your hero",
     archetype: cls.name,
@@ -31,6 +46,7 @@ export function combatHeroFromBuild(b: BuildState): Hero {
       strikeDamageBonus: attrs[cls.weapon.attr],
       agile: false,
       intimidationBonus: attrs.cha + proficiencyBonus(trainedIntim ? "trained" : "untrained", 1),
+      caster,
     },
   };
 }

@@ -140,6 +140,64 @@ export function makeTrip(attacker: Combatant, defender: Combatant, priorAttacks 
   return { result, proned };
 }
 
+// ---- Spellcasting (used by a built caster hero in the capstone) ----
+
+export interface SpellProfile {
+  attack: number;
+  dc: number;
+  /** Key-attribute modifier added to cantrip damage. */
+  bonus: number;
+}
+
+/** A spell-attack cantrip (Ray of Frost, etc.): vs AC, has the attack trait (MAP). */
+export function makeSpellAttack(
+  caster: SpellProfile,
+  defender: Combatant,
+  die: number,
+  priorAttacks: number,
+): AttackOutcome {
+  const map = multipleAttackPenalty(priorAttacks);
+  const roll = rollD20();
+  const total = roll + caster.attack + map;
+  const targetAc = effectiveAc(defender);
+  const result = resolveCheck(roll, total, targetAc);
+  let damage = 0;
+  if (result.degree === "success") damage = damageRoll(die, caster.bonus, false);
+  else if (result.degree === "critical-success") damage = damageRoll(die, caster.bonus, true);
+  return { result, map, targetAc, damage };
+}
+
+/** Basic-save damage: none / half / full / double by the target's save degree. */
+export function basicSaveDamage(degree: CheckResult["degree"], full: number): number {
+  if (degree === "critical-success") return 0;
+  if (degree === "success") return Math.floor(full / 2);
+  if (degree === "failure") return full;
+  return full * 2; // critical failure
+}
+
+export interface SpellSaveOutcome {
+  result: CheckResult; // the DEFENDER's save result
+  dc: number;
+  damage: number;
+}
+
+/** A basic-save cantrip (Electric Arc, etc.): the foe rolls a save vs your spell DC. */
+export function makeSpellSave(
+  caster: SpellProfile,
+  defender: Combatant,
+  die: number,
+  save: "reflex" | "will" | "fortitude",
+): SpellSaveOutcome {
+  // We model defenses as DCs; the matching save modifier is DC − 10, minus the
+  // frightened penalty (frightened lowers the creature's checks too).
+  const dcField = save === "reflex" ? defender.reflexDC : defender.willDC; // (fortitude ~ will here)
+  const saveMod = dcField - 10 - defender.frightened;
+  const roll = rollD20();
+  const result = resolveCheck(roll, roll + saveMod, caster.dc);
+  const full = rollDie(die) + caster.bonus;
+  return { result, dc: caster.dc, damage: basicSaveDamage(result.degree, full) };
+}
+
 /** Roll initiative for everyone and return the ids in turn order (desc). */
 export function rollInitiative(combatants: Combatant[]): {
   combatants: Combatant[];

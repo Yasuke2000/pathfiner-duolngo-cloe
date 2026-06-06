@@ -176,6 +176,13 @@ export interface Spell {
   id: string;
   name: string;
   desc: string;
+  /** If present, this cantrip can be cast offensively in combat. */
+  combat?: {
+    kind: "attack" | "save";
+    save?: "reflex" | "will" | "fortitude";
+    /** Damage die size (e.g. 4 = d4); the key attribute modifier is added. */
+    die: number;
+  };
 }
 
 export const HERITAGES: Record<string, Heritage[]> = {
@@ -250,12 +257,12 @@ export const CLASS_SPELLS: Record<string, SpellcastingDef> = {
     cantripsKnown: 4,
     spellsKnown: 2,
     cantrips: [
-      { id: "divine-lance", name: "Divine Lance", desc: "A ranged spell attack of divine energy." },
+      { id: "divine-lance", name: "Divine Lance", desc: "A ranged spell attack of divine energy.", combat: { kind: "attack", die: 4 } },
       { id: "guidance", name: "Guidance", desc: "Grant an ally a small bonus to one roll." },
       { id: "light", name: "Light", desc: "Make an object glow like a torch." },
       { id: "stabilize", name: "Stabilize", desc: "Stop a dying creature from getting worse." },
       { id: "shield-cantrip", name: "Shield", desc: "A reaction: raise a magical shield." },
-      { id: "daze", name: "Daze", desc: "Mental damage that can stun on a crit." },
+      { id: "daze", name: "Daze", desc: "Mental damage; basic Will save.", combat: { kind: "save", save: "will", die: 4 } },
     ],
     spells: [
       { id: "heal", name: "Heal", desc: "Restore hit points (the cleric's signature)." },
@@ -269,12 +276,12 @@ export const CLASS_SPELLS: Record<string, SpellcastingDef> = {
     cantripsKnown: 5,
     spellsKnown: 2,
     cantrips: [
-      { id: "electric-arc", name: "Electric Arc", desc: "Lightning that can strike two foes." },
-      { id: "ray-of-frost", name: "Ray of Frost", desc: "A cold ranged spell attack that slows." },
+      { id: "electric-arc", name: "Electric Arc", desc: "Lightning; basic Reflex save.", combat: { kind: "save", save: "reflex", die: 4 } },
+      { id: "ray-of-frost", name: "Ray of Frost", desc: "A cold ranged spell attack.", combat: { kind: "attack", die: 4 } },
       { id: "light", name: "Light", desc: "Make an object glow like a torch." },
       { id: "detect-magic", name: "Detect Magic", desc: "Sense magic nearby." },
       { id: "shield-cantrip", name: "Shield", desc: "A reaction: raise a magical shield." },
-      { id: "telekinetic", name: "Telekinetic Projectile", desc: "Hurl a loose object at a foe." },
+      { id: "telekinetic", name: "Telekinetic Projectile", desc: "Hurl a loose object — spell attack.", combat: { kind: "attack", die: 6 } },
     ],
     spells: [
       { id: "magic-missile", name: "Magic Missile", desc: "Darts of force that never miss." },
