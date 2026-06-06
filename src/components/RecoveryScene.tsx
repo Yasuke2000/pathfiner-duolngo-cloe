@@ -6,6 +6,7 @@ import { recoveryCheck, type DyingState } from "@/engine/dying";
 import type { Degree } from "@/engine/types";
 import type { RecoveryNode } from "@/content/types";
 import { sfx } from "@/lib/sound";
+import { Die } from "./Die";
 import { DEGREE_THEME } from "./degrees";
 
 type Phase = "rolling" | "stable";
@@ -111,7 +112,9 @@ export function RecoveryScene({
         </span>
       </div>
 
-      <div className={`die small ${busy ? "rolling" : ""}`}>{face ?? "?"}</div>
+      <div className="die-stage">
+        <Die value={face ?? "?"} rolling={busy} small />
+      </div>
 
       <div className="log" role="log" aria-live="polite">
         {log.map((e) => {

@@ -7,6 +7,7 @@ import { PREGEN_HERO } from "@/game/hero";
 import type { CheckNode } from "@/content/types";
 import { sfx } from "@/lib/sound";
 import { useReduceMotion } from "@/lib/settings";
+import { Die } from "./Die";
 import { DEGREE_ORDER, DEGREE_THEME } from "./degrees";
 
 type Phase = "ready" | "rolling" | "revealed" | "outcome";
@@ -74,14 +75,14 @@ export function CheckScene({
 
   const degree = result?.degree;
   const theme = degree ? DEGREE_THEME[degree] : null;
-  const dieClass =
+  const dieTone: "gold" | "crit" | "fumble" =
     result && phase !== "rolling"
       ? result.die === 20
-        ? "nat20"
+        ? "crit"
         : result.die === 1
-          ? "nat1"
-          : ""
-      : "";
+          ? "fumble"
+          : "gold"
+      : "gold";
 
   return (
     <div className="card">
@@ -90,9 +91,7 @@ export function CheckScene({
       <h2>{node.prompt}</h2>
 
       <div className="die-stage">
-        <div className={`die ${phase === "rolling" ? "rolling" : ""} ${dieClass}`}>
-          {phase === "ready" ? "?" : face}
-        </div>
+        <Die value={phase === "ready" ? "?" : face} rolling={phase === "rolling"} tone={dieTone} />
       </div>
       {result && result.die === 20 && phase !== "rolling" && (
         <p className="shift-note">Natural 20! The die bumps your result up one band.</p>
