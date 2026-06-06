@@ -17,8 +17,8 @@ export const COURSE: Course = {
       speaker: "Tahar",
       xp: 5,
       lines: [
-        "You are no one in particular — a villager, a traveler, a normal person — drawn for reasons you can't name to a broken gate in the hills the locals call the Sunken Threshold.",
-        "The moment you cross it, something buried there answers. A shard of cold light sinks into your chest, and the world sharpens: strength you never had, instinct you never earned. You came here as no one. You stand up as… something.",
+        "You are no one in particular — a villager, a traveler, a normal person — drawn for reasons you can't name to a black cave-mouth in the hills. The locals call it the Sunken Threshold: the throat of an old dungeon the earth swallowed and the water claimed, ages ago.",
+        "The moment you step inside, something buried in the dark answers. A shard of cold light rises from the deep stone and sinks into your chest, and the world sharpens: strength you never had, instinct you never earned. You came here as no one. You stand up as… something.",
         "A lean figure in a tool-strung coat steps out of the dark, lantern raised, eyes bright with recognition. “THERE you are. Felt that spark catch from three worlds away.” He grins. “Tahar — artificer, tinkerer, and the closest thing to a guide you're getting.”",
         "“Here's the deal: I'll teach you to use what just woke up in you. I describe the world, you decide what you do, the dice settle the rest. You can't break it, and you can't lose me. Ready to find out what you've become?”",
       ],
@@ -28,7 +28,7 @@ export const COURSE: Course = {
     "intro-choice": {
       kind: "choice",
       speaker: "Tahar",
-      prompt: "Before we step inside — what kind of adventurer are you, deep down?",
+      prompt: "Before we head down into the dark — what kind of adventurer are you, deep down?",
       options: [
         { label: "Bold and brash", hint: "Charge in first, think later", next: "intro-bold", set: ({ set }) => set({ temperament: "bold" }) },
         { label: "Careful and clever", hint: "Look before you leap", next: "intro-careful", set: ({ set }) => set({ temperament: "careful" }) },
@@ -75,7 +75,7 @@ export const COURSE: Course = {
       title: "Not everything needs a roll",
       xp: 5,
       body: [
-        "The gate's stuck. You set your shoulder to it and shove — and it grinds open with a groan. No dice needed.",
+        "A slab of fallen rock half-blocks the way down. You set your shoulder to it and shove — and it grinds aside with a groan, opening the dark passage deeper. No dice needed.",
         "“When a task is trivial, the GM just tells you it works,” Tahar says. “We only roll when failure is interesting. Keep that in your pocket.”",
       ],
       points: ["Trivial tasks: no roll, you just succeed."],
@@ -245,7 +245,7 @@ export const COURSE: Course = {
       speaker: "Tahar",
       xp: 5,
       lines: [
-        "Deeper in, the passage opens into a flooded hall, ankle-deep and echoing. A figure rises from behind a fallen pillar — a marauder who's been stripping the ruin for scrap, axe already swinging up, eyes flat and certain.",
+        "Deeper in, the passage opens into a flooded hall, ankle-deep and echoing. A figure rises from behind a fallen pillar — a marauder who's been stripping the drowned dungeon for scrap, axe already swinging up, eyes flat and certain.",
         "Tahar's hand drifts to a humming device on his belt, then stops. “No talking our way out of this one. Pity.” He passes you a blade hilt-first. “Right — your spark's about to earn its keep. On a thousand worlds, this next part is the same: it's all about how you spend a single turn. Watch.”",
       ],
       next: "u2-teach-actions",
@@ -330,7 +330,7 @@ export const COURSE: Course = {
       speaker: "Tahar",
       xp: 5,
       lines: [
-        "You press deeper, and the dark comes alive. Two skulkers — wiry, grinning things — drop from the rafters in a rain of grit, one for your throat, one for Tahar's.",
+        "You press deeper, and the dark comes alive. Two skulkers — wiry, grinning things — drop from ledges in the gloom overhead in a rain of grit, one for your throat, one for Tahar's.",
         "He sidesteps the first like he's done it a hundred times in a hundred halls. “NOW it's a real fight — two of them, two of us. This is where most heroes get themselves killed: they forget there's an order to it, and they forget their friends. Watch the turn order, keep that shield ready, and trust me to crack them open for you.”",
       ],
       next: "u3-teach-initiative",
@@ -601,7 +601,7 @@ export const COURSE: Course = {
       speaker: "Tahar",
       xp: 5,
       lines: [
-        "Evening. You and Tahar make camp at the mouth of the ruin you've cleared together. He studies you over the fire, brass tools glinting, like he's reading a map only he can see.",
+        "You climb back toward daylight and make camp at the cave-mouth, the drowned dungeon you've cleared together at your backs. Tahar studies you over the fire, brass tools glinting, like he's reading a map only he can see.",
         "“Think about what you did. You read checks, ran your turns, fought as a team, clawed back from dying, built a hero of your own. That WAS an adventure — a whole dungeon, start to finish.”",
         "“One last test before I send you to a real table. The way home is blocked by a rockfall and a nervous young drake guarding its nest. How you handle it tells me a lot — I've watched this exact moment play out across a dozen worlds. So: what's your approach?”",
       ],
@@ -687,7 +687,7 @@ export const COURSE: Course = {
       speaker: "Tahar",
       lines: (ctx) => [
         "With the drake handled, you find what it was really guarding: a clutch of faintly glowing eggs — and nestled among them, a shard of cold, planar light, pulsing slow. Power, humming, just sitting there.",
-        `Tahar crouches beside it, and for once the easy smile is gone. “Look familiar? It should. That's the same cold light that sank into your chest at the gate — the thing that made you… you.”`,
+        `Tahar crouches beside it, and for once the easy smile is gone. “Look familiar? It should. That's the same cold light that sank into your chest at the threshold — the thing that made you… you.”`,
         `He glances up. “The universe has a sense of humor, ${ctx.address}. It waited until the end to ask what you'll do with the very thing that started you. What you answer here tells me everything. Take your time.”`,
       ],
       next: "u6-moral",
@@ -807,7 +807,7 @@ export const COURSE: Course = {
           t === "bold"
             ? "“You charged in bold from the very first step,” Tahar says, “and you never lost that nerve.”"
             : t === "careful"
-              ? "“Careful and clever, just like you said at the gate,” Tahar says. “It kept you breathing the whole way.”"
+              ? "“Careful and clever, just like you said at the threshold,” Tahar says. “It kept you breathing the whole way.”"
               : t === "curious"
                 ? "“That curiosity you walked in with? It found doors the rest would've missed,” Tahar says."
                 : "“You found your own way through every step,” Tahar says.";
@@ -871,11 +871,11 @@ export const COURSE: Course = {
             ? `His tools click and turn against your chest. “There. The spark sleeps. What you DID with it won't sleep so easy — but that's a weight for the road, not for tonight.”`
             : `He presses a humming brass device to your chest and turns a dial, gentle as a key in a lock. “There. The spark sleeps. Still yours — just quiet, until the day your story needs it again.”`;
         return [
-          `“Here's the thing I didn't tell you at the gate, ${ctx.address},” Tahar says. “You can't keep this lit. A spark like yours, blazing, draws things you're not ready for. So I'm going to lock it down. Not take it — lock it.”`,
+          `“Here's the thing I didn't tell you at the threshold, ${ctx.address},” Tahar says. “You can't keep this lit. A spark like yours, blazing, draws things you're not ready for. So I'm going to lock it down. Not take it — lock it.”`,
           lockLine,
-          "“And one more mercy: you won't remember me. Not this ruin, not my name, not a word of tonight. You're walking back into an ordinary life, and I won't have it cluttered with an artificer and a dragon. By morning this is all a half-dream.”",
+          "“And one more mercy: you won't remember me. Not this cave, not my name, not a word of tonight. You're walking back into an ordinary life, and I won't have it cluttered with an artificer and a dragon. By morning this is all a half-dream.”",
           "The light under your skin dims and folds inward to a warmth behind the ribs. The memory of his face is already going soft at the edges, like a name you almost have.",
-          `“Don't fret — I told you at the gate you couldn't lose me. You can't, quite.” His voice is fading now. “Some nights you'll wake with your heart pounding and a word on your lips you don't know. Sometimes you'll feel watched over. That's all that's left of me — and it's enough. Now go home, ${ctx.hero}. The years between tonight and the day the spark wakes — your town, your people, who you've been — that's YOURS to write. Make it a good one.”`,
+          `“Don't fret — I told you at the threshold you couldn't lose me. You can't, quite.” His voice is fading now. “Some nights you'll wake with your heart pounding and a word on your lips you don't know. Sometimes you'll feel watched over. That's all that's left of me — and it's enough. Now go home, ${ctx.hero}. The years between tonight and the day the spark wakes — your town, your people, who you've been — that's YOURS to write. Make it a good one.”`,
           "And then he's gone, the way he came — between one breath and the next. You walk home under a clearing sky, an ordinary person again, carrying a sleeping light, a dream you can't place, and a story only you can fill in.",
         ];
       },
