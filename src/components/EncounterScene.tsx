@@ -250,18 +250,18 @@ export function EncounterScene({
       const trip = makeTrip(current, target);
       if (trip.proned) {
         cs = patch(cs, target.id, { offGuard: true });
-        pushLog(`Yasuke sweeps ${target.name} off its feet — it's Off-Guard (−2 AC). “Hit it now!” ${rollLabel(trip, "Reflex DC")}`, "ally", trip.result.degree);
+        pushLog(`Tahar sweeps ${target.name} off its feet — it's Off-Guard (−2 AC). “Hit it now!” ${rollLabel(trip, "Reflex DC")}`, "ally", trip.result.degree);
       } else {
-        pushLog(`Yasuke tries to trip ${target.name} but it skips back. ${rollLabel(trip, "Reflex DC")}`, "ally", trip.result.degree);
+        pushLog(`Tahar tries to trip ${target.name} but it skips back. ${rollLabel(trip, "Reflex DC")}`, "ally", trip.result.degree);
       }
     }
     const refreshed = cs.find((c) => c.id === target.id)!;
     const strike = makeStrike(current, refreshed, 0);
     if (strike.damage > 0) {
       cs = applyDamage(cs, target.id, strike.damage);
-      pushLog(`Yasuke strikes ${target.name} for ${strike.damage}. ${rollLabel(strike, "AC")}`, "ally", strike.result.degree);
+      pushLog(`Tahar strikes ${target.name} for ${strike.damage}. ${rollLabel(strike, "AC")}`, "ally", strike.result.degree);
     } else {
-      pushLog(`Yasuke's strike at ${target.name} misses. ${rollLabel(strike, "AC")}`, "ally", strike.result.degree);
+      pushLog(`Tahar's strike at ${target.name} misses. ${rollLabel(strike, "AC")}`, "ally", strike.result.degree);
     }
     setCombatants(cs);
     setTimeout(() => endTurn(cs), TURN_DELAY);

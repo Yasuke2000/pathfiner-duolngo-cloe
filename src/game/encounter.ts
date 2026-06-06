@@ -169,7 +169,7 @@ export function heroCombatant(hero: Hero = PREGEN_HERO): Combatant {
 export const ALLY_BRAM = (): Combatant =>
   makeCombatant({
     id: "bram",
-    name: "Yasuke",
+    name: "Tahar",
     role: "ally",
     ac: 18,
     maxHp: 26,

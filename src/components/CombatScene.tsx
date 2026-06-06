@@ -121,7 +121,7 @@ export function CombatScene({
         if (next <= 0 && !cushioned.current) {
           cushioned.current = true;
           pushLog(
-            `The axe lands hard — but Yasuke shoulders in and drags you clear before it finishes you. (Steadied at 3 HP.)`,
+            `The axe lands hard — but Tahar shoulders in and drags you clear before it finishes you. (Steadied at 3 HP.)`,
             "system",
           );
           next = 3;
@@ -245,7 +245,7 @@ export function CombatScene({
 
       {showCoaching && (
         <div className="feedback bad" style={{ borderColor: "var(--gold-dim)" }}>
-          <b>Yasuke:</b> “That next swing is at −10 — it’ll almost certainly miss. Spend the
+          <b>Tahar:</b> “That next swing is at −10 — it’ll almost certainly miss. Spend the
           action on <b>Demoralize</b> or <b>Raise a Shield</b> instead.”
         </div>
       )}

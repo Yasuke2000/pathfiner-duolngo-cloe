@@ -1,11 +1,12 @@
 interface AvatarDef {
   glyph: string;
   tone: string;
+  role: string;
 }
 
 /** Recurring characters get a portrait medallion; everything else is a chip. */
 const AVATARS: Record<string, AvatarDef> = {
-  Yasuke: { glyph: "🛡️", tone: "26 80% 60%" },
+  Tahar: { glyph: "⚙️", tone: "265 70% 66%", role: "Artificer · walked a hundred worlds" },
 };
 
 export function Speaker({ name }: { name: string }) {
@@ -18,7 +19,7 @@ export function Speaker({ name }: { name: string }) {
       </span>
       <div className="speaker-meta">
         <span className="speaker-name">{name}</span>
-        <span className="speaker-role">your companion</span>
+        <span className="speaker-role">{a.role}</span>
       </div>
     </div>
   );

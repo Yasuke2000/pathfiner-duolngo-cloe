@@ -14,19 +14,19 @@ export const COURSE: Course = {
   nodes: {
     welcome: {
       kind: "narration",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       xp: 5,
       lines: [
         "Rain ticks off your hood. Ahead, half-swallowed by the hillside, leans the broken gate of an old watchtower — the place the village calls the Sunken Threshold.",
-        "A broad-shouldered warrior with a lantern grins at you. “First time out, eh? Name's Yasuke. I'll walk you through it.”",
-        "“Here's the whole game in one breath: I describe the world, you decide what your hero does, and dice settle anything uncertain. That's it. You can't break it, and you can't lose me.”",
+        "A lean figure in a coat strung with brass tools and softly humming gadgets turns, lantern in hand, and gives you an easy, knowing smile. “Ah — there you are. Tahar. Artificer, tinkerer, and reluctant tour guide.”",
+        "“I've walked more worlds than I can count — and one rule holds in every single one: I describe the world, you decide what your hero does, and the dice settle anything in doubt. That's the whole game. You can't break it, and you certainly can't lose me.”",
       ],
       next: "intro-choice",
     },
 
     "intro-choice": {
       kind: "choice",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       prompt: "Before we step inside — what kind of adventurer are you, deep down?",
       options: [
         { label: "Bold and brash", hint: "Charge in first, think later", next: "intro-bold", set: ({ set }) => set({ temperament: "bold" }) },
@@ -36,20 +36,20 @@ export const COURSE: Course = {
     },
     "intro-bold": {
       kind: "narration",
-      speaker: "Yasuke",
-      lines: ["“Ha — a charger! We'll temper that with a little sense, but courage is half this game. Come on.”"],
+      speaker: "Tahar",
+      lines: ["“A charger. Ha! I knew a bold one on a brass-and-steam world who toppled a tyrant with exactly that energy — and nearly died nine times doing it. We'll keep the spirit, lose the dying. Come on.”"],
       next: "what-is-ttrpg",
     },
     "intro-careful": {
       kind: "narration",
-      speaker: "Yasuke",
-      lines: ["“Careful keeps you breathing. Smart. The dice tend to punish the reckless… most of the time. Let's go.”"],
+      speaker: "Tahar",
+      lines: ["“Careful and clever. Good — that's how you live long enough to get interesting. In most worlds I've seen, it's the patient ones who end up legends. Let's go.”"],
       next: "what-is-ttrpg",
     },
     "intro-curious": {
       kind: "narration",
-      speaker: "Yasuke",
-      lines: ["“Curiosity is the finest trait an adventurer can carry. Ask away — that's exactly how you'll learn. After me.”"],
+      speaker: "Tahar",
+      lines: ["“Curiosity — my favourite answer. It's the one trait that travels well between worlds. Ask me anything; I've probably seen a stranger version of it. After me.”"],
       next: "what-is-ttrpg",
     },
 
@@ -58,7 +58,7 @@ export const COURSE: Course = {
       title: "What you're actually doing",
       body: [
         "Pathfinder is a story you build together by talking and rolling dice. There's no script you have to memorize.",
-        "For this lesson you'll play Wren, a green-but-game frontier scout. Yasuke is your companion — he'll never let the story strand you.",
+        "For this lesson you'll play Wren, a green-but-game frontier scout. Tahar is your companion — he'll never let the story strand you.",
       ],
       points: [
         "The GM describes the situation.",
@@ -70,12 +70,12 @@ export const COURSE: Course = {
 
     door: {
       kind: "teach",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       title: "Not everything needs a roll",
       xp: 5,
       body: [
         "The gate's stuck. You set your shoulder to it and shove — and it grinds open with a groan. No dice needed.",
-        "“When a task is trivial, the GM just tells you it works,” Yasuke says. “We only roll when failure is interesting. Keep that in your pocket.”",
+        "“When a task is trivial, the GM just tells you it works,” Tahar says. “We only roll when failure is interesting. Keep that in your pocket.”",
       ],
       points: ["Trivial tasks: no roll, you just succeed."],
       next: "teach-d20",
@@ -114,10 +114,10 @@ export const COURSE: Course = {
 
     "chasm-setup": {
       kind: "narration",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       lines: [
         "Inside, the floor has collapsed into a black chasm. The far ledge is a long jump away.",
-        "Yasuke wedges a broken beam across part of the gap. “There — a running start. That's a circumstance bonus to your jump. Watch how it stacks onto your roll.”",
+        "Tahar wedges a broken beam across part of the gap. “There — a running start. That's a circumstance bonus to your jump. Watch how it stacks onto your roll.”",
         "“This one we roll for. How do you want to take it?”",
       ],
       next: "chasm-approach",
@@ -142,7 +142,7 @@ export const COURSE: Course = {
         attr: "str",
         dc: 15,
         modifiers: [
-          { type: "circumstance", value: 1, source: "Yasuke's beam (running start)" },
+          { type: "circumstance", value: 1, source: "Tahar's beam (running start)" },
         ],
       },
       outcomes: {
@@ -152,28 +152,28 @@ export const COURSE: Course = {
           lines: [
             "You hit the beam at a dead sprint and FLY — clearing the gap with room to spare and landing in a clean roll.",
             "Your hand closes on something in the rubble: a small pouch of old coins.",
-            "“That's a critical success — you beat the DC by ten or more,” Yasuke calls, hopping across after you. “The world gives you a little extra when you blow the doors off.”",
+            "“That's a critical success — you beat the DC by ten or more,” Tahar calls, hopping across after you. “The world gives you a little extra when you blow the doors off.”",
           ],
         },
         success: {
           next: "after-chasm",
           lines: [
             "You jump, catch the far ledge with both hands, and haul yourself up, breathing hard.",
-            "“Clean success — you met the DC,” Yasuke says. “No drama, just done. Most of the game lives right here.”",
+            "“Clean success — you met the DC,” Tahar says. “No drama, just done. Most of the game lives right here.”",
           ],
         },
         failure: {
           next: "after-chasm",
           lines: [
-            "You leap a beat too early. Your boots scrabble at the edge — and Yasuke's hand clamps your wrist and yanks you up onto the ledge.",
-            "“Missed the DC, so: failure. Happens constantly,” Yasuke says, unbothered. “Failing isn't the end of the story — it's just the next thing that happens. Up you get.”",
+            "You leap a beat too early. Your boots scrabble at the edge — and Tahar's hand clamps your wrist and yanks you up onto the ledge.",
+            "“Missed the DC, so: failure. Happens constantly,” Tahar says, unbothered. “Failing isn't the end of the story — it's just the next thing that happens. Up you get.”",
           ],
         },
         "critical-failure": {
           next: "after-chasm",
           lines: [
             "You misjudge it badly and drop short, sliding down to a lower shelf in a clatter of loose stone and bruised pride.",
-            "Yasuke tosses you a rope, grinning. “Missed by ten or more — critical failure. The worst band, and you know what? Still fine. Climb up, we keep going.”",
+            "Tahar tosses you a rope, grinning. “Missed by ten or more — critical failure. The worst band, and you know what? Still fine. Climb up, we keep going.”",
           ],
         },
       },
@@ -181,11 +181,11 @@ export const COURSE: Course = {
 
     "after-chasm": {
       kind: "narration",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       lines: (ctx) => [
         ctx.flags.crossedBoldly
-          ? "On the far ledge, Yasuke grins. “All-or-nothing on the jump — I like the nerve.”"
-          : "On the far ledge, Yasuke nods. “Measured, ready to catch yourself. Smart crossing.”",
+          ? "On the far ledge, Tahar grins. “All-or-nothing on the jump — I like the nerve.”"
+          : "On the far ledge, Tahar nods. “Measured, ready to catch yourself. Smart crossing.”",
         "“See what just happened? Same jump, same dice — but the result had texture. That's the four degrees doing their work.”",
         "“Let's make sure it stuck.”",
       ],
@@ -194,7 +194,7 @@ export const COURSE: Course = {
 
     quiz: {
       kind: "quiz",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       xp: 10,
       prompt:
         "Quick check: you roll a 14 on the die, your modifiers bring the total to 26, and the DC was 15. What's the result?",
@@ -228,7 +228,7 @@ export const COURSE: Course = {
       title: "Unit 1 Complete",
       crown: "Degrees of Success",
       body: [
-        "Yasuke claps you on the shoulder. “That's the engine the whole game runs on. Roll, add, compare to the DC, read the degree. Everything else is detail.”",
+        "Tahar claps you on the shoulder. “That's the engine the whole game runs on. Roll, add, compare to the DC, read the degree. Everything else is detail.”",
         "You can now resolve any check in Pathfinder 2e — and you know that failing is just the story's next turn, not a wall.",
       ],
       upNext:
@@ -241,11 +241,11 @@ export const COURSE: Course = {
     // ---------------------------------------------------------------------
     "u2-intro": {
       kind: "narration",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       xp: 5,
       lines: [
         "Deeper in, the passage opens into a flooded hall — and a figure rises from behind a fallen pillar: a marauder who's been looting the place, axe already in hand.",
-        "“No talking our way out of this one,” Yasuke mutters, drawing steel. “Time you learned how a fight actually works. Stay close.”",
+        "“No talking our way out of this one,” Tahar mutters, drawing steel. “Time you learned how a fight actually works. Stay close.”",
       ],
       next: "u2-teach-actions",
     },
@@ -267,11 +267,11 @@ export const COURSE: Course = {
 
     "u2-teach-map": {
       kind: "teach",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       title: "Why you don't just swing three times",
       body: [
         "Here's the trap every newcomer falls into: spending all three actions on Strikes. Each attack after your first takes a stacking Multiple Attack Penalty (MAP).",
-        "“Your second swing is at −5, your third at −10,” Yasuke says. “That third one almost never lands. The masters spend that action setting up instead — moving, raising a shield, or scaring the enemy so the NEXT hit counts.”",
+        "“Your second swing is at −5, your third at −10,” Tahar says. “That third one almost never lands. The masters spend that action setting up instead — moving, raising a shield, or scaring the enemy so the NEXT hit counts.”",
       ],
       points: [
         "1st Strike: no penalty.",
@@ -301,7 +301,7 @@ export const COURSE: Course = {
       },
       victoryLines: [
         "The marauder drops the axe and slumps against the pillar, beaten.",
-        "“See that?” Yasuke says, breathing hard. “The fights you win aren't the ones where you swing the most — they're the ones where every action earns its keep.”",
+        "“See that?” Tahar says, breathing hard. “The fights you win aren't the ones where you swing the most — they're the ones where every action earns its keep.”",
       ],
       next: "unit2-crown",
     },
@@ -326,11 +326,11 @@ export const COURSE: Course = {
     // ---------------------------------------------------------------------
     "u3-intro": {
       kind: "narration",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       xp: 5,
       lines: [
-        "You press on — and the dark erupts. Two skulkers drop from the rafters, blades out, one lunging for you and one for Yasuke.",
-        "“Two of them, two of us,” Yasuke says, settling into a stance. “This is a real fight now. Watch the turn order, keep your shield ready, and trust me to set them up for you.”",
+        "You press on — and the dark erupts. Two skulkers drop from the rafters, blades out, one lunging for you and one for Tahar.",
+        "“Two of them, two of us,” Tahar says, settling into a stance. “This is a real fight now. Watch the turn order, keep your shield ready, and trust me to set them up for you.”",
       ],
       next: "u3-teach-initiative",
     },
@@ -352,11 +352,11 @@ export const COURSE: Course = {
 
     "u3-teach-reaction": {
       kind: "teach",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       title: "Your reaction: Shield Block",
       body: [
         "You get one reaction per round, and it can fire on someone else's turn — when a specific trigger happens.",
-        "“You learned to Raise a Shield last fight,” Yasuke says. “Here's the payoff: while it's up and a blow lands, you can spend your reaction to Shield Block and soak some of the damage. One per round — so time it.”",
+        "“You learned to Raise a Shield last fight,” Tahar says. “Here's the payoff: while it's up and a blow lands, you can spend your reaction to Shield Block and soak some of the damage. One per round — so time it.”",
       ],
       points: [
         "Raise a Shield (an action) → shield is up.",
@@ -369,9 +369,9 @@ export const COURSE: Course = {
     "u3-encounter": {
       kind: "encounter",
       xp: 10,
-      prompt: "Two-on-two: hold the line with Yasuke",
+      prompt: "Two-on-two: hold the line with Tahar",
       intro: [
-        "Roll initiative and watch the order at the top. On your turn, click a foe to target it. Raise your shield so you can Shield Block when struck — and let Yasuke trip a skulker to leave it off-guard for your strike.",
+        "Roll initiative and watch the order at the top. On your turn, click a foe to target it. Raise your shield so you can Shield Block when struck — and let Tahar trip a skulker to leave it off-guard for your strike.",
       ],
       foes: [
         {
@@ -403,7 +403,7 @@ export const COURSE: Course = {
       ],
       victoryLines: [
         "The second skulker folds, and the hall goes quiet but for dripping water.",
-        "“That,” Yasuke says, sheathing his blade, “is a team fight. You read the order, you blocked when it counted, and you finished what I set up. You're ready for the real thing.”",
+        "“That,” Tahar says, sheathing his blade, “is a team fight. You read the order, you blocked when it counted, and you finished what I set up. You're ready for the real thing.”",
       ],
       next: "unit3-crown",
     },
@@ -428,11 +428,11 @@ export const COURSE: Course = {
     // ---------------------------------------------------------------------
     "u4-intro": {
       kind: "narration",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       xp: 5,
       lines: [
         "The passage ends at a vaulted chamber. A construct of fused stone and old armor grinds to life and levels a greatsword at you.",
-        "Yasuke whistles low. “That plating is thick — swing at it head-on and you'll mostly bounce off. We win this by stacking the deck: knock it Off-Guard, rattle it, make it easier to hit. Conditions, lass. This fight is a conditions lesson with a sword.”",
+        "Tahar whistles low. “That plating is thick — swing at it head-on and you'll mostly bounce off. We win this by stacking the deck: knock it Off-Guard, rattle it, make it easier to hit. Conditions, lass. This fight is a conditions lesson with a sword.”",
       ],
       next: "u4-teach-conditions",
     },
@@ -459,7 +459,7 @@ export const COURSE: Course = {
       prompt: "Boss: bring down the Stone Sentinel",
       victoryTitle: "The Sentinel falls",
       intro: [
-        "Its AC is brutal — head-on swings will mostly miss. Let Yasuke Trip it (Off-Guard, −2 AC) and spend an action to Demoralize (Frightened, −more). Watch its effective AC drop, then strike while it's vulnerable.",
+        "Its AC is brutal — head-on swings will mostly miss. Let Tahar Trip it (Off-Guard, −2 AC) and spend an action to Demoralize (Frightened, −more). Watch its effective AC drop, then strike while it's vulnerable.",
       ],
       foes: [
         {
@@ -478,17 +478,17 @@ export const COURSE: Course = {
       ],
       victoryLines: [
         "With a final crack the construct topples, its animating light winking out.",
-        "“See that?” Yasuke says. “We never out-muscled it. We made it easy to hit and THEN hit it. That's most hard fights in this game — find the lever, pull it.”",
+        "“See that?” Tahar says. “We never out-muscled it. We made it easy to hit and THEN hit it. That's most hard fights in this game — find the lever, pull it.”",
       ],
       next: "u4-downed",
     },
 
     "u4-downed": {
       kind: "narration",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       lines: [
         "As the Sentinel falls, a last reflex swings its blade — and catches you across the ribs. The room tilts. You hit the floor, the world going grey at the edges.",
-        "“Stay with me!” Yasuke is already moving. “You're Dying — but that's not the end. There's a way back. You have to fight for it. Roll.”",
+        "“Stay with me!” Tahar is already moving. “You're Dying — but that's not the end. There's a way back. You have to fight for it. Roll.”",
       ],
       next: "u4-teach-dying",
     },
@@ -515,11 +515,11 @@ export const COURSE: Course = {
       prompt: "Fight your way back: roll recovery checks",
       startingDying: 1,
       intro: [
-        "Yasuke is holding the room. It's on you to claw back to consciousness. Each roll is a flat d20 vs DC 10 + your Dying value — watch the meter.",
+        "Tahar is holding the room. It's on you to claw back to consciousness. Each roll is a flat d20 vs DC 10 + your Dying value — watch the meter.",
       ],
       stabilizedLines: [
         "Your vision snaps back. You're up — battered, Wounded, but breathing.",
-        "“There you are,” Yasuke exhales. “Now you understand the scariest part of the game from the inside. You'll never misread the dying rules at a table again.”",
+        "“There you are,” Tahar exhales. “Now you understand the scariest part of the game from the inside. You'll never misread the dying rules at a table again.”",
       ],
       next: "unit4-crown",
     },
@@ -544,10 +544,10 @@ export const COURSE: Course = {
     // ---------------------------------------------------------------------
     "u5-intro": {
       kind: "narration",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       xp: 5,
       lines: [
-        "Out in the daylight again, Yasuke sits you down on a fallen column. “You've borrowed my Wren long enough. Now you know how the game actually plays — so let's build YOUR hero. The one you'll bring to a real table.”",
+        "Out in the daylight again, Tahar sits you down on a fallen column. “You've borrowed my Wren long enough. Now you know how the game actually plays — so let's build YOUR hero. The one you'll bring to a real table.”",
         "“We do it one choice at a time. No memorizing. I'll tell you what each pick does, and you'll watch the sheet fill itself in.”",
       ],
       next: "u5-teach-build",
@@ -597,19 +597,19 @@ export const COURSE: Course = {
     // ---------------------------------------------------------------------
     "u6-intro": {
       kind: "narration",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       xp: 5,
       lines: [
-        "Evening. You and Yasuke make camp at the mouth of the ruin you've cleared together. He looks at you differently now.",
-        "“Think about what you just did. You read checks, ran your turns, fought as a team, clawed back from dying, and built a hero of your own. That WAS an adventure — a whole dungeon, start to finish.”",
-        "“One last test, then I'm sending you to a real table. The way home is blocked by a rockfall and a nervous young drake guarding its nest. How do you want to handle it?”",
+        "Evening. You and Tahar make camp at the mouth of the ruin you've cleared together. He studies you over the fire, brass tools glinting, like he's reading a map only he can see.",
+        "“Think about what you did. You read checks, ran your turns, fought as a team, clawed back from dying, built a hero of your own. That WAS an adventure — a whole dungeon, start to finish.”",
+        "“One last test before I send you to a real table. The way home is blocked by a rockfall and a nervous young drake guarding its nest. How you handle it tells me a lot — I've watched this exact moment play out across a dozen worlds. So: what's your approach?”",
       ],
       next: "u6-capstone",
     },
 
     "u6-capstone": {
       kind: "choice",
-      speaker: "Yasuke",
+      speaker: "Tahar",
       prompt: "The drake blocks the path. What's your approach?",
       options: [
         { label: "Fight through it", hint: "Combat — with YOUR hero", next: "u6-fight", set: ({ set }) => set({ capstoneApproach: "fight" }) },
@@ -633,7 +633,7 @@ export const COURSE: Course = {
       victoryTitle: "The drake yields",
       useBuiltHero: true,
       intro: [
-        "This is the real thing — these are YOUR character's numbers now, not Wren's. Yasuke fights at your side. Everything you've learned, all at once: initiative, your three actions, conditions, your reaction.",
+        "This is the real thing — these are YOUR character's numbers now, not Wren's. Tahar fights at your side. Everything you've learned, all at once: initiative, your three actions, conditions, your reaction.",
       ],
       foes: [
         {
@@ -652,31 +652,112 @@ export const COURSE: Course = {
       ],
       victoryLines: [
         "The drake screeches, beats its wings, and breaks off — the path is yours.",
-        "“That was all you,” Yasuke says, grinning. “Your hero, your tactics, a real win. You're ready.”",
+        "“That was all you,” Tahar says, grinning. “Your hero, your tactics, a real win. You're ready.”",
       ],
-      next: "u6-handoff",
+      next: "u6-nest",
     },
     "u6-cap-sneak": {
       kind: "narration",
       lines: [
         "You wait, watch its patrol, and slip past in Avoid Notice while it's turned away — a clean exploration solution, no blood spilled.",
-        "“Smart. Not every problem is a fight — that's a lesson some players take years to learn,” Yasuke says.",
+        "“Smart. Not every problem is a fight — that's a lesson some players take years to learn,” Tahar says.",
       ],
-      next: "u6-handoff",
+      next: "u6-nest",
     },
     "u6-cap-talk": {
       kind: "narration",
       lines: [
         "You lower your weapon, speak low and steady, and toss it the dried meat from your pack. The drake huffs, settles, and lets you pass.",
-        "“Now THAT'S roleplay. Diplomacy is a real tool, and you reached for it,” Yasuke grins.",
+        "“Now THAT'S roleplay. Diplomacy is a real tool, and you reached for it,” Tahar grins.",
       ],
-      next: "u6-handoff",
+      next: "u6-nest",
     },
     "u6-cap-clever": {
       kind: "narration",
       lines: [
         "Your eye catches a moss-choked winch bolted to the wall — the old builders' work. You crank it, and a counterweight shifts the rubble aside, opening a clear path the drake won't follow.",
-        "Yasuke laughs, delighted. “That curiosity of yours just turned a fight into a non-event. The best adventurers always find the third option.”",
+        "Tahar laughs, delighted. “That curiosity of yours just turned a fight into a non-event. The best adventurers always find the third option.”",
+      ],
+      next: "u6-nest",
+    },
+
+    "u6-nest": {
+      kind: "narration",
+      speaker: "Tahar",
+      lines: [
+        "With the drake handled, you find what it was really guarding: a clutch of faintly glowing eggs — and nestled among them, a shard of something that pulses with raw, planar light. Power, humming, just sitting there.",
+        "Tahar crouches beside it, suddenly serious. “Now THIS I've seen before. Three worlds, maybe four. A shard like this, a moment exactly like this one.” He glances up at you. “What a person does next tells me everything. Take your time.”",
+      ],
+      next: "u6-moral",
+    },
+
+    "u6-moral": {
+      kind: "choice",
+      speaker: "Tahar",
+      prompt: "The nest, the eggs, and a shard of planar power. What do you do?",
+      options: [
+        {
+          label: "Leave it all untouched",
+          hint: "It isn't yours to take",
+          next: "u6-out-merciful",
+          set: ({ set }) => set({ morality: "merciful" }),
+        },
+        {
+          label: "Take the shard, spare the eggs",
+          hint: "Power is a tool — use it well",
+          next: "u6-out-pragmatic",
+          set: ({ set }) => set({ morality: "pragmatic", tookShard: true }),
+        },
+        {
+          label: "Burn the nest. Leave nothing behind to hunt you",
+          hint: "Ruthless. Final.",
+          next: "u6-out-dark",
+          set: ({ set }) => set({ morality: "ruthless", darkPath: true }),
+        },
+        {
+          label: "Bind the shard into your own flesh — seize the power",
+          hint: "Nobody would dare… would they?",
+          next: "u6-out-corrupted",
+          requires: (ctx) => ctx.flags.temperament === "bold",
+          lockedHint: "Only the truly bold would even consider it.",
+          set: ({ set }) => set({ morality: "corrupted", darkPath: true, corrupted: true }),
+        },
+      ],
+    },
+
+    "u6-out-merciful": {
+      kind: "narration",
+      speaker: "Tahar",
+      lines: [
+        "You step back and leave the nest as you found it. The drake's wingbeats fade as it returns to its eggs, and the shard's glow dims, content to be forgotten.",
+        "Tahar lets out a slow breath. “Mercy. The rarest magic I know — and I've seen a LOT of magic. You'll do just fine out there.”",
+      ],
+      next: "u6-handoff",
+    },
+    "u6-out-pragmatic": {
+      kind: "narration",
+      speaker: "Tahar",
+      lines: [
+        "You pocket the shard and leave the eggs to hatch. It thrums against your ribs, warm and patient.",
+        "“A tool, then,” Tahar says, watching you carefully. “Good. Just remember which of you is holding the other — I've seen that go both ways.”",
+      ],
+      next: "u6-handoff",
+    },
+    "u6-out-dark": {
+      kind: "narration",
+      speaker: "Tahar",
+      lines: [
+        "You set the nest alight. The eggs' glow gutters and goes dark, and the shard cracks in the heat with a sound like a held breath finally let go.",
+        "Tahar says nothing for a long moment. When he speaks, the warmth has stepped back. “…I've watched whole worlds begin right here, at a small fire like this one. I'll still take you to a table. But I'll be watching how this sits on you.”",
+      ],
+      next: "u6-handoff",
+    },
+    "u6-out-corrupted": {
+      kind: "narration",
+      speaker: "Tahar",
+      lines: [
+        "You press the shard to your skin. It SINKS in — light flooding your veins, the world sharpening to a razor's edge, power answering before you even ask. It feels extraordinary. It feels like yours.",
+        "Tahar is on his feet, one hand drifting to his tools, his easy smile gone. “Oh, friend. I've buried people who made that exact choice — and crowned a couple who survived it. I genuinely don't know which you'll be. Neither do you. That's the terrifying part.”",
       ],
       next: "u6-handoff",
     },
@@ -686,7 +767,7 @@ export const COURSE: Course = {
       xp: 20,
       prompt: "You're table-ready",
       intro: [
-        "Yasuke presses a folded map into your hands. “My part's done. Here's everything you need to find a real table — and your character, ready to bring along.”",
+        "Tahar presses a folded map into your hands. “My part's done. Here's everything you need to find a real table — and your character, ready to bring along.”",
         "Tick off what feels solid (it's just for you), grab your sheet, and note where to find your first game.",
       ],
       checklist: [
@@ -713,16 +794,21 @@ export const COURSE: Course = {
       xp: 50,
       title: "You're Ready to Play",
       crown: "Pathfinder 2e — Ready for a Table",
+      enter: ({ set, flags }) => {
+        // The dark path leaves a mark the world remembers.
+        if (flags.darkPath) set({ endingTone: "dark" });
+        else set({ endingTone: "bright" });
+      },
       body: (ctx) => {
         const t = ctx.flags.temperament;
         const temperamentLine =
           t === "bold"
-            ? "“You charged in bold from the very first step,” Yasuke says, “and you never lost that nerve.”"
+            ? "“You charged in bold from the very first step,” Tahar says, “and you never lost that nerve.”"
             : t === "careful"
-              ? "“Careful and clever, just like you said at the gate,” Yasuke says. “It kept you breathing the whole way.”"
+              ? "“Careful and clever, just like you said at the gate,” Tahar says. “It kept you breathing the whole way.”"
               : t === "curious"
-                ? "“That curiosity you walked in with? It found doors the rest would've missed,” Yasuke says."
-                : "“You found your own way through every step,” Yasuke says.";
+                ? "“That curiosity you walked in with? It found doors the rest would've missed,” Tahar says."
+                : "“You found your own way through every step,” Tahar says.";
         const a = ctx.flags.capstoneApproach;
         const approachLine =
           a === "fight"
@@ -735,11 +821,34 @@ export const COURSE: Course = {
                   ? "You turned the drake into a non-problem with a clever third option — exactly how the best players think."
                   : "You found your way past the drake.";
         const m = Number(ctx.flags.mastery) || 0;
+        const masteryLine = `Five crowns of mastery${m >= 5 ? "" : ` (${m} earned)`}, and a hero of your own making.`;
+
+        // ---- The dark ending ----
+        if (ctx.flags.corrupted) {
+          return [
+            `Tahar offers a hand, but his eyes keep flicking to the planar light still moving under your skin. “You came in never having rolled a d20, ${ctx.hero}. You're leaving with the rules, a character, the nerve to use them — and something I can't quite measure.”`,
+            temperamentLine,
+            approachLine,
+            `${masteryLine} “Go find your table. They're lucky to have you — and watch yourself. Power like that wants to spend you. I'll be a world or two away if it does.”`,
+            "He's gone before morning. That's the end of the course — you're ready. Whatever you've become, go play.",
+          ];
+        }
+        if (ctx.flags.darkPath) {
+          return [
+            `Tahar shoulders his pack and offers a hand — a beat slower than before. “You came in never having rolled a d20, ${ctx.hero}. You're leaving with the rules, a character, and the nerve to use them. All of it real.”`,
+            temperamentLine,
+            approachLine,
+            `${masteryLine} “Go find your table. They'll see who you choose to be when it's easier not to — they always do. So choose well out there. I hope you do.”`,
+            "That's the end of the course. You did it. Now go play — and remember the fire.",
+          ];
+        }
+
+        // ---- The bright ending ----
         return [
-          `Yasuke shoulders his pack and offers a hand. “You came in never having rolled a d20, ${ctx.hero}. You're leaving with the rules, a character, and the nerve to use them.”`,
+          `Tahar shoulders his pack and offers a hand. “You came in never having rolled a d20, ${ctx.hero}. You're leaving with the rules, a character, and the nerve to use them.”`,
           temperamentLine,
           approachLine,
-          `Five crowns of mastery${m >= 5 ? "" : ` (${m} earned)`}, and a hero of your own making. “Go find your table. They're lucky to have you — and hey, make some mistakes. That's where the best stories come from.”`,
+          `${masteryLine} “Go find your table. They're lucky to have you — and hey, make some mistakes. That's where the best stories come from.”`,
           "That's the end of the course. You did it. Now go play.",
         ];
       },
