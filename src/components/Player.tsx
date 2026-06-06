@@ -18,6 +18,7 @@ import { SettingsPanel } from "./SettingsPanel";
 import { chapterFor } from "@/lib/chapters";
 import { sfx } from "@/lib/sound";
 import { combatHeroFromBuild } from "@/game/heroFromBuild";
+import { downloadSeal } from "@/game/seal";
 import type { BuildState } from "@/game/builder";
 
 const TOTAL_STEPS = 40; // length of the main story spine, for the progress bar
@@ -424,6 +425,16 @@ function NodeView({
             )}
             <h2 style={{ textAlign: "center" }}>{node.title}</h2>
             <Typed paragraphs={resolve(node.body)} />
+            {node.portal && (
+              <div className="seal-block">
+                <button className="btn" onClick={() => downloadSeal(character, ctx.flags)}>
+                  🔒 Seal your origin <span className="hint">a sealed record of your backstory — hand it to your Game Master</span>
+                </button>
+                <p className="muted" style={{ marginTop: 8 }}>
+                  Your GM can decode it (and learn what you did) at <b>/gm</b> — and give you a fitting curse &amp; blessing.
+                </p>
+              </div>
+            )}
             {node.upNext && (
               <div className="upnext">
                 <div className="k">Up next</div>

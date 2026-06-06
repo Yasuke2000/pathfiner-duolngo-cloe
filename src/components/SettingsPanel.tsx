@@ -101,6 +101,9 @@ export function SettingsPanel({ onRestart }: { onRestart: () => void }) {
             <div style={{ marginTop: 10 }}>
               <SupportButton />
             </div>
+            <p style={{ marginTop: 10 }}>
+              <a className="text-btn" href="/gm">GM: decode a player&apos;s sealed origin →</a>
+            </p>
 
             <div className="actions">
               <button className="btn primary" onClick={() => setOpen(false)}>

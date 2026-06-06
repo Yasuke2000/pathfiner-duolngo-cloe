@@ -111,6 +111,46 @@ body::after {
   border-color: hsl(265 70% 60%);
   box-shadow: 0 0 60px -10px hsl(265 80% 55% / 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
+.seal-block {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.seal-block .btn {
+  display: inline-block;
+  text-align: center;
+}
+
+/* GM decoder boon cards */
+.boon {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-top: 10px;
+  background: var(--bg-2);
+}
+.boon .boon-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.boon.blessing {
+  border-color: var(--crit-success);
+}
+.boon.blessing .boon-name {
+  color: var(--crit-success);
+}
+.boon.curse {
+  border-color: var(--crit-failure);
+}
+.boon.curse .boon-name {
+  color: var(--crit-failure);
+}
+.boon p {
+  margin: 0;
+  font-size: 14px;
+}
 
 /* ---------- Title screen ---------- */
 .title-screen {
