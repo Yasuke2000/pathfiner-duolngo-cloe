@@ -1,31 +1,27 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { SPEED_MS, useReduceMotion, useSettings } from "@/lib/settings";
 
 /**
- * A lightweight typewriter for story text. Types the paragraphs in sequence,
- * shows a blinking caret while running, and instantly completes when clicked.
- * Respects prefers-reduced-motion (renders everything at once).
+ * Typewriter for story text, informed by the research:
+ * - honors a user speed setting (incl. "instant" = no animation) and reduced motion;
+ * - the FIRST click instantly completes the current block;
+ * - reveals by per-character opacity so the layout never reflows as it types;
+ * - exposes the full text to screen readers (the animated layer is aria-hidden).
  */
-export function Typed({
-  paragraphs,
-  className = "prose",
-  speed = 12,
-}: {
-  paragraphs: string[];
-  className?: string;
-  speed?: number;
-}) {
+export function Typed({ paragraphs, className = "prose" }: { paragraphs: string[]; className?: string }) {
+  const settings = useSettings();
+  const reduce = useReduceMotion();
   const text = paragraphs.join("\n\n");
-  const [count, setCount] = useState(0);
-  const [done, setDone] = useState(false);
+  const speed = reduce ? 0 : SPEED_MS[settings.textSpeed];
+
+  const [count, setCount] = useState(speed === 0 ? text.length : 0);
+  const [done, setDone] = useState(speed === 0);
   const at = useRef(0);
 
   useEffect(() => {
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    if (reduce || text.length === 0) {
+    if (speed === 0 || text.length === 0) {
       setCount(text.length);
       setDone(true);
       return;
@@ -34,7 +30,7 @@ export function Typed({
     setCount(0);
     setDone(false);
     const id = setInterval(() => {
-      at.current += 2;
+      at.current += 1;
       if (at.current >= text.length) {
         setCount(text.length);
         setDone(true);
@@ -46,7 +42,13 @@ export function Typed({
     return () => clearInterval(id);
   }, [text, speed]);
 
-  const paras = text.slice(0, count).split("\n\n");
+  // Per-paragraph character offsets into the joined string (separators are 2 chars).
+  let offset = 0;
+  const blocks = paragraphs.map((p) => {
+    const start = offset;
+    offset += p.length + 2;
+    return { p, start };
+  });
 
   return (
     <div
@@ -58,12 +60,26 @@ export function Typed({
         }
       }}
     >
-      {paras.map((p, i) => (
-        <p key={i} className={className}>
-          {p}
-          {!done && i === paras.length - 1 && <span className="caret" aria-hidden />}
-        </p>
-      ))}
+      <div aria-hidden="true">
+        {blocks.map(({ p, start }, pi) => {
+          const lastVisible = !done && count > start && count <= start + p.length;
+          return (
+            <p className={className} key={pi}>
+              {Array.from(p).map((ch, ci) => (
+                <span key={ci} style={{ opacity: start + ci < count ? 1 : 0 }}>
+                  {ch}
+                </span>
+              ))}
+              {lastVisible && <span className="caret" />}
+            </p>
+          );
+        })}
+      </div>
+      <div className="sr-only">
+        {paragraphs.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
+      </div>
     </div>
   );
 }

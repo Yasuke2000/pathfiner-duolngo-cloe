@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Degree } from "@/engine/types";
-import { performCheck, type PerformedCheck } from "@/game/perform";
+import { checkModifier, degreeOdds, performCheck, type PerformedCheck } from "@/game/perform";
 import { PREGEN_HERO } from "@/game/hero";
 import type { CheckNode } from "@/content/types";
 import { sfx } from "@/lib/sound";
+import { useReduceMotion } from "@/lib/settings";
 import { DEGREE_ORDER, DEGREE_THEME } from "./degrees";
 
 type Phase = "ready" | "rolling" | "revealed" | "outcome";
@@ -19,10 +20,16 @@ export function CheckScene({
   node: CheckNode;
   onResolved: (degree: Degree, next: string, bonusXp?: number) => void;
 }) {
+  const reduce = useReduceMotion();
   const [phase, setPhase] = useState<Phase>("ready");
   const [face, setFace] = useState(20); // the number shown on the tumbling die
   const [result, setResult] = useState<PerformedCheck | null>(null);
   const tick = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Pre-roll odds: show the player exactly what they're rolling against.
+  const { modifierTotal } = checkModifier(PREGEN_HERO, node.spec);
+  const odds = degreeOdds(modifierTotal, node.spec.dc);
+  const pct = (n: number) => Math.round(n * 100);
 
   useEffect(() => () => clearTimer(), []);
 
@@ -34,9 +41,17 @@ export function CheckScene({
   function roll() {
     const outcome = performCheck(PREGEN_HERO, node.spec);
     setResult(outcome);
-    setPhase("rolling");
     sfx.roll();
 
+    if (reduce) {
+      // Honor reduced motion: snap straight to the result.
+      setFace(outcome.die);
+      setPhase("revealed");
+      sfx.degree(outcome.degree);
+      return;
+    }
+
+    setPhase("rolling");
     // Spin the visible face for a beat, then settle on the real die.
     tick.current = setInterval(() => setFace(Math.floor(Math.random() * 20) + 1), 70);
     setTimeout(() => {
@@ -74,11 +89,40 @@ export function CheckScene({
       )}
 
       {phase === "ready" && (
-        <div className="actions">
-          <button className="btn primary" onClick={roll}>
-            Roll the d20
-          </button>
-        </div>
+        <>
+          <div className="odds">
+            <div className="odds-head">
+              <span>
+                {node.spec.label}{" "}
+                <b>{modifierTotal >= 0 ? `+${modifierTotal}` : modifierTotal}</b> vs DC{" "}
+                <b>{node.spec.dc}</b>
+              </span>
+              <span className="muted">your chances</span>
+            </div>
+            <div className="odds-bars">
+              {DEGREE_ORDER.slice().reverse().map((d) => {
+                const t = DEGREE_THEME[d];
+                const p = pct(odds[d]);
+                return (
+                  <div className="odds-row" key={d}>
+                    <span className="odds-label" style={{ color: `var(${t.varName})` }}>
+                      {t.symbol} {t.label}
+                    </span>
+                    <span className="odds-track">
+                      <span className="odds-fill" style={{ width: `${p}%`, background: `var(${t.varName})` }} />
+                    </span>
+                    <span className="odds-pct">{p}%</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="actions">
+            <button className="btn primary" onClick={roll}>
+              Roll the d20
+            </button>
+          </div>
+        </>
       )}
 
       {result && phase !== "ready" && phase !== "rolling" && (

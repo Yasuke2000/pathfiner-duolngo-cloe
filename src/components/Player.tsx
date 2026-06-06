@@ -14,11 +14,13 @@ import { TitleScreen } from "./TitleScreen";
 import { Typed } from "./Typed";
 import { Speaker } from "./Speaker";
 import { MuteButton } from "./MuteButton";
+import { SettingsPanel } from "./SettingsPanel";
 import { chapterFor } from "@/lib/chapters";
 import { sfx } from "@/lib/sound";
 import type { BuildState } from "@/game/builder";
 
 const TOTAL_STEPS = 40; // length of the main story spine, for the progress bar
+const SAVE_KEY = "course-save-v1";
 
 export function Player() {
   const [started, setStarted] = useState(false);
@@ -55,12 +57,60 @@ export function Player() {
     setStarted(true);
   }
 
+  function restart() {
+    try {
+      localStorage.removeItem(SAVE_KEY);
+    } catch {
+      /* ignore */
+    }
+    awarded.current = new Set();
+    setCharacter(null);
+    setXp(0);
+    setStep(1);
+    setNodeId(COURSE.start);
+    setStarted(false);
+  }
+
   // Shift the whole scene's ambient color with the current chapter.
   useEffect(() => {
     if (typeof document !== "undefined") {
       document.documentElement.style.setProperty("--accent", chapter.accent);
     }
   }, [chapter.accent]);
+
+  // Resume a saved game on mount (after hydration, to avoid a mismatch).
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return;
+      const sv = JSON.parse(raw);
+      if (sv && typeof sv.nodeId === "string" && COURSE.nodes[sv.nodeId]) {
+        setNodeId(sv.nodeId);
+        setXp(sv.xp ?? 0);
+        setStep(sv.step ?? 1);
+        setCharacter(sv.character ?? null);
+        setStarted(true);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  // Autosave progress whenever it changes.
+  useEffect(() => {
+    if (!started) return;
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, nodeId, xp, step, character }));
+    } catch {
+      /* ignore */
+    }
+  }, [started, nodeId, xp, step, character]);
+
+  // Move focus to the new scene so screen-reader/keyboard users hear the outcome.
+  const stageRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (started) stageRef.current?.focus();
+  }, [nodeId, started]);
 
   if (!started) return <TitleScreen onStart={begin} />;
 
@@ -81,9 +131,12 @@ export function Player() {
           <b>{xp}</b>
         </div>
         <MuteButton />
+        <SettingsPanel onRestart={restart} />
       </div>
 
-      <NodeView node={node} onGo={go} character={character} onBuilt={setCharacter} />
+      <div className="stage" ref={stageRef} tabIndex={-1}>
+        <NodeView node={node} onGo={go} character={character} onBuilt={setCharacter} />
+      </div>
     </>
   );
 }
