@@ -3,34 +3,59 @@
 import { useState } from "react";
 import { ATTRS, ATTR_NAME } from "@/engine/character";
 import type { Attr } from "@/engine/types";
-import { ANCESTRIES, BACKGROUNDS, CLASSES, SKILLS } from "@/content/srd";
 import {
+  ANCESTRIES,
+  ANCESTRY_FEATS,
+  BACKGROUNDS,
+  CLASS_GLYPH,
+  CLASSES,
+  HERITAGES,
+  LANGUAGE_POOL,
+  SKILLS,
+} from "@/content/srd";
+import {
+  ancestryFeats,
   buildAttrs,
   derived,
   emptyBuild,
+  grantedLanguages,
   isComplete,
+  languageBudget,
+  quickBuild,
   resolve,
   skillBudget,
+  spellcasting,
+  startingGear,
   trainedSkills,
   type BuildState,
 } from "@/game/builder";
 import { downloadAppJson, downloadPathbuilderJson, downloadPdf } from "@/game/export";
 import type { BuilderNode } from "@/content/types";
 
-type Step = "name" | "ancestry" | "background" | "class" | "boosts" | "skills" | "feat" | "review";
-const STEPS: Step[] = ["name", "ancestry", "background", "class", "boosts", "skills", "feat", "review"];
+type Step =
+  | "name" | "ancestry" | "heritage" | "background" | "class"
+  | "boosts" | "skills" | "languages" | "spells" | "feats" | "review";
+
+const STEPS: Step[] = [
+  "name", "ancestry", "heritage", "background", "class",
+  "boosts", "skills", "languages", "spells", "feats", "review",
+];
 const STEP_TITLE: Record<Step, string> = {
   name: "Name your hero",
   ancestry: "Choose an ancestry",
+  heritage: "Choose a heritage",
   background: "Choose a background",
   class: "Choose a class",
   boosts: "Assign your four free boosts",
   skills: "Train your skills",
-  feat: "Pick a signature feat",
+  languages: "Languages",
+  spells: "Learn your spells",
+  feats: "Pick your feats",
   review: "Your character",
 };
 
 const mod = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export function BuilderScene({
   node,
@@ -39,7 +64,6 @@ export function BuilderScene({
 }: {
   node: BuilderNode;
   onResolved: (next: string, bonusXp?: number) => void;
-  /** Report the finished build up so later units (the hand-off) can re-export it. */
   onBuilt?: (build: BuildState) => void;
 }) {
   const [build, setBuild] = useState<BuildState>(emptyBuild());
@@ -49,18 +73,14 @@ export function BuilderScene({
 
   const { ancestry, background, cls } = resolve(build);
   const budget = skillBudget(build);
+  const langBudget = languageBudget(build);
+  const sc = spellcasting(build);
 
-  function stepValid(s: Step): boolean {
-    switch (s) {
-      case "name": return build.name.trim().length > 0;
-      case "ancestry": return !!build.ancestryId;
-      case "background": return !!build.backgroundId;
-      case "class": return !!build.classId;
-      case "boosts": return build.freeBoosts.length === 4;
-      case "skills": return build.skills.length === budget;
-      case "feat": return !!build.featId;
-      case "review": return isComplete(build);
-    }
+  function toggleIn(key: "skills" | "languages" | "cantrips" | "spells", value: string, max: number, lock?: (v: string) => boolean) {
+    if (lock?.(value)) return;
+    const cur = build[key];
+    if (cur.includes(value)) set({ [key]: cur.filter((x) => x !== value) } as Partial<BuildState>);
+    else if (cur.length < max) set({ [key]: [...cur, value] } as Partial<BuildState>);
   }
 
   function toggleBoost(a: Attr) {
@@ -69,20 +89,52 @@ export function BuilderScene({
     else if (build.freeBoosts.length < 4) set({ freeBoosts: [...build.freeBoosts, a] });
   }
 
-  function toggleSkill(key: string) {
-    if (background?.skill === key) return; // background skill is locked on
-    const has = build.skills.includes(key);
-    if (has) set({ skills: build.skills.filter((x) => x !== key) });
-    else if (build.skills.length < budget) set({ skills: [...build.skills, key] });
+  function stepValid(s: Step): boolean {
+    switch (s) {
+      case "name": return build.name.trim().length > 0;
+      case "ancestry": return !!build.ancestryId;
+      case "heritage": return !!build.heritageId;
+      case "background": return !!build.backgroundId;
+      case "class": return !!build.classId;
+      case "boosts": return build.freeBoosts.length === 4;
+      case "skills": return build.skills.length === budget;
+      case "languages": return build.languages.length === langBudget;
+      case "spells": return !sc || (build.cantrips.length === sc.cantripsKnown && build.spells.length === sc.spellsKnown);
+      case "feats": return !!build.featId && !!build.ancestryFeatId;
+      case "review": return isComplete(build);
+    }
   }
 
+  function missingHint(s: Step): string | null {
+    if (stepValid(s)) return null;
+    switch (s) {
+      case "name": return "Enter a name to continue.";
+      case "boosts": return `Pick ${4 - build.freeBoosts.length} more attribute${4 - build.freeBoosts.length === 1 ? "" : "s"}.`;
+      case "skills": return `Choose ${budget - build.skills.length} more skill${budget - build.skills.length === 1 ? "" : "s"}.`;
+      case "languages": return `Choose ${langBudget - build.languages.length} more language${langBudget - build.languages.length === 1 ? "" : "s"}.`;
+      case "spells":
+        if (!sc) return null;
+        return `Pick ${sc.cantripsKnown - build.cantrips.length} cantrip(s) and ${sc.spellsKnown - build.spells.length} spell(s).`;
+      case "feats": return !build.featId ? "Choose a class feat." : "Choose an ancestry feat.";
+      default: return "Make a selection to continue.";
+    }
+  }
+
+  function doQuickBuild() {
+    setBuild(quickBuild(build.name));
+    setI(STEPS.indexOf("review"));
+  }
 
   return (
     <div className="card">
-      <span className="speaker">Character Creation · Step {i + 1} of {STEPS.length}</span>
+      <div className="builder-head">
+        <span className="speaker">Character Creation · Step {i + 1} of {STEPS.length}</span>
+        <button className="mute-btn quickbuild" title="Build a random valid hero" onClick={doQuickBuild}>
+          ✨ Surprise me
+        </button>
+      </div>
       <h2>{STEP_TITLE[step]}</h2>
 
-      {/* ---- Step body ---- */}
       {step === "name" && (
         <>
           {node.intro.map((l, k) => <p key={k}>{l}</p>)}
@@ -104,7 +156,15 @@ export function BuilderScene({
             desc: `${a.blurb} · ${a.hp} HP, ${a.speed} ft · ${a.boosts.map((x) => ATTR_NAME[x]).join(", ")}${a.flaw ? `, −${ATTR_NAME[a.flaw]}` : ""}`,
           }))}
           selected={build.ancestryId}
-          onPick={(id) => set({ ancestryId: id })}
+          onPick={(id) => set({ ancestryId: id, heritageId: undefined, ancestryFeatId: undefined, languages: [] })}
+        />
+      )}
+
+      {step === "heritage" && ancestry && (
+        <OptionList
+          options={(HERITAGES[ancestry.id] ?? []).map((h) => ({ id: h.id, title: h.name, desc: h.blurb }))}
+          selected={build.heritageId}
+          onPick={(id) => set({ heritageId: id })}
         />
       )}
 
@@ -124,17 +184,17 @@ export function BuilderScene({
         <OptionList
           options={CLASSES.map((c) => ({
             id: c.id,
-            title: c.name,
+            title: `${CLASS_GLYPH[c.id] ?? ""} ${c.name}`,
             desc: `${c.blurb} · key ${ATTR_NAME[c.keyAttr]} · ${c.hp} HP/level`,
           }))}
           selected={build.classId}
-          onPick={(id) => set({ classId: id, featId: undefined, skills: [] })}
+          onPick={(id) => set({ classId: id, featId: undefined, skills: [], cantrips: [], spells: [] })}
         />
       )}
 
       {step === "boosts" && (
         <>
-          <p>Each boost raises an attribute by +1. They all go to <b>different</b> attributes — so pick four. (You can stack more onto a stat across earlier steps, which is how a key attribute reaches +4.)</p>
+          <p>Each boost raises an attribute by +1, to four <b>different</b> attributes. A stat can collect boosts across steps to reach its +4 cap.</p>
           <div className="boost-grid">
             {ATTRS.map((a) => {
               const on = build.freeBoosts.includes(a);
@@ -153,14 +213,14 @@ export function BuilderScene({
 
       {step === "skills" && (
         <>
-          <p>Pick <b>{budget}</b> skills to be Trained in (class choices + your Intelligence). {background && <>Your background already trains <b>{cap(background.skill)}</b>.</>}</p>
+          <p>Pick <b>{budget}</b> skills to be Trained in (class choices + your Intelligence).{background && <> Your background already trains <b>{cap(background.skill)}</b>.</>}</p>
           <div className="skill-grid">
             {SKILLS.map((s) => {
               const fromBg = background?.skill === s.key;
               const on = fromBg || build.skills.includes(s.key);
               const full = !on && build.skills.length >= budget;
               return (
-                <button key={s.key} className={`btn ${on ? "correct" : ""}`} disabled={fromBg || full} onClick={() => toggleSkill(s.key)}>
+                <button key={s.key} className={`btn ${on ? "correct" : ""}`} disabled={fromBg || full} onClick={() => toggleIn("skills", s.key, budget)}>
                   {s.name} <span className="hint">{ATTR_NAME[s.attr].slice(0, 3)}{fromBg ? " · background" : ""}</span>
                 </button>
               );
@@ -170,20 +230,85 @@ export function BuilderScene({
         </>
       )}
 
-      {step === "feat" && cls && (
-        <OptionList
-          options={cls.feats.map((f) => ({ id: f.id, title: f.name, desc: f.desc }))}
-          selected={build.featId}
-          onPick={(id) => set({ featId: id })}
-        />
+      {step === "languages" && (
+        <>
+          <p>You speak {grantedLanguages(build).map((l) => <b key={l}>{l} </b>)} from your ancestry.</p>
+          {langBudget === 0 ? (
+            <p className="muted">Your Intelligence grants no bonus languages — onward.</p>
+          ) : (
+            <>
+              <p>Your Intelligence lets you learn <b>{langBudget}</b> more:</p>
+              <div className="skill-grid">
+                {LANGUAGE_POOL.filter((l) => !grantedLanguages(build).includes(l)).map((l) => {
+                  const on = build.languages.includes(l);
+                  const full = !on && build.languages.length >= langBudget;
+                  return (
+                    <button key={l} className={`btn ${on ? "correct" : ""}`} disabled={full} onClick={() => toggleIn("languages", l, langBudget)}>
+                      {l}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="muted">{build.languages.length} / {langBudget} chosen</p>
+            </>
+          )}
+        </>
+      )}
+
+      {step === "spells" && (
+        sc ? (
+          <>
+            <p>As {cls?.name === "Cleric" ? "a divine" : "an arcane"} caster, choose your starting magic.</p>
+            <h3 className="section-h">Cantrips ({build.cantrips.length}/{sc.cantripsKnown}) — at-will</h3>
+            <div className="actions">
+              {sc.cantrips.map((s) => {
+                const on = build.cantrips.includes(s.id);
+                const full = !on && build.cantrips.length >= sc.cantripsKnown;
+                return (
+                  <button key={s.id} className={`btn ${on ? "correct" : ""}`} disabled={full} onClick={() => toggleIn("cantrips", s.id, sc.cantripsKnown)}>
+                    {s.name}<span className="hint">{s.desc}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <h3 className="section-h">1st-rank spells ({build.spells.length}/{sc.spellsKnown})</h3>
+            <div className="actions">
+              {sc.spells.map((s) => {
+                const on = build.spells.includes(s.id);
+                const full = !on && build.spells.length >= sc.spellsKnown;
+                return (
+                  <button key={s.id} className={`btn ${on ? "correct" : ""}`} disabled={full} onClick={() => toggleIn("spells", s.id, sc.spellsKnown)}>
+                    {s.name}<span className="hint">{s.desc}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <p className="muted">Your class doesn&apos;t cast spells — your power is steel and skill. Onward.</p>
+        )
+      )}
+
+      {step === "feats" && cls && (
+        <>
+          <h3 className="section-h">Class feat</h3>
+          <OptionList
+            options={cls.feats.map((f) => ({ id: f.id, title: f.name, desc: f.desc }))}
+            selected={build.featId}
+            onPick={(id) => set({ featId: id })}
+          />
+          <h3 className="section-h">Ancestry feat</h3>
+          <OptionList
+            options={ancestryFeats(build).map((f) => ({ id: f.id, title: f.name, desc: f.desc }))}
+            selected={build.ancestryFeatId}
+            onPick={(id) => set({ ancestryFeatId: id })}
+          />
+        </>
       )}
 
       {step === "review" && <Sheet build={build} full />}
-
-      {/* ---- Live sheet (except on review, which shows the full one) ---- */}
       {step !== "review" && (ancestry || cls) && <Sheet build={build} />}
 
-      {/* ---- Exports (review only) ---- */}
       {step === "review" && (
         <div className="actions combat-actions" style={{ marginTop: 18 }}>
           <button className="btn" onClick={() => downloadPdf(build)} disabled={!isComplete(build)}>
@@ -198,7 +323,8 @@ export function BuilderScene({
         </div>
       )}
 
-      {/* ---- Nav ---- */}
+      {step !== "review" && missingHint(step) && <p className="muted" style={{ marginTop: 14 }}>{missingHint(step)}</p>}
+
       <div className="actions combat-actions">
         {i > 0 && (
           <button className="btn" onClick={() => setI(i - 1)}>
@@ -250,16 +376,23 @@ function OptionList({
 function Sheet({ build, full = false }: { build: BuildState; full?: boolean }) {
   const attrs = buildAttrs(build);
   const stats = derived(build);
-  const { ancestry, background, cls } = resolve(build);
+  const { ancestry, heritage, background, cls } = resolve(build);
+  const sc = spellcasting(build);
+  const glyph = (cls && CLASS_GLYPH[cls.id]) || "🧝";
 
   return (
     <div className="sheet">
       <div className="sheet-head">
-        <strong>{build.name.trim() || "New Hero"}</strong>
-        <span className="muted">
-          {[ancestry?.name, cls?.name].filter(Boolean).join(" ") || "Level 1"}
-          {background ? ` · ${background.name}` : ""}
-        </span>
+        <div className="sheet-id">
+          <span className="portrait" aria-hidden>{glyph}</span>
+          <div>
+            <strong>{build.name.trim() || "New Hero"}</strong>
+            <div className="muted">
+              {[heritage?.name, ancestry?.name, cls?.name].filter(Boolean).join(" ") || "Level 1"}
+              {background ? ` · ${background.name}` : ""}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="attr-row">
@@ -288,14 +421,26 @@ function Sheet({ build, full = false }: { build: BuildState; full?: boolean }) {
 
       {full && (
         <div className="sheet-skills">
-          <div className="muted" style={{ marginBottom: 4 }}>Trained skills</div>
-          {trainedSkills(build).map((k) => cap(k)).join(", ") || "—"}
-          {cls && build.featId && (
-            <div style={{ marginTop: 8 }}>
-              <span className="muted">Feat: </span>
-              {cls.feats.find((f) => f.id === build.featId)?.name}
+          <div><span className="muted">Trained skills: </span>{trainedSkills(build).map(cap).join(", ") || "—"}</div>
+          <div><span className="muted">Languages: </span>{[...grantedLanguages(build), ...build.languages].join(", ")}</div>
+          {sc && (
+            <div>
+              <span className="muted">Spells: </span>
+              {[...build.cantrips, ...build.spells]
+                .map((id) => sc.cantrips.concat(sc.spells).find((s) => s.id === id)?.name ?? id)
+                .join(", ") || "—"}
             </div>
           )}
+          {cls && build.featId && (
+            <div><span className="muted">Class feat: </span>{cls.feats.find((f) => f.id === build.featId)?.name}</div>
+          )}
+          {build.ancestryFeatId && (
+            <div>
+              <span className="muted">Ancestry feat: </span>
+              {ancestryFeats(build).find((f) => f.id === build.ancestryFeatId)?.name}
+            </div>
+          )}
+          <div><span className="muted">Gear: </span>{startingGear(build).join(", ")}</div>
         </div>
       )}
     </div>
@@ -308,5 +453,3 @@ const Stat = ({ k, v }: { k: string; v: number | string }) => (
     <span className="v">{v}</span>
   </div>
 );
-
-const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);

@@ -132,6 +132,8 @@ export interface EncounterNode extends BaseNode {
   victoryLines: string[];
   /** Heading shown on the victory card (defaults to a generic one). */
   victoryTitle?: string;
+  /** Use the player's BUILT character's stats instead of the pregen Wren. */
+  useBuiltHero?: boolean;
   next: NodeId;
 }
 

@@ -161,3 +161,141 @@ export const SKILLS: { key: string; name: string; attr: Attr }[] = [
 
 export const byId = <T extends { id: string }>(arr: T[], id: string | undefined): T | undefined =>
   arr.find((x) => x.id === id);
+
+// ---------------------------------------------------------------------------
+// Deeper character options: heritages, ancestry feats, languages, spells, gear
+// ---------------------------------------------------------------------------
+
+export interface Heritage {
+  id: string;
+  name: string;
+  blurb: string;
+}
+
+export interface Spell {
+  id: string;
+  name: string;
+  desc: string;
+}
+
+export const HERITAGES: Record<string, Heritage[]> = {
+  dwarf: [
+    { id: "rock", name: "Rock Dwarf", blurb: "Hard to move; resist being shoved or tripped." },
+    { id: "forge", name: "Forge Dwarf", blurb: "Raised by the forge; resist fire and heat." },
+    { id: "ancient", name: "Ancient-Blooded", blurb: "Old bloodline; a reaction that resists magic." },
+  ],
+  elf: [
+    { id: "cavern", name: "Cavern Elf", blurb: "Darkvision from a life underground." },
+    { id: "woodland", name: "Woodland Elf", blurb: "Climb and hide in forests with ease." },
+    { id: "whisper", name: "Whisper Elf", blurb: "Sharper hearing; pinpoint sounds." },
+  ],
+  halfling: [
+    { id: "gutsy", name: "Gutsy Halfling", blurb: "Shrug off fear with a stiff upper lip." },
+    { id: "nomadic", name: "Nomadic Halfling", blurb: "A wanderer who picks up extra languages." },
+    { id: "twilight", name: "Twilight Halfling", blurb: "Low-light vision from dusk travels." },
+  ],
+  goblin: [
+    { id: "charhide", name: "Charhide Goblin", blurb: "Singed hide; resist fire and recover from burns." },
+    { id: "razortooth", name: "Razortooth Goblin", blurb: "Wicked teeth make a real bite attack." },
+    { id: "unbreakable", name: "Unbreakable Goblin", blurb: "Extra hit points and softer falls." },
+  ],
+};
+
+export const ANCESTRY_FEATS: Record<string, ClassFeat[]> = {
+  dwarf: [
+    { id: "d-lore", name: "Dwarven Lore", desc: "Trained in Crafting & Religion, and Dwarven Lore." },
+    { id: "d-weapon", name: "Dwarven Weapon Familiarity", desc: "Treat dwarven weapons (like the war axe) as one rank simpler." },
+    { id: "rock-runner", name: "Rock Runner", desc: "Move over rubble and stone with no penalty." },
+  ],
+  elf: [
+    { id: "e-lore", name: "Elven Lore", desc: "Trained in Arcana & Nature, and Elven Lore." },
+    { id: "nimble", name: "Nimble Elf", desc: "Your Speed increases by 5 feet." },
+    { id: "otherworldly", name: "Otherworldly Magic", desc: "Gain a cantrip from your elven heritage." },
+  ],
+  halfling: [
+    { id: "h-lore", name: "Halfling Lore", desc: "Trained in Acrobatics & Stealth, and Halfling Lore." },
+    { id: "distracting", name: "Distracting Shadows", desc: "Use larger creatures as cover to Hide." },
+    { id: "sure-feet", name: "Sure Feet", desc: "Stay upright; failures to Balance/Climb aren't worse." },
+  ],
+  goblin: [
+    { id: "g-lore", name: "Goblin Lore", desc: "Trained in Nature & Stealth, and Goblin Lore." },
+    { id: "burn-it", name: "Burn It!", desc: "Your fire spells and alchemy hit harder." },
+    { id: "very-sneaky", name: "Very Sneaky", desc: "Sneak farther, and stay hidden as you move." },
+  ],
+};
+
+/** Languages each ancestry grants for free (Common plus their own). */
+export const ANCESTRY_LANGUAGES: Record<string, string[]> = {
+  dwarf: ["Common", "Dwarven"],
+  elf: ["Common", "Elven"],
+  halfling: ["Common", "Halfling"],
+  goblin: ["Common", "Goblin"],
+};
+
+export const LANGUAGE_POOL = [
+  "Draconic", "Dwarven", "Elven", "Gnomish", "Goblin", "Halfling", "Jotun", "Orcish", "Sylvan", "Undercommon",
+];
+
+export interface SpellcastingDef {
+  tradition: string;
+  cantripsKnown: number;
+  spellsKnown: number;
+  cantrips: Spell[];
+  spells: Spell[];
+}
+
+export const CLASS_SPELLS: Record<string, SpellcastingDef> = {
+  cleric: {
+    tradition: "divine",
+    cantripsKnown: 4,
+    spellsKnown: 2,
+    cantrips: [
+      { id: "divine-lance", name: "Divine Lance", desc: "A ranged spell attack of divine energy." },
+      { id: "guidance", name: "Guidance", desc: "Grant an ally a small bonus to one roll." },
+      { id: "light", name: "Light", desc: "Make an object glow like a torch." },
+      { id: "stabilize", name: "Stabilize", desc: "Stop a dying creature from getting worse." },
+      { id: "shield-cantrip", name: "Shield", desc: "A reaction: raise a magical shield." },
+      { id: "daze", name: "Daze", desc: "Mental damage that can stun on a crit." },
+    ],
+    spells: [
+      { id: "heal", name: "Heal", desc: "Restore hit points (the cleric's signature)." },
+      { id: "bless", name: "Bless", desc: "An aura that buffs allies' attacks." },
+      { id: "fear", name: "Fear", desc: "Frighten a foe." },
+      { id: "sanctuary", name: "Sanctuary", desc: "Ward a creature from being attacked." },
+    ],
+  },
+  wizard: {
+    tradition: "arcane",
+    cantripsKnown: 5,
+    spellsKnown: 2,
+    cantrips: [
+      { id: "electric-arc", name: "Electric Arc", desc: "Lightning that can strike two foes." },
+      { id: "ray-of-frost", name: "Ray of Frost", desc: "A cold ranged spell attack that slows." },
+      { id: "light", name: "Light", desc: "Make an object glow like a torch." },
+      { id: "detect-magic", name: "Detect Magic", desc: "Sense magic nearby." },
+      { id: "shield-cantrip", name: "Shield", desc: "A reaction: raise a magical shield." },
+      { id: "telekinetic", name: "Telekinetic Projectile", desc: "Hurl a loose object at a foe." },
+    ],
+    spells: [
+      { id: "magic-missile", name: "Magic Missile", desc: "Darts of force that never miss." },
+      { id: "grease", name: "Grease", desc: "Make a surface slippery; foes fall." },
+      { id: "fear", name: "Fear", desc: "Frighten a foe." },
+      { id: "sleep", name: "Sleep", desc: "Send foes into a magical slumber." },
+    ],
+  },
+};
+
+/** A simple starting kit shown on the sheet (flavor + a sense of readiness). */
+export const CLASS_GEAR: Record<string, string[]> = {
+  fighter: ["Scale mail", "Longsword", "Steel shield", "Adventurer's pack", "15 gp"],
+  rogue: ["Leather armor", "Rapier", "Dagger ×2", "Thieves' tools", "Adventurer's pack", "15 gp"],
+  cleric: ["Chain shirt", "Mace", "Religious symbol", "Healer's tools", "Adventurer's pack", "15 gp"],
+  wizard: ["Staff", "Dagger", "Spellbook", "Material component pouch", "Adventurer's pack", "15 gp"],
+};
+
+export const CLASS_GLYPH: Record<string, string> = {
+  fighter: "⚔️",
+  rogue: "🗡️",
+  cleric: "✨",
+  wizard: "🔮",
+};

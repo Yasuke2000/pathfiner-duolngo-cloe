@@ -15,6 +15,7 @@ import {
   type Combatant,
 } from "@/game/encounter";
 import { multipleAttackPenalty } from "@/engine/actions";
+import type { Hero } from "@/game/hero";
 import type { EncounterNode } from "@/content/types";
 import { sfx } from "@/lib/sound";
 import { DEGREE_THEME } from "./degrees";
@@ -40,9 +41,12 @@ const TURN_DELAY = 900;
 export function EncounterScene({
   node,
   onResolved,
+  hero,
 }: {
   node: EncounterNode;
   onResolved: (next: string, bonusXp?: number) => void;
+  /** When provided (capstone), the player's built character fights instead of the pregen. */
+  hero?: Hero;
 }) {
   const [combatants, setCombatants] = useState<Combatant[]>([]);
   const [order, setOrder] = useState<string[]>([]);
@@ -76,7 +80,7 @@ export function EncounterScene({
   // --- Start ---------------------------------------------------------------
   function begin() {
     const roster = [
-      heroCombatant(),
+      heroCombatant(hero),
       ALLY_BRAM(),
       ...node.foes.map((f) => makeCombatant(f)),
     ];

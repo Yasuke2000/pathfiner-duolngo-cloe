@@ -612,7 +612,7 @@ export const COURSE: Course = {
       speaker: "Bram",
       prompt: "The drake blocks the path. What's your approach?",
       options: [
-        { label: "Fight through it", hint: "Combat — you know how", next: "u6-cap-fight", set: ({ set }) => set({ capstoneApproach: "fight" }) },
+        { label: "Fight through it", hint: "Combat — with YOUR hero", next: "u6-fight", set: ({ set }) => set({ capstoneApproach: "fight" }) },
         { label: "Sneak past while it's distracted", hint: "Exploration & Stealth", next: "u6-cap-sneak", set: ({ set }) => set({ capstoneApproach: "sneak" }) },
         { label: "Calm it and coax it aside", hint: "A social approach", next: "u6-cap-talk", set: ({ set }) => set({ capstoneApproach: "talk" }) },
         {
@@ -626,11 +626,33 @@ export const COURSE: Course = {
       ],
     },
 
-    "u6-cap-fight": {
-      kind: "narration",
-      lines: [
-        "You square up, Bram at your side — initiative, three actions, conditions, the works. The drake is fierce but you've done this; it yields and flees.",
-        "“Direct. Effective. You've got the combat cold,” Bram nods.",
+    "u6-fight": {
+      kind: "encounter",
+      xp: 15,
+      prompt: "Capstone duel: your hero vs. the drake",
+      victoryTitle: "The drake yields",
+      useBuiltHero: true,
+      intro: [
+        "This is the real thing — these are YOUR character's numbers now, not Wren's. Bram fights at your side. Everything you've learned, all at once: initiative, your three actions, conditions, your reaction.",
+      ],
+      foes: [
+        {
+          id: "drake",
+          name: "Young Drake",
+          role: "foe",
+          ac: 18,
+          maxHp: 32,
+          attackBonus: 10,
+          damageDie: 8,
+          damageBonus: 4,
+          willDC: 17,
+          reflexDC: 16,
+          initiativeBonus: 8,
+        },
+      ],
+      victoryLines: [
+        "The drake screeches, beats its wings, and breaks off — the path is yours.",
+        "“That was all you,” Bram says, grinning. “Your hero, your tactics, a real win. You're ready.”",
       ],
       next: "u6-handoff",
     },

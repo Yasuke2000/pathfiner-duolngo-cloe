@@ -17,6 +17,7 @@ import { MuteButton } from "./MuteButton";
 import { SettingsPanel } from "./SettingsPanel";
 import { chapterFor } from "@/lib/chapters";
 import { sfx } from "@/lib/sound";
+import { combatHeroFromBuild } from "@/game/heroFromBuild";
 import type { BuildState } from "@/game/builder";
 
 const TOTAL_STEPS = 40; // length of the main story spine, for the progress bar
@@ -31,8 +32,10 @@ export function Player() {
   const [flags, setFlags] = useState<Flags>({});
   const [transcript, setTranscript] = useState<{ id: number; speaker?: string; text: string }[]>([]);
   const [showLog, setShowLog] = useState(false);
+  const [savedFlash, setSavedFlash] = useState(false);
   const awarded = useRef<Set<string>>(new Set());
   const logId = useRef(0);
+  const firstSave = useRef(true);
 
   const node = COURSE.nodes[nodeId];
   const chapter = chapterFor(nodeId);
@@ -135,6 +138,13 @@ export function Player() {
     } catch {
       /* ignore */
     }
+    if (firstSave.current) {
+      firstSave.current = false;
+      return;
+    }
+    setSavedFlash(true);
+    const t = setTimeout(() => setSavedFlash(false), 1200);
+    return () => clearTimeout(t);
   }, [started, nodeId, xp, step, character, flags]);
 
   // Move focus to the new scene so screen-reader/keyboard users hear the outcome.
@@ -191,17 +201,21 @@ export function Player() {
       </div>
 
       <div className="stage" ref={stageRef} tabIndex={-1}>
-        <NodeView
-          node={node}
-          onGo={go}
-          character={character}
-          onBuilt={setCharacter}
-          ctx={ctx}
-          resolve={resolve}
-          runEffect={runEffect}
-          onChoose={logToTranscript}
-        />
+        <div key={nodeId} className="scene">
+          <NodeView
+            node={node}
+            onGo={go}
+            character={character}
+            onBuilt={setCharacter}
+            ctx={ctx}
+            resolve={resolve}
+            runEffect={runEffect}
+            onChoose={logToTranscript}
+          />
+        </div>
       </div>
+
+      {savedFlash && <div className="saved-toast" role="status">Saved ✓</div>}
 
       {showLog && (
         <div className="modal-scrim" onClick={() => setShowLog(false)}>
@@ -329,7 +343,13 @@ function NodeView({
       return <CombatScene node={node} onResolved={(next, bonus) => onGo(next, bonus)} />;
 
     case "encounter":
-      return <EncounterScene node={node} onResolved={(next, bonus) => onGo(next, bonus)} />;
+      return (
+        <EncounterScene
+          node={node}
+          onResolved={(next, bonus) => onGo(next, bonus)}
+          hero={node.useBuiltHero && character ? combatHeroFromBuild(character) : undefined}
+        />
+      );
 
     case "recovery":
       return <RecoveryScene node={node} onResolved={(next, bonus) => onGo(next, bonus)} />;

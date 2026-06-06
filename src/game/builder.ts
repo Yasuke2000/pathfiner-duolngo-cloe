@@ -2,45 +2,86 @@ import { computeAttributes, deriveStats, type DerivedStats } from "@/engine/char
 import type { Attr } from "@/engine/types";
 import {
   ANCESTRIES,
+  ANCESTRY_FEATS,
+  ANCESTRY_LANGUAGES,
   BACKGROUNDS,
+  CLASS_GEAR,
+  CLASS_SPELLS,
   CLASSES,
+  HERITAGES,
+  LANGUAGE_POOL,
   SKILLS,
   byId,
   type Ancestry,
   type Background,
   type CharClass,
+  type Heritage,
+  type SpellcastingDef,
 } from "@/content/srd";
 
 export interface BuildState {
   name: string;
   ancestryId?: string;
+  heritageId?: string;
   backgroundId?: string;
   classId?: string;
   /** The four free attribute boosts (one batch — must be distinct). */
   freeBoosts: Attr[];
   /** Chosen trained skills, not counting the one the background grants. */
   skills: string[];
+  /** Bonus languages chosen (Int-based), beyond the ancestry's granted ones. */
+  languages: string[];
+  cantrips: string[];
+  spells: string[];
   featId?: string;
+  ancestryFeatId?: string;
 }
 
 export const emptyBuild = (): BuildState => ({
   name: "",
   freeBoosts: [],
   skills: [],
+  languages: [],
+  cantrips: [],
+  spells: [],
 });
 
 export interface ResolvedBuild {
   ancestry?: Ancestry;
+  heritage?: Heritage;
   background?: Background;
   cls?: CharClass;
 }
 
 export function resolve(b: BuildState): ResolvedBuild {
+  const ancestry = byId(ANCESTRIES, b.ancestryId);
   return {
-    ancestry: byId(ANCESTRIES, b.ancestryId),
+    ancestry,
+    heritage: ancestry ? byId(HERITAGES[ancestry.id] ?? [], b.heritageId) : undefined,
     background: byId(BACKGROUNDS, b.backgroundId),
     cls: byId(CLASSES, b.classId),
   };
+}
+
+export function spellcasting(b: BuildState): SpellcastingDef | undefined {
+  return b.classId ? CLASS_SPELLS[b.classId] : undefined;
+}
+
+export function grantedLanguages(b: BuildState): string[] {
+  return b.ancestryId ? (ANCESTRY_LANGUAGES[b.ancestryId] ?? ["Common"]) : ["Common"];
+}
+
+/** Bonus languages the character may pick (their Intelligence modifier, min 0). */
+export function languageBudget(b: BuildState): number {
+  return Math.max(0, buildAttrs(b).int);
+}
+
+export function startingGear(b: BuildState): string[] {
+  return b.classId ? (CLASS_GEAR[b.classId] ?? []) : [];
+}
+
+export function ancestryFeats(b: BuildState) {
+  return b.ancestryId ? (ANCESTRY_FEATS[b.ancestryId] ?? []) : [];
 }
 
 /** Assemble the attribute boost batches and compute level-1 modifiers. */
@@ -92,39 +133,93 @@ export function derived(b: BuildState): DerivedStats | null {
 }
 
 export function isComplete(b: BuildState): boolean {
-  const { ancestry, background, cls } = resolve(b);
+  const { ancestry, heritage, background, cls } = resolve(b);
+  const sc = spellcasting(b);
+  const spellsOk = !sc || (b.cantrips.length === sc.cantripsKnown && b.spells.length === sc.spellsKnown);
   return (
     b.name.trim().length > 0 &&
     !!ancestry &&
+    !!heritage &&
     !!background &&
     !!cls &&
     b.freeBoosts.length === 4 &&
     new Set(b.freeBoosts).size === 4 &&
     b.skills.length === skillBudget(b) &&
-    !!b.featId
+    b.languages.length === languageBudget(b) &&
+    spellsOk &&
+    !!b.featId &&
+    !!b.ancestryFeatId
   );
+}
+
+/** Build a complete, valid, sensible random character (the "surprise me" button). */
+export function quickBuild(name: string): BuildState {
+  const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+  const pickN = <T,>(arr: T[], n: number): T[] => {
+    const pool = [...arr];
+    const out: T[] = [];
+    while (out.length < n && pool.length) out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+    return out;
+  };
+
+  const ancestry = pick(ANCESTRIES);
+  const cls = pick(CLASSES);
+  const background = pick(BACKGROUNDS);
+  const b: BuildState = {
+    ...emptyBuild(),
+    name: name.trim() || pick(["Dain", "Sera", "Pib", "Wren", "Kale", "Mira"]),
+    ancestryId: ancestry.id,
+    heritageId: pick(HERITAGES[ancestry.id]).id,
+    backgroundId: background.id,
+    classId: cls.id,
+    featId: pick(cls.feats).id,
+    ancestryFeatId: pick(ANCESTRY_FEATS[ancestry.id]).id,
+  };
+  // Free boosts: prefer the key attribute, then three other distinct attrs.
+  const others = (["str", "dex", "con", "int", "wis", "cha"] as Attr[]).filter((a) => a !== cls.keyAttr);
+  b.freeBoosts = [cls.keyAttr, ...pickN(others, 3)];
+  b.skills = pickN(
+    SKILLS.map((s) => s.key).filter((k) => k !== background.skill),
+    skillBudget(b),
+  );
+  b.languages = pickN(LANGUAGE_POOL.filter((l) => !grantedLanguages(b).includes(l)), languageBudget(b));
+  const sc = CLASS_SPELLS[cls.id];
+  if (sc) {
+    b.cantrips = pickN(sc.cantrips.map((s) => s.id), sc.cantripsKnown);
+    b.spells = pickN(sc.spells.map((s) => s.id), sc.spellsKnown);
+  }
+  return b;
 }
 
 /** A clean, documented JSON export of the finished character. */
 export function exportCharacter(b: BuildState) {
-  const { ancestry, background, cls } = resolve(b);
+  const { ancestry, heritage, background, cls } = resolve(b);
   const attrs = buildAttrs(b);
   const stats = derived(b);
+  const sc = spellcasting(b);
   const feat = cls?.feats.find((f) => f.id === b.featId);
+  const ancFeat = ancestryFeats(b).find((f) => f.id === b.ancestryFeatId);
+  const spellName = (id: string) =>
+    sc?.cantrips.concat(sc.spells).find((s) => s.id === id)?.name ?? id;
   return {
     _format: "pathfinder-learn-and-play.character",
-    _version: 1,
+    _version: 2,
     name: b.name.trim() || "Unnamed Hero",
     level: 1,
     ancestry: ancestry?.name,
+    heritage: heritage?.name,
     background: background?.name,
     class: cls?.name,
     keyAttribute: cls?.keyAttr,
     attributes: attrs,
-    trainedSkills: trainedSkills(b).map(
-      (k) => SKILLS.find((s) => s.key === k)?.name ?? k,
-    ),
+    languages: [...grantedLanguages(b), ...b.languages],
+    trainedSkills: trainedSkills(b).map((k) => SKILLS.find((s) => s.key === k)?.name ?? k),
     classFeat: feat ? { name: feat.name, description: feat.desc } : undefined,
+    ancestryFeat: ancFeat ? { name: ancFeat.name, description: ancFeat.desc } : undefined,
+    spells: sc
+      ? { tradition: sc.tradition, cantrips: b.cantrips.map(spellName), spells: b.spells.map(spellName) }
+      : undefined,
+    equipment: startingGear(b),
     derived: stats,
     note:
       "Built with the Learn & Play teaching app. A streamlined level-1 character to bring to your first table.",

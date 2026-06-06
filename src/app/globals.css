@@ -885,6 +885,68 @@ button.btn.big {
   font-size: 14px;
 }
 
+/* ---------- Builder extras ---------- */
+.builder-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.mute-btn.quickbuild {
+  width: auto;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold);
+  white-space: nowrap;
+}
+.sheet-id {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.portrait {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  border-radius: 12px;
+  background: radial-gradient(circle at 30% 25%, hsl(var(--accent) / 0.4), hsl(var(--accent) / 0.12));
+  border: 1px solid hsl(var(--accent) / 0.5);
+}
+.sheet-skills > div {
+  margin-bottom: 4px;
+}
+
+/* ---------- Scene transition + autosave toast ---------- */
+.scene {
+  display: block;
+}
+.saved-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  z-index: 45;
+  background: rgba(20, 16, 29, 0.92);
+  border: 1px solid hsl(var(--accent) / 0.5);
+  color: var(--text);
+  font-size: 13px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  box-shadow: 0 10px 24px -12px #000;
+  animation: toastInOut 1.2s ease both;
+  pointer-events: none;
+}
+@keyframes toastInOut {
+  0% { opacity: 0; transform: translate(-50%, 8px); }
+  15%, 75% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, 8px); }
+}
+
 /* ---------- Hand-off ---------- */
 .section-h {
   font-family: var(--font-display);
