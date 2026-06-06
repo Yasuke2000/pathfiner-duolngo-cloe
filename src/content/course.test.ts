@@ -77,7 +77,7 @@ describe("course graph", () => {
     );
     expect(terminals.length).toBeGreaterThan(0);
     // The two intended finales both exist.
-    expect(ids).toContain("departure"); // Full-story black-hole finale
+    expect(ids).toContain("departure"); // Full-story lock-the-spark finale
     expect(ids).toContain("short-graduation"); // Quick-Lessons conclusion
   });
 

@@ -74,8 +74,8 @@ body::after {
   z-index: 1;
 }
 
-/* ---------- Black-hole portal finale ---------- */
-.portal-vortex {
+/* ---------- Finale: the black-hole portal ---------- */
+.finale-aura {
   position: fixed;
   inset: 0;
   z-index: 0;
@@ -93,7 +93,7 @@ body::after {
   filter: blur(2px);
   animation: swirl 9s linear infinite;
 }
-.portal-vortex::after {
+.finale-aura::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -107,7 +107,7 @@ body::after {
   0%, 100% { transform: scale(1); opacity: 0.85; }
   50% { transform: scale(1.12); opacity: 1; }
 }
-.portal-card {
+.finale-card {
   border-color: hsl(265 70% 60%);
   box-shadow: 0 0 60px -10px hsl(265 80% 55% / 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }

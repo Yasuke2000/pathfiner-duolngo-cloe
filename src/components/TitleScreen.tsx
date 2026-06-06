@@ -44,7 +44,7 @@ export function TitleScreen({
         {canContinue && <div className="mode-divider">or start over</div>}
         <button className="btn mode-btn" onClick={() => onStart("full")}>
           Full Story
-          <span className="hint">the complete origin — branching choices, a dark path, the black-hole finale · ~30 min</span>
+          <span className="hint">the complete origin — branching choices, a dark path, and a finale that becomes your backstory · ~30 min</span>
         </button>
         <button className="btn mode-btn" onClick={() => onStart("short")}>
           Quick Lessons

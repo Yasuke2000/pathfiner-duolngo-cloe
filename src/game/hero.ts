@@ -30,7 +30,7 @@ export interface Hero {
  * the three-action duel is winnable but rewards smart action choices.
  */
 export const PREGEN_HERO: Hero = {
-  name: "Wren",
+  name: "You",
   archetype: "a green but game frontier scout",
   level: 1,
   attrs: { str: 4, dex: 3, con: 2, int: 0, wis: 1, cha: 1 },

@@ -20,7 +20,13 @@ export function chapterFor(nodeId: string): Chapter {
   if (nodeId.startsWith("u3") || nodeId === "unit3-crown") return C3;
   if (nodeId.startsWith("u4") || nodeId === "unit4-crown") return C4;
   if (nodeId.startsWith("u5") || nodeId === "unit5-crown") return C5;
-  if (nodeId.startsWith("u6") || nodeId === "graduation") return C6;
+  if (
+    nodeId.startsWith("u6") ||
+    nodeId === "graduation" ||
+    nodeId === "departure" ||
+    nodeId === "short-graduation"
+  )
+    return C6;
   return C1;
 }
 

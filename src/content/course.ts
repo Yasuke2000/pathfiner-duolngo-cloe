@@ -59,7 +59,7 @@ export const COURSE: Course = {
       title: "What you're actually doing",
       body: [
         "Pathfinder is a story you build together by talking and rolling dice. There's no script you have to memorize.",
-        "Your spark is fresh and you haven't decided who you are yet — so Tahar just calls you “Wren” for now. Later, you'll forge your real self. He's your guide; he'll never let the story strand you.",
+        "Your spark is fresh and you haven't decided who you really are yet — so for now you're simply you. Later, you'll forge your true self. Tahar is your guide; he'll never let the story strand you.",
       ],
       points: [
         "The GM describes the situation.",
@@ -638,7 +638,7 @@ export const COURSE: Course = {
       speaker: "Tahar",
       xp: 5,
       lines: [
-        "Out in the daylight, Tahar sits you down on a fallen column. “The spark's settled into you now. You're not 'Wren' the placeholder anymore — it's time to decide who you actually became when that light went in.”",
+        "Out in the daylight, Tahar sits you down on a fallen column. “The spark's settled into you now. You've fought as a half-formed nobody long enough — it's time to decide who you actually became when that light went in.”",
         "“This is the hero you'll be from here on: your name, your shape, your strengths. One choice at a time. I'll tell you what each pick does, and you'll watch the sheet fill itself in.”",
       ],
       next: "u5-teach-build",
@@ -724,7 +724,7 @@ export const COURSE: Course = {
       victoryTitle: "The drake yields",
       useBuiltHero: true,
       intro: [
-        "This is the real thing — these are YOUR character's numbers now, not Wren's. Tahar fights at your side. Everything you've learned, all at once: initiative, your three actions, conditions, your reaction.",
+        "This is the real thing — these are YOUR hero's own numbers now, the character you just forged. Tahar fights at your side. Everything you've learned, all at once: initiative, your three actions, conditions, your reaction.",
       ],
       foes: [
         {
@@ -963,10 +963,11 @@ export const COURSE: Course = {
         return [
           `“Here's the thing I didn't tell you at the threshold, ${ctx.address},” Tahar says. “You can't keep this lit. A spark like yours, blazing, draws things you're not ready for. So I'm going to lock it down. Not take it — lock it.”`,
           lockLine,
-          "“And one more mercy: you won't remember me. Not this cave, not my name, not a word of tonight. You're walking back into an ordinary life, and I won't have it cluttered with an artificer and a dragon. By morning this is all a half-dream.”",
-          "The light under your skin dims and folds inward to a warmth behind the ribs. The memory of his face is already going soft at the edges, like a name you almost have.",
-          `“Don't fret — I told you at the threshold you couldn't lose me. You can't, quite.” His voice is fading now. “Some nights you'll wake with your heart pounding and a word on your lips you don't know. Sometimes you'll feel watched over. That's all that's left of me — and it's enough. Now go home, ${ctx.hero}. The years between tonight and the day the spark wakes — your town, your people, who you've been — that's YOURS to write. Make it a good one.”`,
-          "And then he's gone, the way he came — between one breath and the next. You walk home under a clearing sky, an ordinary person again, carrying a sleeping light, a dream you can't place, and a story only you can fill in.",
+          "“And one more mercy: you won't remember me. Not this cave, not my name, not a word of tonight. You're going home to an ordinary life, and I won't have it cluttered with an artificer and a drowned dungeon. By morning, all of this is just a strange dream.”",
+          "The light under your skin dims to a warmth behind the ribs — and behind Tahar, the dark itself peels open: a slow, silent whorl, its edges bleeding cold light, pulling gently at your coat, your breath, your name.",
+          `“Don't fret — I told you you couldn't lose me. You can't, quite. Some nights you'll wake with your heart pounding and a word on your lips you don't know; sometimes you'll feel watched over. That's all that's left of me, and it's enough. Go on, ${ctx.hero}. The years between tonight and the day the spark wakes are YOURS to write — make them good.”`,
+          "The dark folds over you, soft as sleep, and the cave and the rain and the artificer with the knowing smile all stream away into nothing…",
+          "…and you wake in your own bed, an ordinary morning of an ordinary life. Only a fading dream, a warmth behind your ribs, and a story that's yours alone to fill in. It begins now.",
         ];
       },
       upNext: "",

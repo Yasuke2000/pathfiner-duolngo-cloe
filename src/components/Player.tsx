@@ -43,7 +43,7 @@ export function Player() {
   const node = COURSE.nodes[nodeId];
   const chapter = chapterFor(nodeId);
 
-  const heroName = character?.name?.trim() || "Wren";
+  const heroName = character?.name?.trim() || "you";
   const address = addressTerm(character?.pronouns);
   const ctx: StoryCtx = { flags, character, hero: heroName, address };
   const resolve = (lines: Lines): string[] => (typeof lines === "function" ? lines(ctx) : lines);
@@ -429,8 +429,8 @@ function NodeView({
     case "end":
       return (
         <>
-          {node.portal && <div className="portal-vortex" aria-hidden />}
-          <div className={`card ${node.portal ? "portal-card" : ""}`}>
+          {node.portal && <div className="finale-aura" aria-hidden />}
+          <div className={`card ${node.portal ? "finale-card" : ""}`}>
             {!node.portal && (
               <div className="crown">
                 <div className="badge">👑</div>
