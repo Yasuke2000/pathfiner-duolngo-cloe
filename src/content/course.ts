@@ -866,16 +866,17 @@ export const COURSE: Course = {
       crown: "",
       body: (ctx) => {
         const lockLine = ctx.flags.corrupted
-          ? `Tahar works for a long while, sweat on his brow. “This one fights me — of course it does, you fed it your own flesh. I can't cage it, ${ctx.address}. Only… quiet it. It'll stir again the moment your story truly needs it. Sooner, if you're not careful.”`
+          ? `He works for a long while, sweat on his brow. “This one fights me — of course it does, you fed it your own flesh. I can't cage it, ${ctx.address}. Only… quiet it. It'll stir the moment your story truly needs it. Sooner, if you're not careful.”`
           : ctx.flags.darkPath
-            ? `Tahar's tools click and turn against your chest. “There. The spark sleeps. What you DID with it doesn't sleep so easy — but that's a weight for the road, not for tonight, ${ctx.address}.”`
-            : `Tahar presses a humming brass device to your chest and turns a dial, gentle as a key in a lock. “There. The spark sleeps. Still yours — just… quiet, until the day your story needs it again.”`;
+            ? `His tools click and turn against your chest. “There. The spark sleeps. What you DID with it won't sleep so easy — but that's a weight for the road, not for tonight.”`
+            : `He presses a humming brass device to your chest and turns a dial, gentle as a key in a lock. “There. The spark sleeps. Still yours — just quiet, until the day your story needs it again.”`;
         return [
-          `“Here's the thing I didn't tell you at the gate, ${ctx.address},” Tahar says. “You can't keep this lit. A spark like yours, blazing, draws things — things you're not ready for yet. So I'm going to lock it down. Not take it. Lock it.”`,
+          `“Here's the thing I didn't tell you at the gate, ${ctx.address},” Tahar says. “You can't keep this lit. A spark like yours, blazing, draws things you're not ready for. So I'm going to lock it down. Not take it — lock it.”`,
           lockLine,
-          "The light under your skin dims and folds inward until it's just a warmth behind the ribs, easy to forget. Around you the ruin is only a ruin again; the rain is only rain.",
-          `“Now — go home. Back to whatever life you had this morning. Live it.” He shoulders his pack and starts away, then glances back. “What happens between tonight and the day the spark wakes? The town you return to, the people you owe, the years in between? That's yours to write, ${ctx.hero}. Make it a good one.”`,
-          "And then he's gone, the way he came — between one breath and the next. You walk home under a clearing sky, an ordinary person again, carrying a quiet light and a story only you can fill in.",
+          "“And one more mercy: you won't remember me. Not this ruin, not my name, not a word of tonight. You're walking back into an ordinary life, and I won't have it cluttered with an artificer and a dragon. By morning this is all a half-dream.”",
+          "The light under your skin dims and folds inward to a warmth behind the ribs. The memory of his face is already going soft at the edges, like a name you almost have.",
+          `“Don't fret — I told you at the gate you couldn't lose me. You can't, quite.” His voice is fading now. “Some nights you'll wake with your heart pounding and a word on your lips you don't know. Sometimes you'll feel watched over. That's all that's left of me — and it's enough. Now go home, ${ctx.hero}. The years between tonight and the day the spark wakes — your town, your people, who you've been — that's YOURS to write. Make it a good one.”`,
+          "And then he's gone, the way he came — between one breath and the next. You walk home under a clearing sky, an ordinary person again, carrying a sleeping light, a dream you can't place, and a story only you can fill in.",
         ];
       },
       upNext: "",
