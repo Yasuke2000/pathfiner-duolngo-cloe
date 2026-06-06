@@ -2,8 +2,30 @@ import type { Degree } from "@/engine/types";
 import type { CheckSpec } from "@/game/perform";
 import type { EnemyConfig } from "@/game/combat";
 import type { CombatantSeed } from "@/game/encounter";
+import type { BuildState } from "@/game/builder";
 
 export type NodeId = string;
+
+/** The mutable "qualities" that make the world remember the player. */
+export type Flags = Record<string, number | string | boolean>;
+
+/** Read-only story context handed to reactive narration. */
+export interface StoryCtx {
+  flags: Flags;
+  character: BuildState | null;
+  /** The hero's display name (built character's name, else the pregen). */
+  hero: string;
+}
+
+/** A side effect run when a node is entered or a choice is taken. */
+export type Effect = (ctx: {
+  flags: Flags;
+  character: BuildState | null;
+  set: (patch: Partial<Flags> | ((f: Flags) => Partial<Flags>)) => void;
+}) => void;
+
+/** Story text that may react to the current state. */
+export type Lines = string[] | ((ctx: StoryCtx) => string[]);
 
 interface BaseNode {
   /** Optional; nodes are keyed by their id in {@link Course.nodes}. */
@@ -12,12 +34,14 @@ interface BaseNode {
   speaker?: string;
   /** Experience awarded for reaching this node. */
   xp?: number;
+  /** Mutate story flags when this node is reached. */
+  enter?: Effect;
 }
 
 /** Plain story narration that advances on "Continue". */
 export interface NarrationNode extends BaseNode {
   kind: "narration";
-  lines: string[];
+  lines: Lines;
   next: NodeId;
 }
 
@@ -25,17 +49,29 @@ export interface NarrationNode extends BaseNode {
 export interface TeachNode extends BaseNode {
   kind: "teach";
   title: string;
-  body: string[];
+  body: Lines;
   /** Optional callout bullets rendered as a highlighted list. */
   points?: string[];
   next: NodeId;
+}
+
+export interface ChoiceOption {
+  label: string;
+  hint?: string;
+  next: NodeId;
+  /** Mutate flags when this option is chosen. */
+  set?: Effect;
+  /** If present and returns false, the option is shown locked. */
+  requires?: (ctx: StoryCtx) => boolean;
+  /** Shown on a locked option explaining the requirement. */
+  lockedHint?: string;
 }
 
 /** A branching player choice. */
 export interface ChoiceNode extends BaseNode {
   kind: "choice";
   prompt: string;
-  options: { label: string; hint?: string; next: NodeId }[];
+  options: ChoiceOption[];
 }
 
 /**
@@ -64,6 +100,8 @@ export interface CheckNode extends BaseNode {
   kind: "check";
   prompt: string;
   spec: CheckSpec;
+  /** "White" check: a failure can be retried after a beat (Disco Elysium style). */
+  retry?: boolean;
   outcomes: Record<Degree, { lines: string[]; next: NodeId; bonusXp?: number }>;
 }
 
@@ -145,7 +183,7 @@ export interface HandoffNode extends BaseNode {
 export interface EndNode extends BaseNode {
   kind: "end";
   title: string;
-  body: string[];
+  body: Lines;
   /** What the learner has earned (a "crown"/mastery marker). */
   crown: string;
   /** A teaser for what comes next in the full course. */

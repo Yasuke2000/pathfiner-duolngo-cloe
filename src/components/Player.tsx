@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Degree } from "@/engine/types";
 import { COURSE } from "@/content/course";
-import type { CourseNode } from "@/content/types";
+import type { CourseNode, Effect, Flags, Lines, StoryCtx } from "@/content/types";
 import { CheckScene } from "./CheckScene";
 import { CombatScene } from "./CombatScene";
 import { EncounterScene } from "./EncounterScene";
@@ -28,10 +28,30 @@ export function Player() {
   const [xp, setXp] = useState(0);
   const [step, setStep] = useState(1);
   const [character, setCharacter] = useState<BuildState | null>(null);
+  const [flags, setFlags] = useState<Flags>({});
+  const [transcript, setTranscript] = useState<{ id: number; speaker?: string; text: string }[]>([]);
+  const [showLog, setShowLog] = useState(false);
   const awarded = useRef<Set<string>>(new Set());
+  const logId = useRef(0);
 
   const node = COURSE.nodes[nodeId];
   const chapter = chapterFor(nodeId);
+
+  const heroName = character?.name?.trim() || "Wren";
+  const ctx: StoryCtx = { flags, character, hero: heroName };
+  const resolve = (lines: Lines): string[] => (typeof lines === "function" ? lines(ctx) : lines);
+
+  function runEffect(effect?: Effect) {
+    if (!effect) return;
+    effect({
+      flags,
+      character,
+      set: (patch) =>
+        setFlags(
+          (prev) => ({ ...prev, ...(typeof patch === "function" ? patch(prev) : patch) }) as Flags,
+        ),
+    });
+  }
 
   function award(id: string, bonus = 0) {
     const target = COURSE.nodes[id];
@@ -42,7 +62,14 @@ export function Player() {
     if (gain) setXp((x) => x + gain);
   }
 
+  function logToTranscript(text: string, speaker?: string) {
+    logId.current += 1;
+    const id = logId.current;
+    setTranscript((t) => [...t, { id, speaker, text }]);
+  }
+
   function go(next: string, bonus = 0) {
+    runEffect(COURSE.nodes[next].enter);
     award(next, bonus);
     if (COURSE.nodes[next].kind === "end") sfx.level();
     setNodeId(next);
@@ -53,6 +80,7 @@ export function Player() {
   function begin() {
     sfx.unlock();
     sfx.click();
+    runEffect(COURSE.nodes[COURSE.start].enter);
     award(COURSE.start);
     setStarted(true);
   }
@@ -65,6 +93,8 @@ export function Player() {
     }
     awarded.current = new Set();
     setCharacter(null);
+    setFlags({});
+    setTranscript([]);
     setXp(0);
     setStep(1);
     setNodeId(COURSE.start);
@@ -89,6 +119,7 @@ export function Player() {
         setXp(sv.xp ?? 0);
         setStep(sv.step ?? 1);
         setCharacter(sv.character ?? null);
+        setFlags(sv.flags ?? {});
         setStarted(true);
       }
     } catch {
@@ -100,16 +131,33 @@ export function Player() {
   useEffect(() => {
     if (!started) return;
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, nodeId, xp, step, character }));
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, nodeId, xp, step, character, flags }));
     } catch {
       /* ignore */
     }
-  }, [started, nodeId, xp, step, character]);
+  }, [started, nodeId, xp, step, character, flags]);
 
   // Move focus to the new scene so screen-reader/keyboard users hear the outcome.
   const stageRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (started) stageRef.current?.focus();
+  }, [nodeId, started]);
+
+  // Record story beats into the scrollback transcript as they're reached.
+  useEffect(() => {
+    if (!started) return;
+    const n = COURSE.nodes[nodeId];
+    const c: StoryCtx = { flags, character, hero: heroName };
+    const r = (l: Lines) => (typeof l === "function" ? l(c) : l);
+    if (n.kind === "narration") r(n.lines).forEach((t) => logToTranscript(t, n.speaker));
+    else if (n.kind === "teach") {
+      logToTranscript(n.title, n.speaker);
+      r(n.body).forEach((t) => logToTranscript(t));
+    } else if (n.kind === "end") {
+      logToTranscript(n.title);
+      r(n.body).forEach((t) => logToTranscript(t));
+    } else if (n.kind === "choice") logToTranscript(n.prompt, n.speaker);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodeId, started]);
 
   if (!started) return <TitleScreen onStart={begin} />;
@@ -130,13 +178,52 @@ export function Player() {
           <span className="xp-icon" aria-hidden>✦</span>
           <b>{xp}</b>
         </div>
+        <button
+          className="mute-btn"
+          aria-label="Story log"
+          title="Story log"
+          onClick={() => setShowLog(true)}
+        >
+          📜
+        </button>
         <MuteButton />
         <SettingsPanel onRestart={restart} />
       </div>
 
       <div className="stage" ref={stageRef} tabIndex={-1}>
-        <NodeView node={node} onGo={go} character={character} onBuilt={setCharacter} />
+        <NodeView
+          node={node}
+          onGo={go}
+          character={character}
+          onBuilt={setCharacter}
+          ctx={ctx}
+          resolve={resolve}
+          runEffect={runEffect}
+          onChoose={logToTranscript}
+        />
       </div>
+
+      {showLog && (
+        <div className="modal-scrim" onClick={() => setShowLog(false)}>
+          <div className="modal log-modal" role="dialog" aria-label="Story log" onClick={(e) => e.stopPropagation()}>
+            <h2>Story so far</h2>
+            <div className="transcript">
+              {transcript.length === 0 && <p className="muted">Your story will appear here as you play.</p>}
+              {transcript.map((e) => (
+                <p key={e.id} className="prose">
+                  {e.speaker && <b className="t-speaker">{e.speaker}: </b>}
+                  {e.text}
+                </p>
+              ))}
+            </div>
+            <div className="actions">
+              <button className="btn primary" onClick={() => setShowLog(false)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
@@ -146,18 +233,26 @@ function NodeView({
   onGo,
   character,
   onBuilt,
+  ctx,
+  resolve,
+  runEffect,
+  onChoose,
 }: {
   node: CourseNode;
   character: BuildState | null;
   onBuilt: (b: BuildState) => void;
   onGo: (next: string, bonus?: number) => void;
+  ctx: StoryCtx;
+  resolve: (lines: Lines) => string[];
+  runEffect: (e?: Effect) => void;
+  onChoose: (text: string, speaker?: string) => void;
 }) {
   switch (node.kind) {
     case "narration":
       return (
         <div className="card">
           {node.speaker && <Speaker name={node.speaker} />}
-          <Typed paragraphs={node.lines} />
+          <Typed paragraphs={resolve(node.lines)} />
           <div className="actions">
             <button className="btn primary" onClick={() => onGo(node.next)}>
               Continue
@@ -171,7 +266,7 @@ function NodeView({
         <div className="card">
           {node.speaker && <Speaker name={node.speaker} />}
           <h2>{node.title}</h2>
-          <Typed paragraphs={node.body} />
+          <Typed paragraphs={resolve(node.body)} />
           {node.points && (
             <ul className="points">
               {node.points.map((p, i) => (
@@ -193,12 +288,28 @@ function NodeView({
           {node.speaker && <Speaker name={node.speaker} />}
           <h2>{node.prompt}</h2>
           <div className="actions">
-            {node.options.map((o, i) => (
-              <button className="btn" key={i} onClick={() => onGo(o.next)}>
-                {o.label}
-                {o.hint && <span className="hint">{o.hint}</span>}
-              </button>
-            ))}
+            {node.options.map((o, i) => {
+              const locked = o.requires ? !o.requires(ctx) : false;
+              return (
+                <button
+                  className="btn"
+                  key={i}
+                  disabled={locked}
+                  onClick={() => {
+                    if (locked) return;
+                    onChoose(`You chose: ${o.label}`);
+                    runEffect(o.set);
+                    onGo(o.next);
+                  }}
+                >
+                  {locked ? "🔒 " : ""}
+                  {o.label}
+                  {(locked ? o.lockedHint : o.hint) && (
+                    <span className="hint">{locked ? o.lockedHint : o.hint}</span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       );
@@ -249,7 +360,7 @@ function NodeView({
             <div className="label">Mastered: {node.crown}</div>
           </div>
           <h2 style={{ textAlign: "center" }}>{node.title}</h2>
-          <Typed paragraphs={node.body} />
+          <Typed paragraphs={resolve(node.body)} />
           <div className="upnext">
             <div className="k">Up next</div>
             <p style={{ margin: "6px 0 0" }}>{node.upNext}</p>

@@ -29,9 +29,9 @@ export const COURSE: Course = {
       speaker: "Bram",
       prompt: "Before we step inside — what kind of adventurer are you, deep down?",
       options: [
-        { label: "Bold and brash", hint: "Charge in first, think later", next: "intro-bold" },
-        { label: "Careful and clever", hint: "Look before you leap", next: "intro-careful" },
-        { label: "Curious about everything", hint: "Ask all the questions", next: "intro-curious" },
+        { label: "Bold and brash", hint: "Charge in first, think later", next: "intro-bold", set: ({ set }) => set({ temperament: "bold" }) },
+        { label: "Careful and clever", hint: "Look before you leap", next: "intro-careful", set: ({ set }) => set({ temperament: "careful" }) },
+        { label: "Curious about everything", hint: "Ask all the questions", next: "intro-curious", set: ({ set }) => set({ temperament: "curious" }) },
       ],
     },
     "intro-bold": {
@@ -127,14 +127,15 @@ export const COURSE: Course = {
       kind: "choice",
       prompt: "The gap yawns below. How do you cross?",
       options: [
-        { label: "A full running leap", hint: "Commit — speed off the beam", next: "chasm" },
-        { label: "A measured jump, ready to grab the ledge", hint: "Play it safe", next: "chasm" },
+        { label: "A full running leap", hint: "Commit — speed off the beam", next: "chasm", set: ({ set }) => set({ crossedBoldly: true }) },
+        { label: "A measured jump, ready to grab the ledge", hint: "Play it safe", next: "chasm", set: ({ set }) => set({ crossedBoldly: false }) },
       ],
     },
 
     chasm: {
       kind: "check",
       prompt: "Leap the chasm — Athletics vs DC 15",
+      retry: true,
       spec: {
         label: "Athletics",
         skill: "athletics",
@@ -181,8 +182,11 @@ export const COURSE: Course = {
     "after-chasm": {
       kind: "narration",
       speaker: "Bram",
-      lines: [
-        "On the far ledge, Bram dusts off her hands. “See what just happened? Same jump, same dice — but the result had texture. That's the four degrees doing their work.”",
+      lines: (ctx) => [
+        ctx.flags.crossedBoldly
+          ? "On the far ledge, Bram grins. “All-or-nothing on the jump — I like the nerve.”"
+          : "On the far ledge, Bram nods. “Measured, ready to catch yourself. Smart crossing.”",
+        "“See what just happened? Same jump, same dice — but the result had texture. That's the four degrees doing their work.”",
         "“Let's make sure it stuck.”",
       ],
       next: "quiz",
@@ -220,6 +224,7 @@ export const COURSE: Course = {
     "unit1-crown": {
       kind: "end",
       xp: 15,
+      enter: ({ set }) => set((f) => ({ mastery: (Number(f.mastery) || 0) + 1 })),
       title: "Unit 1 Complete",
       crown: "Degrees of Success",
       body: [
@@ -304,6 +309,7 @@ export const COURSE: Course = {
     "unit2-crown": {
       kind: "end",
       xp: 20,
+      enter: ({ set }) => set((f) => ({ mastery: (Number(f.mastery) || 0) + 1 })),
       title: "Unit 2 Complete",
       crown: "The Three-Action Economy",
       body: [
@@ -405,6 +411,7 @@ export const COURSE: Course = {
     "unit3-crown": {
       kind: "end",
       xp: 25,
+      enter: ({ set }) => set((f) => ({ mastery: (Number(f.mastery) || 0) + 1 })),
       title: "Unit 3 Complete",
       crown: "Initiative, Allies & Reactions",
       body: [
@@ -520,6 +527,7 @@ export const COURSE: Course = {
     "unit4-crown": {
       kind: "end",
       xp: 30,
+      enter: ({ set }) => set((f) => ({ mastery: (Number(f.mastery) || 0) + 1 })),
       title: "Unit 4 Complete",
       crown: "Conditions & the Dying Rules",
       body: [
@@ -573,6 +581,7 @@ export const COURSE: Course = {
     "unit5-crown": {
       kind: "end",
       xp: 30,
+      enter: ({ set }) => set((f) => ({ mastery: (Number(f.mastery) || 0) + 1 })),
       title: "Unit 5 Complete",
       crown: "Character Creation",
       body: [
@@ -603,9 +612,17 @@ export const COURSE: Course = {
       speaker: "Bram",
       prompt: "The drake blocks the path. What's your approach?",
       options: [
-        { label: "Fight through it", hint: "Combat — you know how", next: "u6-cap-fight" },
-        { label: "Sneak past while it's distracted", hint: "Exploration & Stealth", next: "u6-cap-sneak" },
-        { label: "Calm it and coax it aside", hint: "A social approach", next: "u6-cap-talk" },
+        { label: "Fight through it", hint: "Combat — you know how", next: "u6-cap-fight", set: ({ set }) => set({ capstoneApproach: "fight" }) },
+        { label: "Sneak past while it's distracted", hint: "Exploration & Stealth", next: "u6-cap-sneak", set: ({ set }) => set({ capstoneApproach: "sneak" }) },
+        { label: "Calm it and coax it aside", hint: "A social approach", next: "u6-cap-talk", set: ({ set }) => set({ capstoneApproach: "talk" }) },
+        {
+          label: "Spot the old winch and reroute the rockfall",
+          hint: "A clever third way",
+          next: "u6-cap-clever",
+          requires: (ctx) => ctx.flags.temperament === "curious",
+          lockedHint: "A more curious adventurer might have noticed the mechanism here.",
+          set: ({ set }) => set({ capstoneApproach: "clever" }),
+        },
       ],
     },
 
@@ -630,6 +647,14 @@ export const COURSE: Course = {
       lines: [
         "You lower your weapon, speak low and steady, and toss it the dried meat from your pack. The drake huffs, settles, and lets you pass.",
         "“Now THAT'S roleplay. Diplomacy is a real tool, and you reached for it,” Bram grins.",
+      ],
+      next: "u6-handoff",
+    },
+    "u6-cap-clever": {
+      kind: "narration",
+      lines: [
+        "Your eye catches a moss-choked winch bolted to the wall — the old builders' work. You crank it, and a counterweight shifts the rubble aside, opening a clear path the drake won't follow.",
+        "Bram laughs, delighted. “That curiosity of yours just turned a fight into a non-event. The best adventurers always find the third option.”",
       ],
       next: "u6-handoff",
     },
@@ -666,11 +691,36 @@ export const COURSE: Course = {
       xp: 50,
       title: "You're Ready to Play",
       crown: "Pathfinder 2e — Ready for a Table",
-      body: [
-        "Bram shoulders her pack and offers a hand. “You came in never having rolled a d20. You're leaving with the rules, a character, and the nerve to use them. That's the whole journey.”",
-        "“Go find your table. They're lucky to have you. And hey — make some mistakes. That's where the best stories come from.”",
-        "That's the end of the course. You did it. Now go play.",
-      ],
+      body: (ctx) => {
+        const t = ctx.flags.temperament;
+        const temperamentLine =
+          t === "bold"
+            ? "“You charged in bold from the very first step,” Bram says, “and you never lost that nerve.”"
+            : t === "careful"
+              ? "“Careful and clever, just like you said at the gate,” Bram says. “It kept you breathing the whole way.”"
+              : t === "curious"
+                ? "“That curiosity you walked in with? It found doors the rest would've missed,” Bram says."
+                : "“You found your own way through every step,” Bram says.";
+        const a = ctx.flags.capstoneApproach;
+        const approachLine =
+          a === "fight"
+            ? "You faced the drake head-on and won — the combat is second nature now."
+            : a === "sneak"
+              ? "You slipped past the drake without a drop of blood — exploration mastered."
+              : a === "talk"
+                ? "You talked the drake down — proof you can roleplay your way through, not just fight."
+                : a === "clever"
+                  ? "You turned the drake into a non-problem with a clever third option — exactly how the best players think."
+                  : "You found your way past the drake.";
+        const m = Number(ctx.flags.mastery) || 0;
+        return [
+          `Bram shoulders her pack and offers a hand. “You came in never having rolled a d20, ${ctx.hero}. You're leaving with the rules, a character, and the nerve to use them.”`,
+          temperamentLine,
+          approachLine,
+          `Five crowns of mastery${m >= 5 ? "" : ` (${m} earned)`}, and a hero of your own making. “Go find your table. They're lucky to have you — and hey, make some mistakes. That's where the best stories come from.”`,
+          "That's the end of the course. You did it. Now go play.",
+        ];
+      },
       upNext:
         "There is no next — this is your graduation. Bring your sheet, find a group, and roll some dice for real.",
     },

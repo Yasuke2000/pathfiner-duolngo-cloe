@@ -24,7 +24,15 @@ export function CheckScene({
   const [phase, setPhase] = useState<Phase>("ready");
   const [face, setFace] = useState(20); // the number shown on the tumbling die
   const [result, setResult] = useState<PerformedCheck | null>(null);
+  const [flash, setFlash] = useState<Degree | null>(null);
   const tick = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  function maybeFlash(degree: Degree) {
+    if (degree === "critical-success" || degree === "critical-failure") {
+      setFlash(degree);
+      setTimeout(() => setFlash(null), 650);
+    }
+  }
 
   // Pre-roll odds: show the player exactly what they're rolling against.
   const { modifierTotal } = checkModifier(PREGEN_HERO, node.spec);
@@ -48,6 +56,7 @@ export function CheckScene({
       setFace(outcome.die);
       setPhase("revealed");
       sfx.degree(outcome.degree);
+      maybeFlash(outcome.degree);
       return;
     }
 
@@ -59,6 +68,7 @@ export function CheckScene({
       setFace(outcome.die);
       setPhase("revealed");
       sfx.degree(outcome.degree);
+      maybeFlash(outcome.degree);
     }, ROLL_MS);
   }
 
@@ -75,11 +85,14 @@ export function CheckScene({
 
   return (
     <div className="card">
+      {flash && <div className={`screen-flash ${flash}`} aria-hidden />}
       <span className="speaker">Roll the dice</span>
       <h2>{node.prompt}</h2>
 
-      <div className={`die ${phase === "rolling" ? "rolling" : ""} ${dieClass}`}>
-        {phase === "ready" ? "?" : face}
+      <div className="die-stage">
+        <div className={`die ${phase === "rolling" ? "rolling" : ""} ${dieClass}`}>
+          {phase === "ready" ? "?" : face}
+        </div>
       </div>
       {result && result.die === 20 && phase !== "rolling" && (
         <p className="shift-note">Natural 20! The die bumps your result up one band.</p>
@@ -185,6 +198,11 @@ export function CheckScene({
       {phase === "outcome" && result && degree && (
         <Outcome
           lines={node.outcomes[degree].lines}
+          canRetry={!!node.retry && (degree === "failure" || degree === "critical-failure")}
+          onRetry={() => {
+            setResult(null);
+            setPhase("ready");
+          }}
           onContinue={() =>
             onResolved(
               degree,
@@ -200,9 +218,13 @@ export function CheckScene({
 
 function Outcome({
   lines,
+  canRetry,
+  onRetry,
   onContinue,
 }: {
   lines: string[];
+  canRetry: boolean;
+  onRetry: () => void;
   onContinue: () => void;
 }) {
   return (
@@ -210,7 +232,17 @@ function Outcome({
       {lines.map((l, i) => (
         <p key={i}>{l}</p>
       ))}
+      {canRetry && (
+        <p className="shift-note">
+          This is a check you can retry — steady yourself, remember the math, and roll again.
+        </p>
+      )}
       <div className="actions">
+        {canRetry && (
+          <button className="btn" onClick={onRetry}>
+            Take a breath & try again
+          </button>
+        )}
         <button className="btn primary" onClick={onContinue}>
           Continue
         </button>
