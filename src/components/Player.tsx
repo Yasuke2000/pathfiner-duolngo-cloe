@@ -35,6 +35,7 @@ export function Player() {
   const [showLog, setShowLog] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
   const [resumed, setResumed] = useState(false);
+  const [mode, setMode] = useState<"full" | "short">("full");
   const awarded = useRef<Set<string>>(new Set());
   const logId = useRef(0);
   const firstSave = useRef(true);
@@ -73,7 +74,16 @@ export function Player() {
     setTranscript((t) => [...t, { id, speaker, text }]);
   }
 
-  function go(next: string, bonus = 0) {
+  // In Quick-Lessons mode, bypass the story-heavy branches and finale.
+  const SHORT_REMAP: Record<string, string> = {
+    "intro-choice": "what-is-ttrpg",
+    "chasm-approach": "chasm",
+    "u6-intro": "u6-handoff",
+    graduation: "short-graduation",
+  };
+
+  function go(rawNext: string, bonus = 0) {
+    const next = mode === "short" && SHORT_REMAP[rawNext] ? SHORT_REMAP[rawNext] : rawNext;
     runEffect(COURSE.nodes[next].enter);
     award(next, bonus);
     if (COURSE.nodes[next].kind === "end") sfx.level();
@@ -82,7 +92,8 @@ export function Player() {
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function newGame() {
+  function newGame(chosenMode: "full" | "short" = "full") {
+    setMode(chosenMode);
     try {
       localStorage.removeItem(SAVE_KEY);
     } catch {
@@ -133,6 +144,7 @@ export function Player() {
         setStep(sv.step ?? 1);
         setCharacter(sv.character ?? null);
         setFlags(sv.flags ?? {});
+        if (sv.mode === "short" || sv.mode === "full") setMode(sv.mode);
         setResumed(true);
       }
     } catch {
@@ -174,7 +186,7 @@ export function Player() {
   useEffect(() => {
     if (!started) return;
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, nodeId, xp, step, character, flags }));
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, nodeId, xp, step, character, flags, mode }));
     } catch {
       /* ignore */
     }
@@ -185,7 +197,7 @@ export function Player() {
     setSavedFlash(true);
     const t = setTimeout(() => setSavedFlash(false), 1200);
     return () => clearTimeout(t);
-  }, [started, nodeId, xp, step, character, flags]);
+  }, [started, nodeId, xp, step, character, flags, mode]);
 
   // Move focus to the new scene so screen-reader/keyboard users hear the outcome.
   const stageRef = useRef<HTMLDivElement>(null);
@@ -210,7 +222,8 @@ export function Player() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodeId, started]);
 
-  if (!started) return <TitleScreen onStart={newGame} onContinue={continueGame} canContinue={resumed} />;
+  if (!started)
+    return <TitleScreen onStart={(m) => newGame(m)} onContinue={continueGame} canContinue={resumed} />;
 
   const progress = Math.round((step / TOTAL_STEPS) * 100);
 

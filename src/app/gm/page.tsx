@@ -16,6 +16,16 @@ export default function GmPage() {
     setErr(!r);
   }
 
+  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const text = await f.text();
+    setInput(text);
+    const r = decodeSeal(text);
+    setD(r);
+    setErr(!r);
+  }
+
   const cb = d ? suggestCurseBlessing(d) : null;
 
   return (
@@ -40,6 +50,11 @@ export default function GmPage() {
           <button className="btn primary" onClick={decode} disabled={!input.trim()}>
             Decode the seal
           </button>
+          <label className="btn" style={{ textAlign: "center", cursor: "pointer" }}>
+            ⬆ Upload a seal file
+            <span className="hint">choose the .txt the player gave you</span>
+            <input type="file" accept=".txt,text/plain" onChange={onFile} style={{ display: "none" }} />
+          </label>
         </div>
 
         {err && (

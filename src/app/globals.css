@@ -238,6 +238,31 @@ body::after {
   align-items: center;
   gap: 10px;
 }
+.mode-cta {
+  display: grid;
+  gap: 12px;
+  max-width: 460px;
+  margin: 18px auto 0;
+}
+.mode-btn {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  padding: 16px 18px;
+}
+.mode-btn .hint {
+  font-family: var(--font-body);
+  font-weight: 400;
+}
+.mode-divider {
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 6px;
+}
 .text-btn {
   appearance: none;
   background: none;

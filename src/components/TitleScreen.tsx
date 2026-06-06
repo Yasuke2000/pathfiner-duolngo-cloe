@@ -7,7 +7,7 @@ export function TitleScreen({
   onContinue,
   canContinue = false,
 }: {
-  onStart: () => void;
+  onStart: (mode: "full" | "short") => void;
   onContinue?: () => void;
   canContinue?: boolean;
 }) {
@@ -34,21 +34,24 @@ export function TitleScreen({
         ))}
       </div>
 
-      {canContinue ? (
-        <div className="title-cta">
-          <button className="btn primary big" onClick={onContinue}>
-            Continue your journey
-          </button>
-          <button className="text-btn" onClick={onStart}>
-            Start over
-          </button>
-        </div>
-      ) : (
-        <button className="btn primary big" onClick={onStart}>
-          Begin your journey
+      {canContinue && (
+        <button className="btn primary big" onClick={onContinue}>
+          Continue your journey
         </button>
       )}
-      <p className="muted title-foot">A solo, single-playthrough course · about 20–30 minutes · no account needed</p>
+
+      <div className="mode-cta">
+        {canContinue && <div className="mode-divider">or start over</div>}
+        <button className="btn mode-btn" onClick={() => onStart("full")}>
+          Full Story
+          <span className="hint">the complete origin — branching choices, a dark path, the black-hole finale · ~30 min</span>
+        </button>
+        <button className="btn mode-btn" onClick={() => onStart("short")}>
+          Quick Lessons
+          <span className="hint">just the rules, taught by playing — no long story · ~15 min</span>
+        </button>
+      </div>
+      <p className="muted title-foot">A solo, single-playthrough course · no account needed</p>
       <SupportButton />
     </div>
   );

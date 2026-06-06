@@ -245,8 +245,8 @@ export const COURSE: Course = {
       speaker: "Tahar",
       xp: 5,
       lines: [
-        "Deeper in, the passage opens into a flooded hall — and a figure rises from behind a fallen pillar: a marauder who's been looting the place, axe already in hand.",
-        "“No talking our way out of this one,” Tahar mutters, drawing steel. “Time you learned how a fight actually works. Stay close.”",
+        "Deeper in, the passage opens into a flooded hall, ankle-deep and echoing. A figure rises from behind a fallen pillar — a marauder who's been stripping the ruin for scrap, axe already swinging up, eyes flat and certain.",
+        "Tahar's hand drifts to a humming device on his belt, then stops. “No talking our way out of this one. Pity.” He passes you a blade hilt-first. “Right — your spark's about to earn its keep. On a thousand worlds, this next part is the same: it's all about how you spend a single turn. Watch.”",
       ],
       next: "u2-teach-actions",
     },
@@ -330,8 +330,8 @@ export const COURSE: Course = {
       speaker: "Tahar",
       xp: 5,
       lines: [
-        "You press on — and the dark erupts. Two skulkers drop from the rafters, blades out, one lunging for you and one for Tahar.",
-        "“Two of them, two of us,” Tahar says, settling into a stance. “This is a real fight now. Watch the turn order, keep your shield ready, and trust me to set them up for you.”",
+        "You press deeper, and the dark comes alive. Two skulkers — wiry, grinning things — drop from the rafters in a rain of grit, one for your throat, one for Tahar's.",
+        "He sidesteps the first like he's done it a hundred times in a hundred halls. “NOW it's a real fight — two of them, two of us. This is where most heroes get themselves killed: they forget there's an order to it, and they forget their friends. Watch the turn order, keep that shield ready, and trust me to crack them open for you.”",
       ],
       next: "u3-teach-initiative",
     },
@@ -432,8 +432,8 @@ export const COURSE: Course = {
       speaker: "Tahar",
       xp: 5,
       lines: [
-        "The passage ends at a vaulted chamber. A construct of fused stone and old armor grinds to life and levels a greatsword at you.",
-        "Tahar whistles low. “That plating is thick — swing at it head-on and you'll mostly bounce off. We win this by stacking the deck: knock it Off-Guard, rattle it, make it easier to hit. Conditions, lass. This fight is a conditions lesson with a sword.”",
+        "The passage ends in a vaulted chamber, its air dead and dusty. With a grind of stone on stone, a construct of fused rubble and ancient armor hauls itself upright and levels a greatsword the size of a door at you.",
+        "Tahar whistles low, almost admiring. “Ohh, I've met its cousins. That plating's too thick to just hack through — swing head-on and you'll bounce off all day. So we cheat: knock it Off-Guard, rattle its nerve, stack every advantage until it's easy to hit. That's the secret the great ones know — most hard fights are really a conditions puzzle wearing a sword.”",
       ],
       next: "u4-teach-conditions",
     },
@@ -869,6 +869,20 @@ export const COURSE: Course = {
         `“That's the point. You step into your story clean, and let it surprise you.” He flicks you a small brass token already dissolving into sparks. “Good luck out there, ${ctx.hero}. Give them a tale worth telling.”`,
         "He steps back. The dark takes you — a lurch, a fall with no floor — and the watchtower, the rain, and the artificer with the knowing smile all stream away into nothing…",
         "…and you wake somewhere new, the way every hero wakes: at the start of the story, with no memory of how you got here, only who you are. Your adventure begins now.",
+      ],
+      upNext: "",
+    },
+
+    // Concise ending used by Quick-Lessons mode (skips the capstone/finale).
+    "short-graduation": {
+      kind: "end",
+      xp: 30,
+      title: "You're Ready to Play",
+      crown: "Pathfinder 2e — The Core",
+      body: (ctx) => [
+        `That's the core of it, ${ctx.hero}. You can resolve a check and read its degree, run a three-action turn, fight as a party, handle conditions and the dying rules, and build a character of your own.`,
+        "“That's everything you actually need to sit down at a table,” Tahar says, packing up his tools. “The rest is just stories — and those, you'll make yourself.”",
+        "Grab your sheet from the previous step, find a group, and go play. (Want the full story — the capstone, the choices, the consequences? Start over and pick Full Story.)",
       ],
       upNext: "",
     },
