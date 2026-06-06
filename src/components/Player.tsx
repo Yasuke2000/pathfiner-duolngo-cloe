@@ -17,6 +17,7 @@ import { MuteButton } from "./MuteButton";
 import { SettingsPanel } from "./SettingsPanel";
 import { chapterFor } from "@/lib/chapters";
 import { sfx } from "@/lib/sound";
+import { getSettings } from "@/lib/settings";
 import { combatHeroFromBuild } from "@/game/heroFromBuild";
 import { downloadSeal } from "@/game/seal";
 import { addressTerm, type BuildState } from "@/game/builder";
@@ -87,7 +88,9 @@ export function Player() {
     const next = mode === "short" && SHORT_REMAP[rawNext] ? SHORT_REMAP[rawNext] : rawNext;
     runEffect(COURSE.nodes[next].enter);
     award(next, bonus);
-    if (COURSE.nodes[next].kind === "end") sfx.level();
+    const target = COURSE.nodes[next];
+    if (target.kind === "end") (target.portal ? sfx.portal() : sfx.level());
+    else sfx.page();
     setNodeId(next);
     setStep((s) => Math.min(TOTAL_STEPS, s + 1));
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
@@ -111,6 +114,7 @@ export function Player() {
     setResumed(false);
     sfx.unlock();
     sfx.click();
+    sfx.music(getSettings().music);
     runEffect(COURSE.nodes[COURSE.start].enter);
     award(COURSE.start);
     setStarted(true);
@@ -118,6 +122,7 @@ export function Player() {
 
   function continueGame() {
     sfx.unlock();
+    sfx.music(getSettings().music);
     setStarted(true);
   }
 

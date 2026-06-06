@@ -8,9 +8,10 @@ export interface Settings {
   textSpeed: TextSpeed;
   reduceMotion: boolean;
   dyslexia: boolean;
+  music: boolean;
 }
 
-const DEFAULTS: Settings = { textSpeed: "normal", reduceMotion: false, dyslexia: false };
+const DEFAULTS: Settings = { textSpeed: "normal", reduceMotion: false, dyslexia: false, music: false };
 const KEY = "settings-v1";
 
 /** Milliseconds per character for the typewriter. instant = no animation. */

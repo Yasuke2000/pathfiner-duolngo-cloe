@@ -67,6 +67,18 @@ export function SettingsPanel({ onRestart }: { onRestart: () => void }) {
             />
 
             <Toggle
+              label="Ambient music"
+              hint="A subtle background drone"
+              on={s.music}
+              onChange={() => {
+                const on = !s.music;
+                setSettings({ music: on });
+                sfx.unlock();
+                sfx.music(on);
+              }}
+            />
+
+            <Toggle
               label="Reduce motion"
               hint="Snap animations & dice to their result"
               on={s.reduceMotion}

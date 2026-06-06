@@ -32,6 +32,7 @@ export function toggleMuted(): boolean {
   } catch {
     /* ignore */
   }
+  if (m) stopMusic(); // muting silences the ambient pad too
   return m;
 }
 
@@ -130,4 +131,98 @@ export const sfx = {
     if (muted()) return;
     arp([784, 988, 1318], 0.08, 0.3, "triangle", 0.2);
   },
+  /** A soft page-turn whoosh between story beats. */
+  page() {
+    if (muted()) return;
+    noiseBurst(0, 0.16, 0.035, 2600);
+  },
+  /** A descending sweep + shimmer for the black-hole finale. */
+  portal() {
+    if (muted()) return;
+    const a = ac();
+    if (!a) return;
+    const o = a.createOscillator();
+    const g = a.createGain();
+    const t = a.currentTime;
+    o.type = "sine";
+    o.frequency.setValueAtTime(420, t);
+    o.frequency.exponentialRampToValueAtTime(70, t + 1.6);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.16, t + 0.1);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 1.7);
+    o.connect(g).connect(a.destination);
+    o.start(t);
+    o.stop(t + 1.8);
+    noiseBurst(0.1, 1.3, 0.05, 500);
+  },
+  /** Start/stop a subtle ambient drone (opt-in via Settings). */
+  music(on: boolean) {
+    if (!on || muted()) {
+      stopMusic();
+      return;
+    }
+    if (musicGain) return; // already running
+    const a = ac();
+    if (!a) return;
+    const g = a.createGain();
+    g.gain.value = 0.0001;
+    g.connect(a.destination);
+    const filter = a.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.value = 650;
+    filter.connect(g);
+    // A2 root with a fifth and an octave, very slightly detuned for warmth.
+    [110, 110 * 1.5, 110 * 2].forEach((f, i) => {
+      const o = a.createOscillator();
+      o.type = i === 0 ? "sine" : "triangle";
+      o.frequency.value = f * (1 + i * 0.004);
+      o.connect(filter);
+      o.start();
+      musicOscs.push(o);
+    });
+    // Slow "breathing" LFO on the master gain.
+    const lfo = a.createOscillator();
+    lfo.frequency.value = 0.07;
+    const lfoGain = a.createGain();
+    lfoGain.gain.value = 0.012;
+    lfo.connect(lfoGain);
+    lfoGain.connect(g.gain);
+    lfo.start();
+    musicLfo = lfo;
+    g.gain.setValueAtTime(0.0001, a.currentTime);
+    g.gain.linearRampToValueAtTime(0.05, a.currentTime + 3);
+    musicGain = g;
+  },
 };
+
+let musicGain: GainNode | null = null;
+let musicLfo: OscillatorNode | null = null;
+const musicOscs: OscillatorNode[] = [];
+
+function stopMusic() {
+  if (!musicGain || !ctx) return;
+  const a = ctx;
+  const t = a.currentTime;
+  musicGain.gain.cancelScheduledValues(t);
+  musicGain.gain.setValueAtTime(musicGain.gain.value, t);
+  musicGain.gain.linearRampToValueAtTime(0.0001, t + 1);
+  const oscs = [...musicOscs];
+  const lfo = musicLfo;
+  setTimeout(() => {
+    oscs.forEach((o) => {
+      try {
+        o.stop();
+      } catch {
+        /* ignore */
+      }
+    });
+    try {
+      lfo?.stop();
+    } catch {
+      /* ignore */
+    }
+  }, 1100);
+  musicOscs.length = 0;
+  musicLfo = null;
+  musicGain = null;
+}
