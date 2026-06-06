@@ -159,6 +159,26 @@ body::after {
 .title-foot {
   margin-top: 16px;
 }
+.title-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.text-btn {
+  appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: underline;
+  padding: 4px 8px;
+}
+.text-btn:hover {
+  color: var(--text);
+}
 
 /* ---------- HUD (top bar) ---------- */
 .hud {
@@ -224,6 +244,18 @@ body::after {
 .xp b {
   color: var(--gold);
   font-variant-numeric: tabular-nums;
+}
+@media (max-width: 560px) {
+  .hud {
+    flex-wrap: wrap;
+  }
+  .hud-title {
+    display: none; /* keep the act label; drop the longer title on small screens */
+  }
+  .progress {
+    order: 5;
+    flex-basis: 100%;
+  }
 }
 .mute-btn {
   appearance: none;

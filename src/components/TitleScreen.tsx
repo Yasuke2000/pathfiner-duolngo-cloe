@@ -1,7 +1,15 @@
 import { ALL_CHAPTERS } from "@/lib/chapters";
 import { SupportButton } from "./SupportButton";
 
-export function TitleScreen({ onStart }: { onStart: () => void }) {
+export function TitleScreen({
+  onStart,
+  onContinue,
+  canContinue = false,
+}: {
+  onStart: () => void;
+  onContinue?: () => void;
+  canContinue?: boolean;
+}) {
   return (
     <div className="title-screen">
       <div className="title-emblem" aria-hidden>
@@ -25,9 +33,20 @@ export function TitleScreen({ onStart }: { onStart: () => void }) {
         ))}
       </div>
 
-      <button className="btn primary big" onClick={onStart}>
-        Begin your journey
-      </button>
+      {canContinue ? (
+        <div className="title-cta">
+          <button className="btn primary big" onClick={onContinue}>
+            Continue your journey
+          </button>
+          <button className="text-btn" onClick={onStart}>
+            Start over
+          </button>
+        </div>
+      ) : (
+        <button className="btn primary big" onClick={onStart}>
+          Begin your journey
+        </button>
+      )}
       <p className="muted title-foot">A solo, single-playthrough course · about 20–30 minutes · no account needed</p>
       <SupportButton />
     </div>

@@ -33,6 +33,7 @@ export function Player() {
   const [transcript, setTranscript] = useState<{ id: number; speaker?: string; text: string }[]>([]);
   const [showLog, setShowLog] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
+  const [resumed, setResumed] = useState(false);
   const awarded = useRef<Set<string>>(new Set());
   const logId = useRef(0);
   const firstSave = useRef(true);
@@ -80,7 +81,21 @@ export function Player() {
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function begin() {
+  function newGame() {
+    try {
+      localStorage.removeItem(SAVE_KEY);
+    } catch {
+      /* ignore */
+    }
+    awarded.current = new Set();
+    firstSave.current = true;
+    setFlags({});
+    setTranscript([]);
+    setCharacter(null);
+    setXp(0);
+    setStep(1);
+    setNodeId(COURSE.start);
+    setResumed(false);
     sfx.unlock();
     sfx.click();
     runEffect(COURSE.nodes[COURSE.start].enter);
@@ -88,19 +103,13 @@ export function Player() {
     setStarted(true);
   }
 
+  function continueGame() {
+    sfx.unlock();
+    setStarted(true);
+  }
+
   function restart() {
-    try {
-      localStorage.removeItem(SAVE_KEY);
-    } catch {
-      /* ignore */
-    }
-    awarded.current = new Set();
-    setCharacter(null);
-    setFlags({});
-    setTranscript([]);
-    setXp(0);
-    setStep(1);
-    setNodeId(COURSE.start);
+    newGame();
     setStarted(false);
   }
 
@@ -123,12 +132,42 @@ export function Player() {
         setStep(sv.step ?? 1);
         setCharacter(sv.character ?? null);
         setFlags(sv.flags ?? {});
-        setStarted(true);
+        setResumed(true);
       }
     } catch {
       /* ignore */
     }
   }, []);
+
+  // Keyboard navigation: Enter/Space advances narration; number keys pick choices.
+  useEffect(() => {
+    if (!started) return;
+    const onKey = (e: KeyboardEvent) => {
+      const n = COURSE.nodes[nodeId];
+      const ae = document.activeElement;
+      const onControl =
+        ae instanceof HTMLElement && ["BUTTON", "A", "INPUT", "TEXTAREA"].includes(ae.tagName);
+      if ((n.kind === "narration" || n.kind === "teach") && (e.key === "Enter" || e.key === " ")) {
+        if (onControl) return; // let a focused button handle it
+        e.preventDefault();
+        go(n.next);
+      } else if (n.kind === "end" && n.next && e.key === "Enter" && !onControl) {
+        e.preventDefault();
+        go(n.next);
+      } else if (n.kind === "choice") {
+        const idx = parseInt(e.key, 10) - 1;
+        const o = n.options[idx];
+        if (o && !(o.requires && !o.requires(ctx))) {
+          logToTranscript(`You chose: ${o.label}`);
+          runEffect(o.set);
+          go(o.next);
+        }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [started, nodeId, flags, character]);
 
   // Autosave progress whenever it changes.
   useEffect(() => {
@@ -170,7 +209,7 @@ export function Player() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodeId, started]);
 
-  if (!started) return <TitleScreen onStart={begin} />;
+  if (!started) return <TitleScreen onStart={newGame} onContinue={continueGame} canContinue={resumed} />;
 
   const progress = Math.round((step / TOTAL_STEPS) * 100);
 
