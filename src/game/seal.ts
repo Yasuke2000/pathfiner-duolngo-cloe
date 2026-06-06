@@ -17,6 +17,7 @@ function xorBytes(bytes: Uint8Array): Uint8Array {
 export interface Dossier {
   v: number;
   name: string;
+  pronouns?: string;
   ancestry?: string;
   heritage?: string;
   class?: string;
@@ -37,6 +38,7 @@ export function buildDossier(build: BuildState | null, flags: Flags): Dossier {
   return {
     v: 1,
     name: build?.name?.trim() || "Unnamed Wanderer",
+    pronouns: build?.pronouns ?? "they",
     ancestry: "ancestry" in r ? r.ancestry?.name : undefined,
     heritage: "heritage" in r ? r.heritage?.name : undefined,
     class: "cls" in r ? r.cls?.name : undefined,

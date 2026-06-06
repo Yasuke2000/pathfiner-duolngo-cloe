@@ -4,6 +4,6 @@ export default defineConfig({
   test: {
     // The engine is framework-agnostic pure TypeScript; we test it in a plain node env.
     environment: "node",
-    include: ["src/engine/**/*.test.ts"],
+    include: ["src/engine/**/*.test.ts", "src/content/**/*.test.ts"],
   },
 });

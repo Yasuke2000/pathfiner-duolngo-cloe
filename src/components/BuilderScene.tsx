@@ -18,6 +18,7 @@ import {
   buildAttrs,
   derived,
   emptyBuild,
+  PRONOUN_LABELS,
   grantedLanguages,
   isComplete,
   languageBudget,
@@ -145,6 +146,18 @@ export function BuilderScene({
             onChange={(e) => set({ name: e.target.value })}
             maxLength={28}
           />
+          <p className="muted" style={{ margin: "14px 0 6px" }}>How should Tahar refer to you?</p>
+          <div className="seg">
+            {PRONOUN_LABELS.map((p) => (
+              <button
+                key={p.id}
+                className={`seg-btn ${build.pronouns === p.id ? "on" : ""}`}
+                onClick={() => set({ pronouns: p.id })}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
         </>
       )}
 

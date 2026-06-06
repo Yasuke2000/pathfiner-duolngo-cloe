@@ -19,8 +19,11 @@ import {
   type SpellcastingDef,
 } from "@/content/srd";
 
+export type Pronouns = "she" | "he" | "they";
+
 export interface BuildState {
   name: string;
+  pronouns?: Pronouns;
   ancestryId?: string;
   heritageId?: string;
   backgroundId?: string;
@@ -83,6 +86,17 @@ export function startingGear(b: BuildState): string[] {
 export function ancestryFeats(b: BuildState) {
   return b.ancestryId ? (ANCESTRY_FEATS[b.ancestryId] ?? []) : [];
 }
+
+/** How Tahar addresses the hero, per their chosen identity. */
+export function addressTerm(pronouns?: Pronouns): string {
+  return pronouns === "she" ? "lass" : pronouns === "he" ? "lad" : "friend";
+}
+
+export const PRONOUN_LABELS: { id: Pronouns; label: string }[] = [
+  { id: "she", label: "She / her" },
+  { id: "he", label: "He / him" },
+  { id: "they", label: "They / them" },
+];
 
 /** Assemble the attribute boost batches and compute level-1 modifiers. */
 export function buildAttrs(b: BuildState): Record<Attr, number> {
@@ -168,6 +182,7 @@ export function quickBuild(name: string): BuildState {
   const b: BuildState = {
     ...emptyBuild(),
     name: name.trim() || pick(["Dain", "Sera", "Pib", "Wren", "Kale", "Mira"]),
+    pronouns: pick(["she", "he", "they"] as Pronouns[]),
     ancestryId: ancestry.id,
     heritageId: pick(HERITAGES[ancestry.id]).id,
     backgroundId: background.id,
@@ -205,6 +220,7 @@ export function exportCharacter(b: BuildState) {
     _format: "pathfinder-learn-and-play.character",
     _version: 2,
     name: b.name.trim() || "Unnamed Hero",
+    pronouns: b.pronouns ?? "they",
     level: 1,
     ancestry: ancestry?.name,
     heritage: heritage?.name,

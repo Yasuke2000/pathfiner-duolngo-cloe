@@ -685,9 +685,10 @@ export const COURSE: Course = {
     "u6-nest": {
       kind: "narration",
       speaker: "Tahar",
-      lines: [
-        "With the drake handled, you find what it was really guarding: a clutch of faintly glowing eggs — and nestled among them, a shard of something that pulses with raw, planar light. Power, humming, just sitting there.",
-        "Tahar crouches beside it, suddenly serious. “Now THIS I've seen before. Three worlds, maybe four. A shard like this, a moment exactly like this one.” He glances up at you. “What a person does next tells me everything. Take your time.”",
+      lines: (ctx) => [
+        "With the drake handled, you find what it was really guarding: a clutch of faintly glowing eggs — and nestled among them, a shard of cold, planar light, pulsing slow. Power, humming, just sitting there.",
+        `Tahar crouches beside it, and for once the easy smile is gone. “Look familiar? It should. That's the same cold light that sank into your chest at the gate — the thing that made you… you.”`,
+        `He glances up. “The universe has a sense of humor, ${ctx.address}. It waited until the end to ask what you'll do with the very thing that started you. What you answer here tells me everything. Take your time.”`,
       ],
       next: "u6-moral",
     },
@@ -863,13 +864,19 @@ export const COURSE: Course = {
       portal: true,
       title: "Goodbye, and Good Luck",
       crown: "",
-      body: (ctx) => [
-        "“Where you're going,” Tahar says, almost gently, “you won't remember me. Not this ruin, not the spark, not a single word I taught you. It'll all sink down past memory and become instinct — you'll simply know how to be who you are.”",
-        "The brass dial on his belt spins up. Behind him the air tears open into a slow, silent whorl of dark — a hole in the world, its edges bleeding violet light, pulling at your coat, your breath, your name.",
-        `“That's the point. You step into your story clean, and let it surprise you.” He flicks you a small brass token already dissolving into sparks. “Good luck out there, ${ctx.hero}. Give them a tale worth telling.”`,
-        "He steps back. The dark takes you — a lurch, a fall with no floor — and the watchtower, the rain, and the artificer with the knowing smile all stream away into nothing…",
-        "…and you wake somewhere new, the way every hero wakes: at the start of the story, with no memory of how you got here, only who you are. Your adventure begins now.",
-      ],
+      body: (ctx) => {
+        const crossLine = ctx.flags.crossedBoldly
+          ? "“You crossed that first chasm without a heartbeat's hesitation,” he adds. “Cross this one the same way — don't look down.”"
+          : "“You crossed that first chasm measured, ready to catch the ledge,” he adds. “This one you can't plan for. So just breathe… and step.”";
+        return [
+          `“Here's the one thing I didn't tell you at the gate, ${ctx.address}. I said you couldn't lose me.” Tahar's smile turns rueful. “Half-true. Where you're going, you won't REMEMBER me — not this ruin, not the spark, not a word I taught you. It'll sink past memory and become instinct. You'll simply know how to be who you are.”`,
+          "The brass dial on his belt spins up, and behind him the air tears open into a slow, silent whorl of dark — a hole in the world, its edges bleeding violet light, pulling at your coat, your breath, your name.",
+          crossLine,
+          `“That's the whole point — you step into your story clean, and let it surprise you.” He flicks you a small brass token already dissolving into sparks. “Good luck out there, ${ctx.hero}. Give them a tale worth telling.”`,
+          "The dark takes you — a lurch, a fall with no floor — and the watchtower, the rain, and the artificer with the knowing smile all stream away into nothing…",
+          "…and you wake somewhere new, the way every hero wakes: at the start of the story, with no memory of how you got here — only who you are. Your adventure begins now.",
+        ];
+      },
       upNext: "",
     },
 

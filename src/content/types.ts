@@ -15,6 +15,8 @@ export interface StoryCtx {
   character: BuildState | null;
   /** The hero's display name (built character's name, else the pregen). */
   hero: string;
+  /** How Tahar addresses the hero, by their chosen identity: lass / lad / friend. */
+  address: string;
 }
 
 /** A side effect run when a node is entered or a choice is taken. */

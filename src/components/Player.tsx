@@ -19,7 +19,7 @@ import { chapterFor } from "@/lib/chapters";
 import { sfx } from "@/lib/sound";
 import { combatHeroFromBuild } from "@/game/heroFromBuild";
 import { downloadSeal } from "@/game/seal";
-import type { BuildState } from "@/game/builder";
+import { addressTerm, type BuildState } from "@/game/builder";
 
 const TOTAL_STEPS = 40; // length of the main story spine, for the progress bar
 const SAVE_KEY = "course-save-v1";
@@ -44,7 +44,8 @@ export function Player() {
   const chapter = chapterFor(nodeId);
 
   const heroName = character?.name?.trim() || "Wren";
-  const ctx: StoryCtx = { flags, character, hero: heroName };
+  const address = addressTerm(character?.pronouns);
+  const ctx: StoryCtx = { flags, character, hero: heroName, address };
   const resolve = (lines: Lines): string[] => (typeof lines === "function" ? lines(ctx) : lines);
 
   function runEffect(effect?: Effect) {
@@ -209,7 +210,7 @@ export function Player() {
   useEffect(() => {
     if (!started) return;
     const n = COURSE.nodes[nodeId];
-    const c: StoryCtx = { flags, character, hero: heroName };
+    const c: StoryCtx = { flags, character, hero: heroName, address };
     const r = (l: Lines) => (typeof l === "function" ? l(c) : l);
     if (n.kind === "narration") r(n.lines).forEach((t) => logToTranscript(t, n.speaker));
     else if (n.kind === "teach") {

@@ -68,6 +68,7 @@ export default function GmPage() {
           <>
             <h3 className="section-h">{d.name} — level {d.level}</h3>
             <div className="stat-row">
+              {d.pronouns && <Chip k="Pronouns" v={d.pronouns} />}
               {d.ancestry && <Chip k="Ancestry" v={d.ancestry} />}
               {d.heritage && <Chip k="Heritage" v={d.heritage} />}
               {d.class && <Chip k="Class" v={d.class} />}
