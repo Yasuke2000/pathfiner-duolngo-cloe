@@ -126,3 +126,66 @@ test("the title screen and its modes render", async ({ page }) => {
   await expect(page.getByRole("button", { name: /^Full Story/ })).toBeVisible();
   await expect(page.getByRole("button", { name: /^Quick Lessons/ })).toBeVisible();
 });
+
+test("the capstone fight uses YOUR built character, not the pregen", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /^Full Story/ }).first().click();
+  const NAME = "Zoltigon"; // a name the pregen ("You") will never have
+  const heroCard = page.locator(".combatant.hero", { hasText: NAME }).first();
+  let named = false;
+
+  for (let i = 0; i < 1400; i++) {
+    // Success: a party card in an encounter shows our built name — only the
+    // capstone, using the character we built, can do that.
+    if (named && (await heroCard.isVisible({ timeout: 100 }).catch(() => false))) {
+      await expect(heroCard).toBeVisible();
+      return;
+    }
+    // At the builder's name step, type our name; the driver then uses "Surprise
+    // me", which keeps a typed name and fills the rest.
+    if (!named) {
+      const input = page.locator("input.text-input").first();
+      if (await input.isVisible({ timeout: 100 }).catch(() => false)) {
+        await input.fill(NAME);
+        named = true;
+        continue;
+      }
+    }
+
+    let acted = false;
+    for (const name of ADVANCE) {
+      const btn = await ve(page, name);
+      if (btn) {
+        await btn.click();
+        acted = true;
+        break;
+      }
+    }
+    if (acted) {
+      await page.waitForTimeout(70);
+      continue;
+    }
+    const strike = await ve(page, /^Strike/);
+    if (strike) {
+      await strike.click();
+      const foe = page.locator(".foe-card.clickable").first();
+      if (await foe.isVisible({ timeout: 150 }).catch(() => false)) await foe.click();
+      await page.waitForTimeout(70);
+      continue;
+    }
+    const endTurn = await ve(page, /End turn/);
+    if (endTurn) {
+      await endTurn.click();
+      await page.waitForTimeout(900);
+      continue;
+    }
+    const any = page.locator("button.btn:not([disabled])").first();
+    if (await any.isVisible({ timeout: 150 }).catch(() => false)) {
+      await any.click();
+      await page.waitForTimeout(70);
+      continue;
+    }
+    await page.waitForTimeout(250);
+  }
+  throw new Error("never reached a capstone fight using the built character");
+});

@@ -23,7 +23,7 @@ import { downloadSeal } from "@/game/seal";
 import { addressTerm, type BuildState } from "@/game/builder";
 
 const TOTAL_STEPS = 40; // length of the main story spine, for the progress bar
-const SAVE_KEY = "course-save-v1";
+const SAVE_KEY = "course-save-v2"; // v2: invalidates pre-built-hero-capstone saves
 
 export function Player() {
   const [started, setStarted] = useState(false);
