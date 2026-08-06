@@ -1,0 +1,57 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Length 751 >>
+stream
+BT
+/F1 11 Tf
+50 790 Td
+14 TL
+(Acme Consulting BV) Tj T*
+(Stationsstraat 12, 9800 Deinze, Belgium) Tj T*
+(VAT: BE 0123 456 749) Tj T*
+() Tj T*
+(INVOICE) Tj T*
+(Invoice number: INV-2026-0042) Tj T*
+(Invoice date: 2026-07-15) Tj T*
+(Due date: 2026-08-14) Tj T*
+() Tj T*
+(Bill to: Gheeraert Transport NV) Tj T*
+(VAT: BE 0987 654 321) Tj T*
+() Tj T*
+(Description                              Qty    Unit price   VAT     Total) Tj T*
+(Consultancy services July                10     95.00        21 %    950.00) Tj T*
+(Software licence \(annual\)                1      1.200,00     21 %    1.200,00) Tj T*
+() Tj T*
+(Subtotal: 2,150.00) Tj T*
+(VAT \(21%\): 451.50) Tj T*
+(Total due: EUR 2,601.50) Tj T*
+() Tj T*
+(Payment to IBAN BE71 0961 2345 6769) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000000311 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1113
+%%EOF

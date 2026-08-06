@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice>
+  <InvoiceNumber>INV-2026-0042</InvoiceNumber>
+  <IssueDate>2026-07-15</IssueDate>
+  <DueDate>2026-08-14</DueDate>
+  <Currency>EUR</Currency>
+  <Supplier>
+    <Name>Acme Consulting BV</Name>
+    <VatNumber>BE0123456749</VatNumber>
+    <Street>Stationsstraat 12</Street>
+    <City>Deinze</City>
+    <PostalCode>9800</PostalCode>
+    <Country>BE</Country>
+    <Email>billing@acme.example</Email>
+  </Supplier>
+  <Customer>
+    <Name>Gheeraert Transport NV</Name>
+    <VatNumber>BE0987654321</VatNumber>
+    <Street>Industrielaan 4</Street>
+    <City>Loppem</City>
+    <PostalCode>8210</PostalCode>
+    <Country>BE</Country>
+  </Customer>
+  <Lines>
+    <Line>
+      <Description>Consultancy services July</Description>
+      <Quantity>10</Quantity>
+      <UnitPrice>95.00</UnitPrice>
+      <VatRate>21</VatRate>
+    </Line>
+    <Line>
+      <Description>Software licence (annual)</Description>
+      <Quantity>1</Quantity>
+      <UnitPrice>1200.00</UnitPrice>
+      <VatRate>21</VatRate>
+    </Line>
+  </Lines>
+  <Iban>BE71096123456769</Iban>
+  <PaymentReference>+++042/2026/00042+++</PaymentReference>
+</Invoice>
