@@ -11,6 +11,11 @@ export default defineConfig({
     // The engine/game/content modules are framework-agnostic TypeScript; we test
     // them in a plain node env.
     environment: "node",
-    include: ["src/engine/**/*.test.ts", "src/content/**/*.test.ts", "src/game/**/*.test.ts"],
+    include: [
+      "src/engine/**/*.test.ts",
+      "src/content/**/*.test.ts",
+      "src/game/**/*.test.ts",
+      "src/dutch/**/*.test.ts",
+    ],
   },
 });

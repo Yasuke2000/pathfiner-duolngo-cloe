@@ -18,6 +18,11 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
+    // Sandboxes/CI images sometimes ship a Chromium that doesn't match the
+    // version Playwright expects. Point PW_CHROMIUM at that binary to use it.
+    ...(process.env.PW_CHROMIUM
+      ? { launchOptions: { executablePath: process.env.PW_CHROMIUM, args: ["--no-sandbox"] } }
+      : {}),
   },
   webServer: {
     command: "npm run dev",

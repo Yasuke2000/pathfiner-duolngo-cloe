@@ -40,7 +40,7 @@ async function ve(page: Page, name: RegExp): Promise<Locator | null> {
 }
 
 async function play(page: Page, opts: { start: RegExp; flee?: boolean; done: () => Locator }) {
-  await page.goto("/");
+  await page.goto("/play");
   await page.getByRole("button", { name: opts.start }).first().click();
 
   for (let i = 0; i < 1200; i++) {
@@ -121,14 +121,14 @@ test("Quick Lessons: reaches the concise graduation", async ({ page }) => {
 });
 
 test("the title screen and its modes render", async ({ page }) => {
-  await page.goto("/");
-  await expect(page.getByText("The Sunken Threshold")).toBeVisible();
+  await page.goto("/play");
+  await expect(page.getByRole("heading", { name: "The Sunken Threshold" })).toBeVisible();
   await expect(page.getByRole("button", { name: /^Full Story/ })).toBeVisible();
   await expect(page.getByRole("button", { name: /^Quick Lessons/ })).toBeVisible();
 });
 
 test("the capstone fight uses YOUR built character, not the pregen", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/play");
   await page.getByRole("button", { name: /^Full Story/ }).first().click();
   const NAME = "Zoltigon"; // a name the pregen ("You") will never have
   const heroCard = page.locator(".combatant.hero", { hasText: NAME }).first();
@@ -188,4 +188,56 @@ test("the capstone fight uses YOUR built character, not the pregen", async ({ pa
     await page.waitForTimeout(250);
   }
   throw new Error("never reached a capstone fight using the built character");
+});
+
+test("the menu offers both courses and routes to each", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "The Academy" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The Sunken Threshold" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Code & Koffie" })).toBeVisible();
+
+  await page.getByRole("heading", { name: "Code & Koffie" }).click();
+  await expect(page.getByRole("heading", { name: "Code & Koffie" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Oefenen" }).first()).toBeVisible();
+});
+
+test("Dutch: a lesson asks, grades and finishes", async ({ page }) => {
+  await page.goto("/dutch");
+  await page.getByRole("button", { name: "Oefenen" }).first().click();
+
+  // A brand-new learner meets every word by multiple choice first. Wrong
+  // answers are requeued once, so budget for well over the 12 we start with.
+  for (let i = 0; i < 250; i++) {
+    const done = page.getByRole("button", { name: "Terug naar de lijst" });
+    if (await done.isVisible({ timeout: 150 }).catch(() => false)) {
+      await done.click();
+      await expect(page.getByRole("button", { name: "Oefenen" }).first()).toBeVisible();
+      return;
+    }
+    const check = page.getByRole("button", { name: "Controleren" });
+    if (await check.isEnabled({ timeout: 150 }).catch(() => false)) {
+      await check.click();
+      continue;
+    }
+    const next = page.getByRole("button", { name: /Volgende|Afronden/ });
+    if (await next.isVisible({ timeout: 150 }).catch(() => false)) {
+      await next.click();
+      continue;
+    }
+    // Nothing answered yet: pick an option.
+    const opt = page.locator(".d-option").first();
+    if (await opt.isVisible({ timeout: 150 }).catch(() => false)) {
+      await opt.click();
+      continue;
+    }
+    await page.waitForTimeout(150);
+  }
+  throw new Error("the Dutch lesson never reached its summary");
+});
+
+test("Dutch: the word list shows Flemish usage notes", async ({ page }) => {
+  await page.goto("/dutch");
+  await page.getByRole("button", { name: /Woordenlijst/ }).first().click();
+  await expect(page.locator(".d-list").first()).toBeVisible();
+  await expect(page.locator(".d-note").first()).toBeVisible();
 });

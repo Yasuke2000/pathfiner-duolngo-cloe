@@ -1450,3 +1450,397 @@ html[data-motion="reduce"] *::after {
   animation: none !important;
   transition: none !important;
 }
+
+/* ======================================================================
+   The Academy — main menu
+   ====================================================================== */
+.menu {
+  text-align: center;
+  padding: 26px 0 40px;
+  animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 18px;
+  margin: 28px 0 22px;
+  text-align: left;
+}
+.menu-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  border-radius: 20px;
+  text-decoration: none;
+  color: var(--text);
+  background:
+    radial-gradient(120% 90% at 50% 0%, hsl(var(--tone) / 0.16), transparent 60%),
+    linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 1px solid hsl(var(--tone) / 0.45);
+  box-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.9);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+}
+.menu-card:hover {
+  transform: translateY(-3px);
+  border-color: hsl(var(--tone) / 0.8);
+  box-shadow: 0 28px 70px -30px hsl(var(--tone) / 0.5);
+}
+.menu-glyph {
+  font-size: 30px;
+  line-height: 1;
+}
+.menu-card h2 {
+  font-family: var(--font-display);
+  margin: 2px 0 0;
+  font-size: 25px;
+  color: hsl(var(--tone));
+}
+.menu-tag {
+  margin: 0;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+}
+.menu-blurb {
+  margin: 4px 0 0;
+  font-family: var(--font-prose);
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 15px;
+}
+.menu-meta {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+.menu-go {
+  margin-top: 10px;
+  font-weight: 700;
+  color: hsl(var(--tone));
+}
+.menu-tools {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ======================================================================
+   Code & Koffie — the Dutch trainer
+   ====================================================================== */
+.d-home {
+  animation: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.d-hero {
+  text-align: center;
+  padding: 6px 0 22px;
+}
+.d-title {
+  font-size: clamp(34px, 7vw, 54px);
+  margin: 10px 0 2px;
+}
+.d-stats {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+.d-stat {
+  min-width: 96px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--panel);
+  border: 1px solid var(--border-soft);
+}
+.d-stat b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--gold);
+}
+.d-stat span {
+  font-size: 11px;
+  color: var(--muted);
+}
+.d-units {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+.d-unit {
+  padding: 20px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 1px solid hsl(var(--tone) / 0.4);
+}
+.d-unit-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.d-unit-head h3 {
+  font-family: var(--font-display);
+  margin: 0;
+  color: hsl(var(--tone));
+  font-size: 21px;
+}
+.d-pct {
+  font-family: var(--font-display);
+  color: var(--muted);
+  font-size: 14px;
+}
+.d-blurb {
+  font-family: var(--font-prose);
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 8px 0 12px;
+}
+.d-bar {
+  height: 7px;
+  border-radius: 999px;
+  background: var(--bg-2);
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+}
+.d-bar > span {
+  display: block;
+  height: 100%;
+  background: hsl(var(--tone));
+  transition: width 0.4s ease;
+}
+.d-unit-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.d-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+  border-top: 1px solid var(--border-soft);
+}
+.d-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.d-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+.d-nl {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--text);
+}
+.d-en {
+  color: var(--muted);
+  text-align: right;
+  font-size: 14px;
+}
+.d-note {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  color: var(--gold-dim);
+  line-height: 1.5;
+}
+.d-example {
+  margin: 4px 0 0;
+  font-family: var(--font-prose);
+  font-size: 13px;
+  color: var(--muted);
+}
+.d-foot {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 12px;
+}
+
+/* ---------- a lesson ---------- */
+.d-lesson {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.d-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.d-progress {
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bg-2);
+  border: 1px solid var(--border-soft);
+  overflow: hidden;
+}
+.d-progress > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--crit-success), var(--success));
+  transition: width 0.35s ease;
+}
+.d-count {
+  font-size: 12px;
+  min-width: 42px;
+  text-align: right;
+}
+.d-prompt {
+  margin: 10px 0 20px;
+}
+/* `.card h2` is more specific than a bare class, so scope this one too. */
+.card .d-word,
+.d-word {
+  /* Deliberately NOT the display face: Cinzel renders lowercase as small caps,
+     which would teach the wrong spelling and capitalisation. */
+  font-family: var(--font-body);
+  font-size: clamp(26px, 5vw, 36px);
+  margin: 6px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.d-speak {
+  background: hsl(var(--accent) / 0.14);
+  border: 1px solid hsl(var(--accent) / 0.45);
+  color: var(--text);
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 26px;
+  padding: 10px 16px;
+  line-height: 1;
+}
+.d-speak.small {
+  font-size: 16px;
+  padding: 6px 10px;
+}
+.d-speak.tiny {
+  font-size: 12px;
+  padding: 2px 6px;
+  margin-left: 6px;
+  border-radius: 8px;
+}
+.d-speak:hover {
+  background: hsl(var(--accent) / 0.26);
+}
+.d-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+}
+.d-options.two {
+  grid-template-columns: 1fr 1fr;
+  max-width: 340px;
+}
+.d-option {
+  font: inherit;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease, transform 0.08s ease;
+}
+.d-option:hover:not(:disabled) {
+  border-color: var(--accent-c);
+  transform: translateY(-1px);
+}
+.d-option.big {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 24px;
+  text-align: center;
+}
+.d-option.sel {
+  border-color: var(--accent-c);
+  background: hsl(var(--accent) / 0.16);
+}
+.d-option.right {
+  border-color: var(--crit-success);
+  background: rgba(52, 211, 153, 0.18);
+}
+.d-option.wrong {
+  border-color: var(--crit-failure);
+  background: rgba(240, 85, 106, 0.16);
+}
+.d-input {
+  margin-top: 4px;
+}
+.d-feedback {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  line-height: 1.55;
+}
+.d-feedback.correct {
+  border-color: var(--crit-success);
+  background: rgba(52, 211, 153, 0.12);
+}
+.d-feedback.typo {
+  border-color: var(--failure);
+  background: rgba(245, 158, 11, 0.12);
+}
+.d-feedback.wrong {
+  border-color: var(--crit-failure);
+  background: rgba(240, 85, 106, 0.12);
+}
+.d-answer {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 19px;
+}
+.d-build-line {
+  min-height: 54px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px dashed var(--border);
+  background: var(--bg-2);
+}
+.d-bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.d-chip {
+  font: inherit;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  cursor: pointer;
+}
+.d-chip:hover:not(:disabled) {
+  border-color: var(--accent-c);
+}
+.d-chip.placed {
+  border-color: var(--accent-c);
+  background: hsl(var(--accent) / 0.16);
+}
+.d-chip.used {
+  opacity: 0.25;
+  cursor: default;
+}
+.d-done {
+  text-align: center;
+  max-width: 520px;
+  margin: 0 auto;
+}

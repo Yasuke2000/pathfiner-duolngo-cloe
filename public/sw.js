@@ -3,7 +3,7 @@
 // with the cached shell as an offline fallback), and stale-while-revalidate
 // cache-first for everything else (the static assets are content-hashed).
 
-const VERSION = "v2";
+const VERSION = "v3";
 const CACHE = "sunken-threshold-" + VERSION;
 
 self.addEventListener("install", () => {

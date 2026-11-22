@@ -18,3 +18,7 @@ next-env.d.ts
 .env*.local
 .vercel
 coverage
+
+# Playwright artifacts
+test-results/
+playwright-report/
