@@ -20,6 +20,35 @@ describe("the vocabulary itself", () => {
     }
   });
 
+  it("covers both tracks, and tags every unit with one", () => {
+    const tracks = new Set(UNITS.map((u) => u.track));
+    expect(tracks).toEqual(new Set(["life", "cs"]));
+    expect(UNITS.filter((u) => u.track === "cs").length).toBeGreaterThanOrEqual(10);
+  });
+
+  it("teaches the CS vocabulary, not just translates it", () => {
+    // The point of the CS track is that a first-year meets the concept and the
+    // Dutch word together, so most technical terms must say what they ARE.
+    const csTerms = UNITS.filter((u) => u.track === "cs").flatMap((u) => u.terms);
+    expect(csTerms.length).toBeGreaterThanOrEqual(250);
+    const withDef = csTerms.filter((t) => t.def && t.def.length > 20);
+    expect(withDef.length / csTerms.length).toBeGreaterThan(0.4);
+    const withExample = UNITS.flatMap((u) => u.terms).filter((t) => t.example);
+    expect(withExample.length).toBeGreaterThanOrEqual(30);
+  });
+
+  it("keeps example sentences in Dutch and English, both non-empty", () => {
+    for (const u of UNITS) {
+      for (const t of u.terms) {
+        if (!t.example) continue;
+        expect(t.example.nl.trim().length).toBeGreaterThan(0);
+        expect(t.example.en.trim().length).toBeGreaterThan(0);
+        // A word-bank exercise needs something to arrange.
+        expect(t.example.nl.trim().split(/\s+/).length).toBeGreaterThan(2);
+      }
+    }
+  });
+
   it("gives every term a unique id within its unit", () => {
     for (const u of UNITS) {
       const ids = u.terms.map((t) => termId(u.id, t.nl));

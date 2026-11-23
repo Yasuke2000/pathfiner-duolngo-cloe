@@ -1844,3 +1844,30 @@ html[data-motion="reduce"] *::after {
   max-width: 520px;
   margin: 0 auto;
 }
+.d-def {
+  margin: 6px 0 0;
+  font-family: var(--font-prose);
+  font-size: 13.5px;
+  color: var(--text);
+  opacity: 0.85;
+  line-height: 1.55;
+}
+.d-track-h {
+  font-family: var(--font-display);
+  font-size: 26px;
+  margin: 34px 0 2px;
+  color: var(--gold);
+}
+.d-track-sub {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-family: var(--font-prose);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.d-hero-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}

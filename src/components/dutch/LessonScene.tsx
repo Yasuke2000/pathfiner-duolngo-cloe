@@ -275,6 +275,7 @@ export function LessonScene({
             {verdict === "wrong" && "Niet juist — het juiste antwoord is:"}
           </b>{" "}
           <span className="d-answer">{expectedOf(ex)}</span>
+          {phase === "checked" && ex.term.def && <p className="d-def">{ex.term.def}</p>}
           {note && <p className="d-note">💡 {note}</p>}
           {ex.kind !== "listen" && ex.term.example && (
             <p className="d-example">
