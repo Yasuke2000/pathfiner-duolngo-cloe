@@ -39,11 +39,11 @@ export function MainMenu() {
           <h2>Code &amp; Koffie</h2>
           <p className="menu-tag">Nederlands voor informatici — Dutch &amp; tech English</p>
           <p className="menu-blurb">
-            Belgian Dutch for a computer-science student in Flanders: the classroom, the lab, the
-            code, the exams and the shop on the corner — translated both ways, with the Flemish
-            words textbooks leave out.
+            Belgian Dutch for a computer-science student in Flanders: over a thousand words and
+            sentences from the lecture hall, the lab and the shop on the corner, code-reading
+            questions, a grammar reference and a dictionary.
           </p>
-          <span className="menu-meta">Practise daily · both directions · spaced repetition</span>
+          <span className="menu-meta">A few minutes a day · both directions · spaced repetition</span>
           <span className="menu-go">Start →</span>
         </Link>
       </div>

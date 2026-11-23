@@ -208,7 +208,7 @@ test("Dutch: a lesson asks, grades and finishes", async ({ page }) => {
   // A brand-new learner meets every word by multiple choice first. Wrong
   // answers are requeued once, so budget for well over the 12 we start with.
   for (let i = 0; i < 250; i++) {
-    const done = page.getByRole("button", { name: "Terug naar de lijst" });
+    const done = page.getByRole("button", { name: "Terug naar het overzicht" });
     if (await done.isVisible({ timeout: 150 }).catch(() => false)) {
       await done.click();
       await expect(page.getByRole("button", { name: "Oefenen" }).first()).toBeVisible();
@@ -244,7 +244,7 @@ test("Dutch: the word list shows Flemish usage notes", async ({ page }) => {
 
 test("Dutch: code-reading shows real code and explains the answer in Dutch", async ({ page }) => {
   await page.goto("/dutch");
-  await page.getByRole("button", { name: /Code lezen$/ }).click();
+  await page.getByRole("button", { name: /^Code lezen/ }).click();
   await expect(page.locator(".d-code")).toBeVisible();
   await expect(page.locator(".d-lang")).toBeVisible();
 
@@ -264,4 +264,76 @@ test("Dutch: a sentence is assembled from a word bank", async ({ page }) => {
   await unit.getByRole("button", { name: "Oefenen" }).click();
   // New sentences are introduced by recognition; options are full sentences.
   await expect(page.locator(".d-option, .d-chip").first()).toBeVisible();
+});
+
+test("Dutch: a new learner is told where to start", async ({ page }) => {
+  await page.goto("/dutch");
+  await expect(page.getByText("Begin hier")).toBeVisible();
+  await page.getByRole("button", { name: /Les starten/ }).click();
+  await expect(page.locator(".d-lesson")).toBeVisible();
+  await expect(page.locator(".d-option").first()).toBeVisible();
+});
+
+test("Dutch: number keys answer, and 'Ik weet het niet' reveals the answer", async ({ page }) => {
+  await page.goto("/dutch");
+  await page.getByRole("button", { name: /Les starten/ }).click();
+  await expect(page.locator(".d-option").first()).toBeVisible();
+
+  // Keyboard: 2 selects the second option, Enter checks it.
+  await page.keyboard.press("2");
+  await expect(page.locator(".d-option").nth(1)).toHaveClass(/sel/);
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".d-feedback")).toBeVisible();
+  await page.keyboard.press("Enter");
+
+  // Giving up shows the right answer instead of leaving the learner stuck.
+  await page.getByRole("button", { name: "Ik weet het niet" }).click();
+  await expect(page.locator(".d-feedback.wrong")).toBeVisible();
+  await expect(page.locator(".d-option.right")).toHaveCount(1);
+});
+
+test("Dutch: the dictionary finds a word in either language", async ({ page }) => {
+  await page.goto("/dutch");
+  await page.getByRole("tab", { name: "Woordenboek" }).click();
+  const box = page.getByRole("searchbox");
+
+  await box.fill("teller");
+  await expect(page.locator(".dk-term-nl", { hasText: "de teller" }).first()).toBeVisible();
+  await expect(page.getByText(/NUMERATOR/)).toBeVisible();
+
+  await box.fill("deadlock");
+  await expect(page.locator(".dk-term-nl", { hasText: "de impasse" })).toBeVisible();
+
+  await box.fill("qzxwvk");
+  await expect(page.getByText(/Niets gevonden/)).toBeVisible();
+});
+
+test("Dutch: the grammar reference opens a topic", async ({ page }) => {
+  await page.goto("/dutch");
+  await page.getByRole("tab", { name: "Grammatica" }).click();
+  await page.getByRole("button", { name: /Scheidbare werkwoorden/ }).click();
+  await expect(page.getByText("De functie geeft nul terug.")).toBeVisible();
+});
+
+test("Dutch: finishing a lesson fills the daily goal and recaps mistakes", async ({ page }) => {
+  await page.goto("/dutch");
+  await page.getByRole("button", { name: /Les starten/ }).click();
+  for (let i = 0; i < 120; i++) {
+    if (await page.getByRole("button", { name: "Nog een les" }).isVisible({ timeout: 100 }).catch(() => false)) break;
+    const next = page.getByRole("button", { name: /^(Volgende|Afronden)$/ });
+    if (await next.isVisible({ timeout: 100 }).catch(() => false)) {
+      await next.click();
+      continue;
+    }
+    // Deliberately give up on everything: every item must show up in the recap.
+    const idk = page.getByRole("button", { name: "Ik weet het niet" });
+    if (await idk.isVisible({ timeout: 100 }).catch(() => false)) await idk.click();
+  }
+  await expect(page.getByRole("heading", { name: "Nog even bekijken" })).toBeVisible();
+  await expect(page.locator(".d-recap li")).toHaveCount(12);
+
+  await page.getByRole("button", { name: "Terug naar het overzicht" }).click();
+  // 24 answers x 2 XP each = 48 XP towards today's goal, and the unit is now started.
+  await expect(page.locator(".dk-meter").first()).toContainText("48");
+  await expect(page.getByText("Ga verder").first()).toBeVisible();
 });

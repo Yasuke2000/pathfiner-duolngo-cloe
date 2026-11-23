@@ -1,4 +1,5 @@
 import { DutchHome } from "@/components/dutch/DutchHome";
+import "./dutch.css";
 
 export const metadata = {
   title: "Code & Koffie — Nederlands voor informatici",
@@ -8,7 +9,7 @@ export const metadata = {
 
 export default function DutchPage() {
   return (
-    <main className="shell">
+    <main className="dk-main">
       <DutchHome />
     </main>
   );

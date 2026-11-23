@@ -1,5 +1,6 @@
 import type { Unit } from "./types";
 import { CS_UNITS } from "./vocab-cs";
+import { MORE_UNITS } from "./vocab-more";
 import { SENTENCE_UNITS } from "./vocab-sentences";
 
 /**
@@ -81,7 +82,7 @@ const LIFE_UNITS: Unit[] = [
       { nl: "het groepswerk", en: "the group project" },
       { nl: "de presentatie", en: "the presentation" },
       { nl: "het hoorcollege", en: "the lecture" },
-      { nl: "de oefeningenles", en: "the exercise session", altNl: ["het werkcollege"] },
+      { nl: "de oefenzitting", en: "the exercise session", altNl: ["de oefeningenles", "het werkcollege"], note: "'Oefenzitting' at KU Leuven, 'oefeningenles' or 'werkcollege' elsewhere — same thing." },
       { nl: "het labo", en: "the lab", note: "Flemish for lab. The Netherlands says 'het lab' or 'het practicum'." },
       { nl: "de aula", en: "the lecture hall" },
       { nl: "het lokaal", en: "the classroom" },
@@ -173,7 +174,7 @@ const LIFE_UNITS: Unit[] = [
       { nl: "de index", en: "the index", def: "The position number of an element — in most languages counting starts at 0." },
       { nl: "de tekenreeks", en: "the string", altNl: ["de string"], def: "A piece of text, stored as a sequence of characters." },
       { nl: "het getal", en: "the number" },
-      { nl: "het geheel getal", en: "the integer", def: "A whole number, with no decimal part." },
+      { nl: "het geheel getal", en: "the integer", altNl: ["het gehele getal"], def: "A whole number, with no decimal part." },
       { nl: "het kommagetal", en: "the decimal / float", note: "Dutch writes decimals with a comma: 3,14 — not 3.14.", def: "A number with a decimal part, stored approximately." },
       { nl: "waar", en: "true", note: "Also means 'where'. In code contexts it is the boolean true." },
       { nl: "onwaar", en: "false" },
@@ -339,7 +340,7 @@ const LIFE_UNITS: Unit[] = [
       { nl: "de punten", en: "the grades / marks", note: "Flanders says 'punten' (out of 20). The Netherlands says 'cijfers' (out of 10)." },
       { nl: "de deliberatie", en: "the deliberation", note: "The jury meeting that decides if you pass the year — a very Belgian institution." },
       { nl: "inschrijven", en: "to enroll / to register" },
-      { nl: "het inschrijvingsgeld", en: "the tuition fee" },
+      { nl: "het studiegeld", en: "the tuition fee", altNl: ["het inschrijvingsgeld"], note: "Officially 'studiegeld'; students also say 'inschrijvingsgeld'." },
       { nl: "de cursus", en: "the course notes", note: "Watch out: in Flanders 'de cursus' is usually the printed syllabus, not the course itself." },
       { nl: "het handboek", en: "the textbook" },
       { nl: "de bib", en: "the library", altNl: ["de bibliotheek"] },
@@ -377,7 +378,7 @@ const LIFE_UNITS: Unit[] = [
       { nl: "voilà", en: "there you go" },
       { nl: "zever", en: "nonsense", note: "Informal. 'Dat is zever' = that's rubbish." },
       { nl: "een pint", en: "a beer" },
-      { nl: "de kaffee", en: "the pub", altNl: ["het café"] },
+      { nl: "het café", en: "the pub / bar", note: "In Flanders 'een café' is a pub where you drink beer, not a coffee shop." },
       { nl: "lukken", en: "to work out / to manage" },
       { nl: "zagen", en: "to nag / to whine", note: "Literally 'to saw'. 'Niet zagen!' = stop complaining." },
       { nl: "content", en: "happy / pleased", note: "Flemish (from French). 'Ik ben content' = I'm happy." },
@@ -388,8 +389,8 @@ const LIFE_UNITS: Unit[] = [
   },
   {
     id: "tijd",
-    title: "Getallen, tijd & afspraken",
-    subtitle: "Numbers, time & appointments",
+    title: "Tellen, dagen & de klok",
+    subtitle: "Numbers to ten, weekdays, telling the time",
     blurb: "Includes the clock trap that makes foreigners an hour early. Or late.",
     accent: "200 70% 58%",
     track: "life",
@@ -479,7 +480,7 @@ const LIFE_UNITS: Unit[] = [
   },
 ];
 
-export const UNITS: Unit[] = [...LIFE_UNITS, ...CS_UNITS, ...SENTENCE_UNITS];
+export const UNITS: Unit[] = [...LIFE_UNITS, ...CS_UNITS, ...MORE_UNITS, ...SENTENCE_UNITS];
 
 export const UNIT_BY_ID = new Map(UNITS.map((u) => [u.id, u]));
 

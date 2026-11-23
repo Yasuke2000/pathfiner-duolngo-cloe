@@ -13,8 +13,9 @@ describe("sentence units", () => {
     for (const u of SENTENCE_UNITS) {
       for (const t of u.terms) {
         expect(t.kind).toBe("sentence");
-        expect(t.nl.trim().split(/\s+/).length).toBeGreaterThan(2);
-        expect(t.en.trim().split(/\s+/).length).toBeGreaterThan(2);
+        // Even a greeting like "Geachte professor," is at least two words.
+        expect(t.nl.trim().split(/\s+/).length).toBeGreaterThanOrEqual(2);
+        expect(t.en.trim().split(/\s+/).length).toBeGreaterThanOrEqual(2);
       }
     }
   });
