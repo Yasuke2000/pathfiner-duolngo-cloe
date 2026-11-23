@@ -1,4 +1,4 @@
-import { emptySave, type DayStat, type DutchSave } from "./progress";
+import { emptySave, LOG_LIMIT, type DayStat, type DutchSave, type KindStat, type Mistake } from "./progress";
 import type { ProgressMap, TermState } from "./srs";
 
 /**
@@ -61,6 +61,26 @@ function sanitize(raw: unknown): DutchSave {
     }
   }
 
+  const str = (v: unknown) => (typeof v === "string" ? v.slice(0, 400) : "");
+  const log: Mistake[] = [];
+  if (Array.isArray(r.log)) {
+    for (const v of r.log) {
+      if (!v || typeof v !== "object") continue;
+      const m = v as Record<string, unknown>;
+      if (!isNum(m.t) || typeof m.id !== "string") continue;
+      log.push({ t: m.t, id: m.id, kind: str(m.kind), asked: str(m.asked), given: str(m.given), expected: str(m.expected) });
+    }
+  }
+
+  const kinds: Record<string, KindStat> = {};
+  if (r.kinds && typeof r.kinds === "object") {
+    for (const [kind, v] of Object.entries(r.kinds as Record<string, unknown>)) {
+      if (!v || typeof v !== "object") continue;
+      const k = v as Record<string, unknown>;
+      if (isNum(k.n) && isNum(k.ok)) kinds[kind] = { n: Math.max(0, k.n), ok: Math.max(0, Math.min(k.n, k.ok)) };
+    }
+  }
+
   return {
     ...emptySave(),
     terms,
@@ -71,6 +91,8 @@ function sanitize(raw: unknown): DutchSave {
     streak: isNum(r.streak) ? r.streak : undefined,
     goalDay: isDay(r.goalDay) ? r.goalDay : undefined,
     history,
+    log: log.length ? log.sort((a, b) => a.t - b.t).slice(-LOG_LIMIT) : undefined,
+    kinds: Object.keys(kinds).length ? kinds : undefined,
   };
 }
 
@@ -118,6 +140,23 @@ export function mergeSaves(local: DutchSave, incoming: DutchSave): DutchSave {
   const latestDay = [local.day, incoming.day].filter(Boolean).sort().pop();
   const dayXpCandidates = [local, incoming].filter((s) => s.day === latestDay).map((s) => s.dayXp ?? 0);
 
+  // Mistakes from both sides, without duplicates, oldest first.
+  const seenLog = new Set<string>();
+  const log: Mistake[] = [];
+  for (const m of [...(local.log ?? []), ...(incoming.log ?? [])].sort((a, b) => a.t - b.t)) {
+    const key = `${m.t}|${m.id}|${m.given}`;
+    if (seenLog.has(key)) continue;
+    seenLog.add(key);
+    log.push(m);
+  }
+
+  const kinds: Record<string, KindStat> = {};
+  for (const kind of new Set([...Object.keys(local.kinds ?? {}), ...Object.keys(incoming.kinds ?? {})])) {
+    const a = local.kinds?.[kind];
+    const b = incoming.kinds?.[kind];
+    kinds[kind] = !a ? b! : !b ? a : a.n >= b.n ? a : b;
+  }
+
   return {
     terms,
     xp: Math.max(local.xp, incoming.xp),
@@ -127,6 +166,8 @@ export function mergeSaves(local: DutchSave, incoming: DutchSave): DutchSave {
     streak: newer.streak,
     goalDay: newer.goalDay,
     history,
+    log: log.length ? log.slice(-LOG_LIMIT) : undefined,
+    kinds: Object.keys(kinds).length ? kinds : undefined,
   };
 }
 

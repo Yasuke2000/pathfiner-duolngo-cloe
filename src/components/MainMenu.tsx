@@ -55,6 +55,9 @@ export function MainMenu() {
         <Link className="text-btn" href="/gm">
           GM decoder
         </Link>
+        <Link className="text-btn" href="/dutch/coach">
+          Coach view
+        </Link>
         <Link className="text-btn" href="/about">
           About
         </Link>

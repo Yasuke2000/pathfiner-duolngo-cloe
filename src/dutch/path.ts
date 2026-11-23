@@ -37,14 +37,14 @@ export const GROUPS: Group[] = [
     title: "Informatica: de basis",
     titleEn: "Computer science: the basics",
     subtitle: "The computer, first-year programming, reading names and symbols, debugging.",
-    unitIds: ["computer", "prog1", "namen", "symbolen", "debug", "oop", "data", "git"],
+    unitIds: ["computer", "prog1", "namen", "symbolen", "debug", "oop", "concepten", "data", "git"],
   },
   {
     id: "cs-diep",
     title: "Informatica: verdieping",
     titleEn: "Computer science: in depth",
     subtitle: "Compilers, algorithms, data structures, systems, networks, software, hardware, AI.",
-    unitIds: ["compiler", "algo", "ds", "os", "net", "se", "architectuur", "ai"],
+    unitIds: ["compiler", "algo", "ds", "os", "machine", "net", "se", "architectuur", "ai"],
   },
   {
     id: "wiskunde",
@@ -66,7 +66,7 @@ export const CODE_GROUP = {
   id: "code",
   title: "Code lezen",
   titleEn: "Reading code",
-  subtitle: "Real Java, CSS, HTML, Python and SQL — questions, options and explanations in Dutch.",
+  subtitle: "Real Java, C, JavaScript, Python, SQL, CSS and HTML — questions, options and explanations in Dutch.",
 };
 
 export function unitsOf(group: Group): Unit[] {

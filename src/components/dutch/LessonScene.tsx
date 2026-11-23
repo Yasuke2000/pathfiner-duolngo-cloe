@@ -46,6 +46,22 @@ function askedOf(ex: Exercise, t: T): string {
   }
 }
 
+/** What was asked, without interface wording — this is what goes into the mistake log. */
+function askedRaw(ex: Exercise): string {
+  switch (ex.kind) {
+    case "choose":
+    case "type":
+    case "build":
+      return ex.prompt;
+    case "article":
+      return ex.noun;
+    case "listen":
+      return ex.spoken;
+    case "code":
+      return ex.q.question;
+  }
+}
+
 export function LessonScene({
   title,
   build,
@@ -106,7 +122,8 @@ export function LessonScene({
 
   const ready = ex ? answerOf(ex).trim().length > 0 : false;
 
-  function settle(v: Verdict) {
+  /** `given` is what she answered; empty when she chose "I don't know". */
+  function settle(v: Verdict, given: string) {
     if (!ex) return;
     const ok = v !== "wrong";
     setVerdict(v);
@@ -115,7 +132,12 @@ export function LessonScene({
     else sfx.miss();
 
     setSave((prev) => {
-      const updated = recordAnswer(prev ?? loadProgress(), ex.id, ok);
+      const updated = recordAnswer(prev ?? loadProgress(), ex.id, ok, Date.now(), {
+        kind: ex.kind,
+        asked: askedRaw(ex),
+        given,
+        expected: expectedOf(ex),
+      });
       saveProgress(updated);
       return updated;
     });
@@ -142,7 +164,7 @@ export function LessonScene({
     else if (ex.kind === "code") v = given === ex.q.answer ? "correct" : "wrong";
     else if (ex.kind === "build") v = normalize(given) === normalize(ex.answer) ? "correct" : "wrong";
     else v = judge(given, ex.accepted).verdict;
-    settle(v);
+    settle(v, given);
   }
 
   function next() {
@@ -427,7 +449,7 @@ export function LessonScene({
       <div className="d-actions">
         {phase === "answer" ? (
           <>
-            <button className="dk-btn ghost" onClick={() => settle("wrong")}>
+            <button className="dk-btn ghost" onClick={() => settle("wrong", "")}>
               {t("btn.idk")}
             </button>
             <button className="dk-btn primary" onClick={check} disabled={!ready}>

@@ -7,10 +7,14 @@
  * eigenschap?"). So: real Java, CSS, HTML, Python and SQL, with the question,
  * the options and the explanation all in Dutch.
  */
-export type CodeLang = "java" | "css" | "html" | "python" | "sql" | "tekst";
+import { CONCEPT_OF } from "./concepts";
+
+export type CodeLang = "java" | "css" | "html" | "python" | "sql" | "tekst" | "c" | "javascript";
 
 export interface CodeQuestion {
   id: string;
+  /** Concept this question tests; older questions are tagged in concepts.ts. */
+  concept?: string;
   lang: CodeLang;
   code: string;
   /** The question, in Dutch. */
@@ -1174,6 +1178,642 @@ print(totaal)`,
       },
     ],
   },
+  {
+    id: "code-hoog",
+    title: "Code lezen: hoog niveau",
+    subtitle: "High-level concepts in code",
+    blurb: "Polymorphism, scope, references, recursion, functions as values, complexity.",
+    accent: "270 70% 68%",
+    questions: [
+      {
+        id: "hoog-polymorfisme",
+        concept: "inheritance",
+        lang: "java",
+        code: `class Dier {
+    void maakGeluid() { System.out.println("..."); }
+}
+class Hond extends Dier {
+    void maakGeluid() { System.out.println("Woef"); }
+}
+
+Dier d = new Hond();
+d.maakGeluid();`,
+        question: "Wat wordt er afgedrukt?",
+        questionEn: "What gets printed?",
+        options: ["Woef", "...", "Niets, dit compileert niet.", "Eerst ... en dan Woef"],
+        answer: "Woef",
+        explain:
+          "Het object is een Hond, ook al heeft de variabele het type Dier. Welke methode wordt uitgevoerd, hangt af van het echte object en niet van het type van de variabele: dat is polymorfisme. Hond overschrijft de methode van Dier.",
+        explainEn:
+          "The object is a Hond, even though the variable has type Dier. Which method runs depends on the actual object, not on the variable's type: that is polymorphism. Hond overrides Dier's method.",
+      },
+      {
+        id: "hoog-interface",
+        concept: "abstraction",
+        lang: "java",
+        code: `interface Vorm {
+    double oppervlakte();
+}
+
+class Cirkel implements Vorm {
+    double straal;
+    public double oppervlakte() {
+        return Math.PI * straal * straal;
+    }
+}`,
+        question: "Wat belooft de interface 'Vorm'?",
+        questionEn: "What does the interface 'Vorm' promise?",
+        options: [
+          "Dat elke Vorm een methode oppervlakte() heeft.",
+          "Hoe de oppervlakte berekend wordt.",
+          "Dat elke Vorm een straal heeft.",
+          "Dat er maar één Vorm kan bestaan.",
+        ],
+        answer: "Dat elke Vorm een methode oppervlakte() heeft.",
+        explain:
+          "Een interface zegt wát een klasse moet kunnen, niet hóé. Cirkel implementeert de interface en vult zelf in hoe de oppervlakte berekend wordt. Dat is abstractie: de gebruiker hoeft de details niet te kennen.",
+        explainEn:
+          "An interface says WHAT a class must be able to do, not HOW. Cirkel implements the interface and fills in how the area is computed. That is abstraction: the caller needn't know the details.",
+      },
+      {
+        id: "hoog-inkapseling",
+        concept: "oop",
+        lang: "java",
+        code: `class Rekening {
+    private double saldo;
+
+    void stort(double bedrag) {
+        if (bedrag > 0) {
+            saldo += bedrag;
+        }
+    }
+}`,
+        question: "Waarom is 'saldo' private?",
+        questionEn: "Why is 'saldo' private?",
+        options: [
+          "Zodat het alleen via de methodes kan veranderen, die de regels bewaken.",
+          "Omdat het een getal is.",
+          "Zodat het sneller is.",
+          "Omdat de klasse maar één object mag hebben.",
+        ],
+        answer: "Zodat het alleen via de methodes kan veranderen, die de regels bewaken.",
+        explain:
+          "Dit heet inkapseling. Niemand buiten de klasse kan het saldo rechtstreeks aanpassen; het moet via stort(), en die weigert een negatief bedrag. Zo blijft het object altijd in een geldige toestand.",
+        explainEn:
+          "This is encapsulation. Nobody outside the class can change the balance directly; it must go through stort(), which refuses a negative amount. That keeps the object in a valid state.",
+      },
+      {
+        id: "hoog-bereik",
+        concept: "scope",
+        lang: "java",
+        code: `for (int i = 0; i < 3; i++) {
+    int kwadraat = i * i;
+}
+System.out.println(kwadraat);`,
+        question: "Waarom compileert dit niet?",
+        questionEn: "Why doesn't this compile?",
+        options: [
+          "'kwadraat' bestaat alleen binnen de lus.",
+          "'kwadraat' heeft het verkeerde type.",
+          "De lus loopt nooit.",
+          "Je mag niet vermenigvuldigen in een lus.",
+        ],
+        answer: "'kwadraat' bestaat alleen binnen de lus.",
+        explain:
+          "Een variabele bestaat alleen in het blok waarin ze gedeclareerd is: dat is haar bereik (scope). Na de sluitende accolade van de lus is 'kwadraat' weg. Declareer ze vóór de lus als je ze daarna nodig hebt.",
+        explainEn:
+          "A variable exists only in the block where it is declared: that is its scope. After the loop's closing brace 'kwadraat' is gone. Declare it before the loop if you need it afterwards.",
+      },
+      {
+        id: "hoog-referentie",
+        concept: "references",
+        lang: "java",
+        code: `int[] a = {1, 2, 3};
+int[] b = a;
+b[0] = 99;
+System.out.println(a[0]);`,
+        question: "Wat drukt dit af?",
+        questionEn: "What does this print?",
+        options: ["99", "1", "0", "Een foutmelding"],
+        answer: "99",
+        explain:
+          "'b = a' kopieert de rij niet: het kopieert de verwijzing. a en b wijzen daarna naar dezelfde rij in het geheugen, dus een wijziging via b zie je ook via a.",
+        explainEn:
+          "'b = a' does not copy the array: it copies the reference. a and b then point at the same array in memory, so a change made through b is visible through a.",
+      },
+      {
+        id: "hoog-waarde",
+        concept: "references",
+        lang: "java",
+        code: `static void verhoog(int x) {
+    x = x + 1;
+}
+
+int getal = 5;
+verhoog(getal);
+System.out.println(getal);`,
+        question: "Wat drukt dit af?",
+        questionEn: "What does this print?",
+        options: ["5", "6", "0", "Een foutmelding"],
+        answer: "5",
+        explain:
+          "Een int wordt doorgegeven per waarde: de methode krijgt een kopie. Ze verhoogt die kopie, maar 'getal' zelf verandert niet. Vergelijk met een rij, waar de verwijzing gekopieerd wordt.",
+        explainEn:
+          "An int is passed by value: the method receives a copy. It increments that copy, but 'getal' itself is unchanged. Compare with an array, where the reference is copied.",
+      },
+      {
+        id: "hoog-onveranderlijk",
+        concept: "references",
+        lang: "java",
+        code: `String s = "hallo";
+s.toUpperCase();
+System.out.println(s);`,
+        question: "Wat drukt dit af?",
+        questionEn: "What does this print?",
+        options: ["hallo", "HALLO", "Hallo", "Niets"],
+        answer: "hallo",
+        explain:
+          "Een String is onveranderlijk (immutable). toUpperCase() wijzigt s niet, maar geeft een nieuwe tekenreeks terug — en die wordt hier weggegooid. Je moet schrijven: s = s.toUpperCase();",
+        explainEn:
+          "A String is immutable. toUpperCase() does not change s; it returns a new string — which is thrown away here. You have to write: s = s.toUpperCase();",
+      },
+      {
+        id: "hoog-faculteit",
+        concept: "recursion",
+        lang: "java",
+        code: `static int faculteit(int n) {
+    if (n <= 1) return 1;
+    return n * faculteit(n - 1);
+}`,
+        question: "Wat geeft faculteit(4) terug?",
+        questionEn: "What does faculteit(4) return?",
+        options: ["24", "10", "4", "16"],
+        answer: "24",
+        explain:
+          "4 × faculteit(3) = 4 × 3 × faculteit(2) = 4 × 3 × 2 × faculteit(1) = 4 × 3 × 2 × 1 = 24. 'n <= 1' is het basisgeval dat de recursie stopt.",
+        explainEn:
+          "4 × faculteit(3) = 4 × 3 × faculteit(2) = 4 × 3 × 2 × faculteit(1) = 24. 'n <= 1' is the base case that stops the recursion.",
+      },
+      {
+        id: "hoog-filter",
+        concept: "functional",
+        lang: "javascript",
+        code: `const getallen = [1, 2, 3, 4];
+const even = getallen.filter(n => n % 2 === 0);`,
+        question: "Wat zit er in 'even'?",
+        questionEn: "What is in 'even'?",
+        options: ["[2, 4]", "[1, 3]", "[true, false, true, false]", "2"],
+        answer: "[2, 4]",
+        explain:
+          "filter krijgt een functie mee en houdt alleen de elementen over waarvoor die functie waar teruggeeft. 'n => n % 2 === 0' is een anonieme functie: is de rest bij deling door twee nul?",
+        explainEn:
+          "filter takes a function and keeps only the elements for which that function returns true. 'n => n % 2 === 0' is an anonymous function: is the remainder after dividing by two zero?",
+      },
+      {
+        id: "hoog-comprehensie",
+        concept: "functional",
+        lang: "python",
+        code: `namen = ["ana", "bram"]
+groot = [n.upper() for n in namen]`,
+        question: "Wat zit er in 'groot'?",
+        questionEn: "What is in 'groot'?",
+        options: ['["ANA", "BRAM"]', '["ana", "bram"]', '"ANABRAM"', "2"],
+        answer: '["ANA", "BRAM"]',
+        explain:
+          "Dit is een lijstcomprehensie: ze past dezelfde bewerking toe op elk element en maakt daar een nieuwe lijst van. De oorspronkelijke lijst 'namen' blijft ongewijzigd.",
+        explainEn:
+          "This is a list comprehension: it applies the same operation to every element and builds a new list. The original list 'namen' is unchanged.",
+      },
+      {
+        id: "hoog-kwadratisch",
+        concept: "complexity",
+        lang: "java",
+        code: `for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+        teller++;
+    }
+}`,
+        question: "Hoe vaak wordt 'teller' verhoogd?",
+        questionEn: "How many times is 'teller' incremented?",
+        options: ["n × n keer", "2 × n keer", "n keer", "log n keer"],
+        answer: "n × n keer",
+        explain:
+          "De binnenste lus loopt n keer voor elke ronde van de buitenste lus, dus n × n in totaal. Dat heet kwadratische complexiteit: verdubbel n en het werk wordt vier keer zo groot.",
+        explainEn:
+          "The inner loop runs n times for each pass of the outer loop, so n × n in total. That is quadratic complexity: double n and the work quadruples.",
+      },
+      {
+        id: "hoog-lineair",
+        concept: "complexity",
+        lang: "java",
+        code: `static boolean bevat(int[] rij, int doel) {
+    for (int x : rij) {
+        if (x == doel) return true;
+    }
+    return false;
+}`,
+        question: "Hoeveel elementen bekijkt dit in het slechtste geval?",
+        questionEn: "How many elements does this examine in the worst case?",
+        options: ["Allemaal: n elementen", "Eén element", "De helft", "n × n elementen"],
+        answer: "Allemaal: n elementen",
+        explain:
+          "Als het doel er niet in zit, of helemaal achteraan staat, moet de lus de hele rij doorlopen. Dat is lineair zoeken. In het beste geval staat het doel vooraan en is één stap genoeg.",
+        explainEn:
+          "If the target is absent, or sits at the very end, the loop must walk the whole array. That is linear search. In the best case the target is first and one step suffices.",
+      },
+      {
+        id: "hoog-uitzondering",
+        concept: "errors",
+        lang: "java",
+        code: `try {
+    int x = Integer.parseInt("abc");
+    System.out.println("gelukt");
+} catch (NumberFormatException e) {
+    System.out.println("geen getal");
+}
+System.out.println("klaar");`,
+        question: "Wat wordt er afgedrukt?",
+        questionEn: "What gets printed?",
+        options: ["geen getal, klaar", "gelukt, klaar", "gelukt, geen getal, klaar", "Alleen geen getal"],
+        answer: "geen getal, klaar",
+        explain:
+          "parseInt gooit een uitzondering op, dus de rest van het try-blok wordt overgeslagen en 'gelukt' verschijnt nooit. Het catch-blok vangt de uitzondering op, en daarna gaat het programma gewoon verder.",
+        explainEn:
+          "parseInt throws an exception, so the rest of the try block is skipped and 'gelukt' never appears. The catch block catches the exception, and then the program simply carries on.",
+      },
+      {
+        id: "hoog-map",
+        concept: "collections",
+        lang: "java",
+        code: `Map<String, Integer> punten = new HashMap<>();
+punten.put("Ana", 14);
+punten.put("Bram", 9);
+punten.put("Ana", 16);
+System.out.println(punten.get("Ana"));`,
+        question: "Wat drukt dit af?",
+        questionEn: "What does this print?",
+        options: ["16", "14", "30", "null"],
+        answer: "16",
+        explain:
+          "In een map komt elke sleutel maar één keer voor. De tweede put met de sleutel \"Ana\" voegt niets toe, maar overschrijft de oude waarde.",
+        explainEn:
+          "In a map every key occurs only once. The second put with the key \"Ana\" adds nothing; it overwrites the old value.",
+      },
+      {
+        id: "hoog-stapel",
+        concept: "collections",
+        lang: "java",
+        code: `Deque<String> stapel = new ArrayDeque<>();
+stapel.push("a");
+stapel.push("b");
+stapel.push("c");
+System.out.println(stapel.pop());`,
+        question: "Wat drukt dit af?",
+        questionEn: "What does this print?",
+        options: ["c", "a", "b", "abc"],
+        answer: "c",
+        explain:
+          "Een stapel werkt volgens 'laatst erin, eerst eruit': pop() haalt het element weg dat het laatst toegevoegd is. Bij een wachtrij zou je net het eerste krijgen.",
+        explainEn:
+          "A stack is last in, first out: pop() removes the element added most recently. With a queue you would get the first one instead.",
+      },
+      {
+        id: "hoog-async",
+        concept: "async",
+        lang: "javascript",
+        code: `console.log("A");
+setTimeout(() => console.log("B"), 0);
+console.log("C");`,
+        question: "In welke volgorde verschijnt de uitvoer?",
+        questionEn: "In what order does the output appear?",
+        options: ["A, C, B", "A, B, C", "B, A, C", "C, B, A"],
+        answer: "A, C, B",
+        explain:
+          "setTimeout plant de terugroepfunctie in voor later, zelfs met een wachttijd van nul. De huidige code loopt eerst helemaal af, en pas daarna komt B. Dat is asynchrone code: niet alles gebeurt in de volgorde waarin het geschreven staat.",
+        explainEn:
+          "setTimeout schedules the callback for later, even with a delay of zero. The current code runs to completion first, and only then comes B. That is asynchronous code: not everything happens in the order it is written.",
+      },
+    ],
+  },
+  {
+    id: "code-laag",
+    title: "Code lezen: laag niveau",
+    subtitle: "Low-level concepts in code",
+    blurb: "Bits, overflow, floating point, pointers, the stack and the heap, linking.",
+    accent: "12 75% 62%",
+    questions: [
+      {
+        id: "laag-binair",
+        concept: "bits",
+        lang: "java",
+        code: `int x = 0b1011;`,
+        question: "Welke waarde heeft x?",
+        questionEn: "What value does x have?",
+        options: ["11", "1011", "13", "4"],
+        answer: "11",
+        explain:
+          "0b betekent dat het getal binair geschreven is. Van rechts naar links zijn de bits 1, 2, 4 en 8 waard: 8 + 0 + 2 + 1 = 11.",
+        explainEn:
+          "0b means the number is written in binary. From right to left the bits are worth 1, 2, 4 and 8: 8 + 0 + 2 + 1 = 11.",
+      },
+      {
+        id: "laag-hex",
+        concept: "bits",
+        lang: "java",
+        code: `int kleur = 0xFF;`,
+        question: "Welke waarde heeft 'kleur'?",
+        questionEn: "What value does 'kleur' have?",
+        options: ["255", "15", "16", "1515"],
+        answer: "255",
+        explain:
+          "0x betekent hexadecimaal: grondtal 16. F is 15, dus FF = 15 × 16 + 15 = 255. Dat is ook precies wat in één byte past.",
+        explainEn:
+          "0x means hexadecimal: base 16. F is 15, so FF = 15 × 16 + 15 = 255. That is also exactly what fits in one byte.",
+      },
+      {
+        id: "laag-en",
+        concept: "bits",
+        lang: "java",
+        code: `int r = 12 & 10;`,
+        question: "Welke waarde heeft r?",
+        questionEn: "What value does r have?",
+        options: ["8", "22", "2", "14"],
+        answer: "8",
+        explain:
+          "'&' is de bitsgewijze EN. 12 is 1100 en 10 is 1010. Alleen waar beide bits 1 zijn, blijft een 1 staan: 1000, en dat is 8. Let op: één '&' is bitsgewijs, twee '&&' is de logische en.",
+        explainEn:
+          "'&' is bitwise AND. 12 is 1100 and 10 is 1010. Only where both bits are 1 does a 1 remain: 1000, which is 8. Note: one '&' is bitwise, two '&&' is logical and.",
+      },
+      {
+        id: "laag-schuif",
+        concept: "bits",
+        lang: "java",
+        code: `int r = 3 << 2;`,
+        question: "Welke waarde heeft r?",
+        questionEn: "What value does r have?",
+        options: ["12", "6", "5", "9"],
+        answer: "12",
+        explain:
+          "'<<' verschuift de bits naar links. Elke plaats naar links verdubbelt het getal, dus twee plaatsen is maal vier: 3 × 4 = 12.",
+        explainEn:
+          "'<<' shifts the bits left. Each place to the left doubles the number, so two places is times four: 3 × 4 = 12.",
+      },
+      {
+        id: "laag-overloop",
+        concept: "overflow",
+        lang: "java",
+        code: `byte b = 127;
+b++;
+System.out.println(b);`,
+        question: "Wat drukt dit af?",
+        questionEn: "What does this print?",
+        options: ["-128", "128", "0", "Een foutmelding"],
+        answer: "-128",
+        explain:
+          "Een byte met teken gaat van -128 tot 127. Eén meer dan het maximum past niet: het getal loopt over en springt naar het kleinste. Java geeft daarbij geen foutmelding.",
+        explainEn:
+          "A signed byte runs from -128 to 127. One more than the maximum does not fit: the number overflows and wraps to the smallest. Java gives no error for this.",
+      },
+      {
+        id: "laag-zonder-teken",
+        concept: "overflow",
+        lang: "c",
+        code: `unsigned char c = 255;
+c = c + 1;
+printf("%d", c);`,
+        question: "Wat drukt dit af?",
+        questionEn: "What does this print?",
+        options: ["0", "256", "-1", "255"],
+        answer: "0",
+        explain:
+          "Een unsigned char is één byte zonder teken: 0 tot 255. 256 past er niet meer in, dus alleen de laagste acht bits blijven over en dat is 0.",
+        explainEn:
+          "An unsigned char is one byte without a sign: 0 to 255. 256 no longer fits, so only the lowest eight bits remain, which is 0.",
+      },
+      {
+        id: "laag-deling",
+        concept: "arith",
+        lang: "java",
+        code: `int a = 7 / 2;
+int b = 7 % 2;`,
+        question: "Welke waarden hebben a en b?",
+        questionEn: "What values do a and b have?",
+        options: ["a = 3 en b = 1", "a = 3,5 en b = 0", "a = 4 en b = 1", "a = 3 en b = 2"],
+        answer: "a = 3 en b = 1",
+        explain:
+          "Delen met twee gehele getallen is een gehele deling: het deel na de komma valt weg, dus 3. '%' geeft de rest van die deling: 7 = 3 × 2 + 1, dus 1.",
+        explainEn:
+          "Dividing two integers is integer division: the part after the decimal point is dropped, so 3. '%' gives the remainder of that division: 7 = 3 × 2 + 1, so 1.",
+      },
+      {
+        id: "laag-komma",
+        concept: "floats",
+        lang: "java",
+        code: `System.out.println(0.1 + 0.2 == 0.3);`,
+        question: "Wat drukt dit af?",
+        questionEn: "What does this print?",
+        options: ["false", "true", "0.3", "Een foutmelding"],
+        answer: "false",
+        explain:
+          "Kommagetallen worden binair opgeslagen en 0,1 is binair niet exact voor te stellen. De som is 0,30000000000000004. Vergelijk kommagetallen dus nooit met '==', maar kijk of het verschil klein genoeg is.",
+        explainEn:
+          "Floating-point numbers are stored in binary and 0.1 cannot be represented exactly. The sum is 0.30000000000000004. So never compare floats with '=='; check whether the difference is small enough.",
+      },
+      {
+        id: "laag-teken",
+        concept: "chars",
+        lang: "java",
+        code: `char c = 'A';
+c += 2;
+System.out.println(c);`,
+        question: "Wat drukt dit af?",
+        questionEn: "What does this print?",
+        options: ["C", "A2", "67", "AAA"],
+        answer: "C",
+        explain:
+          "Een teken is onder de motorkap een getal: 'A' heeft code 65. Tel er twee bij op en je krijgt 67, de code van 'C'.",
+        explainEn:
+          "A character is a number under the hood: 'A' has code 65. Add two and you get 67, the code of 'C'.",
+      },
+      {
+        id: "laag-nulteken",
+        concept: "chars",
+        lang: "c",
+        code: `char naam[4] = "Ana";`,
+        question: "Waarom vier plaatsen voor drie letters?",
+        questionEn: "Why four places for three letters?",
+        options: [
+          "Voor het afsluitende nulteken.",
+          "Omdat een rij altijd een even lengte heeft.",
+          "Voor de aanhalingstekens.",
+          "Het is een vergissing: drie is genoeg.",
+        ],
+        answer: "Voor het afsluitende nulteken.",
+        explain:
+          "In C eindigt een tekenreeks op een onzichtbaar nulteken, zodat functies weten waar de tekst stopt. Vergeet je die extra plaats, dan lezen ze verder dan de rij.",
+        explainEn:
+          "In C a string ends with an invisible null character, so functions know where the text stops. Forget that extra place and they read past the array.",
+      },
+      {
+        id: "laag-wijzer",
+        concept: "pointers",
+        lang: "c",
+        code: `int x = 5;
+int *p = &x;`,
+        question: "Wat bevat p?",
+        questionEn: "What does p hold?",
+        options: ["Het adres van x.", "De waarde 5.", "Een kopie van x.", "Niets."],
+        answer: "Het adres van x.",
+        explain:
+          "'&x' betekent: het geheugenadres van x. p is een wijzer (pointer): een variabele die geen waarde bijhoudt maar een plaats in het geheugen.",
+        explainEn:
+          "'&x' means: the memory address of x. p is a pointer: a variable that holds not a value but a place in memory.",
+      },
+      {
+        id: "laag-derefereren",
+        concept: "pointers",
+        lang: "c",
+        code: `int x = 5;
+int *p = &x;
+*p = 7;
+printf("%d", x);`,
+        question: "Wat drukt dit af?",
+        questionEn: "What does this print?",
+        options: ["7", "5", "Een adres", "0"],
+        answer: "7",
+        explain:
+          "'*p' volgt de wijzer naar de plaats waar ze naar wijst — dat heet derefereren. '*p = 7' schrijft dus 7 op het adres van x, en daardoor is x zelf veranderd.",
+        explainEn:
+          "'*p' follows the pointer to the place it points at — that is dereferencing. So '*p = 7' writes 7 at the address of x, which changes x itself.",
+      },
+      {
+        id: "laag-wijzerrekenen",
+        concept: "pointers",
+        lang: "c",
+        code: `int rij[3] = {10, 20, 30};
+int *p = rij;
+printf("%d", *(p + 1));`,
+        question: "Wat drukt dit af?",
+        questionEn: "What does this print?",
+        options: ["20", "10", "11", "30"],
+        answer: "20",
+        explain:
+          "De naam van een rij is het adres van haar eerste element. 'p + 1' schuift één element op (niet één byte), en '*' leest wat daar staat: het tweede element. rij[1] is gewoon een kortere schrijfwijze voor *(rij + 1).",
+        explainEn:
+          "An array's name is the address of its first element. 'p + 1' moves one element along (not one byte), and '*' reads what is there: the second element. rij[1] is simply shorthand for *(rij + 1).",
+      },
+      {
+        id: "laag-buiten-rij",
+        concept: "memory",
+        lang: "c",
+        code: `int rij[3];
+rij[3] = 42;`,
+        question: "Wat is hier het probleem in C?",
+        questionEn: "What is the problem here in C?",
+        options: [
+          "Er wordt buiten de rij geschreven, en C controleert dat niet.",
+          "De compiler weigert dit.",
+          "42 past niet in een int.",
+          "De rij is niet gesorteerd.",
+        ],
+        answer: "Er wordt buiten de rij geschreven, en C controleert dat niet.",
+        explain:
+          "De geldige indexen zijn 0, 1 en 2. C controleert de grenzen niet: de 42 komt gewoon in het geheugen ernaast terecht. Dat is ongedefinieerd gedrag — het kan werken, crashen of iets anders overschrijven. Java zou hier een uitzondering opgooien.",
+        explainEn:
+          "The valid indexes are 0, 1 and 2. C does not check bounds: the 42 simply lands in the memory next door. That is undefined behaviour — it may work, crash, or overwrite something else. Java would throw an exception here.",
+      },
+      {
+        id: "laag-lek",
+        concept: "memory",
+        lang: "c",
+        code: `int *data = malloc(100 * sizeof(int));
+/* ... data wordt gebruikt ... */
+return 0;`,
+        question: "Wat ontbreekt hier?",
+        questionEn: "What is missing here?",
+        options: [
+          "free(data): het geheugen wordt nooit vrijgegeven.",
+          "Een lus over de data.",
+          "Een puntkomma.",
+          "Niets: C ruimt dit zelf op.",
+        ],
+        answer: "free(data): het geheugen wordt nooit vrijgegeven.",
+        explain:
+          "Wat je met malloc toewijst, moet je zelf weer vrijgeven met free. Vergeet je dat, dan heb je een geheugenlek. C heeft geen afvalverzameling zoals Java of Python.",
+        explainEn:
+          "What you allocate with malloc you must release yourself with free. Forget it and you have a memory leak. C has no garbage collection like Java or Python.",
+      },
+      {
+        id: "laag-hoop",
+        concept: "memory",
+        lang: "java",
+        code: `int getal = 5;
+int[] rij = new int[1000];`,
+        question: "Waar komen de duizend getallen van 'rij' terecht?",
+        questionEn: "Where do the thousand numbers of 'rij' end up?",
+        options: [
+          "Op de hoop; alleen de verwijzing staat op de stapel.",
+          "Volledig op de stapel.",
+          "In het bestand zelf.",
+          "In de processor.",
+        ],
+        answer: "Op de hoop; alleen de verwijzing staat op de stapel.",
+        explain:
+          "Alles wat je met 'new' maakt, komt op de hoop (heap). De lokale variabele 'rij' is alleen een verwijzing en staat op de stapel (stack), net als 'getal'. De stapel verdwijnt als de methode klaar is; de hoop wordt door de afvalverzameling opgeruimd.",
+        explainEn:
+          "Everything you create with 'new' goes on the heap. The local variable 'rij' is only a reference and lives on the stack, like 'getal'. The stack frame disappears when the method returns; the heap is cleaned by garbage collection.",
+      },
+      {
+        id: "laag-stapeloverloop",
+        concept: "memory",
+        lang: "java",
+        code: `static int tel(int n) {
+    return tel(n + 1);
+}`,
+        question: "Wat gebeurt er als je tel(0) aanroept?",
+        questionEn: "What happens when you call tel(0)?",
+        options: [
+          "Een StackOverflowError: de oproepstapel loopt vol.",
+          "Het programma loopt eeuwig door zonder fout.",
+          "Het geeft 1 terug.",
+          "Het compileert niet.",
+        ],
+        answer: "Een StackOverflowError: de oproepstapel loopt vol.",
+        explain:
+          "Elke aanroep zet een nieuw stapelframe op de oproepstapel, en er is geen basisgeval dat de recursie stopt. De stapel heeft een vaste grootte en raakt vol.",
+        explainEn:
+          "Every call pushes a new stack frame onto the call stack, and there is no base case to stop the recursion. The stack has a fixed size and fills up.",
+      },
+      {
+        id: "laag-koppelfout",
+        concept: "compile",
+        lang: "c",
+        code: `int som(int a, int b);
+
+int main() {
+    return som(1, 2);
+}`,
+        question: "Dit compileert. Welke fout krijg je daarna?",
+        questionEn: "This compiles. Which error do you get afterwards?",
+        options: [
+          "Een koppelfout: som is gedeclareerd maar nergens gedefinieerd.",
+          "Een syntaxisfout.",
+          "Een typefout.",
+          "Geen enkele fout.",
+        ],
+        answer: "Een koppelfout: som is gedeclareerd maar nergens gedefinieerd.",
+        explain:
+          "De eerste regel is alleen een declaratie: ze zegt dat som bestaat. De compiler is daarmee tevreden. Pas bij het koppelen zoekt de linker de echte code van som, en die bestaat nergens.",
+        explainEn:
+          "The first line is only a declaration: it says that som exists. The compiler is satisfied with that. Only at link time does the linker look for som's actual code, and there is none.",
+      },
+    ],
+  },
 ];
 
 export const ALL_CODE_QUESTIONS = CODE_UNITS.flatMap((u) => u.questions);
+
+/** The concept a question tests — see concepts.ts. */
+export function conceptOf(q: CodeQuestion): string {
+  return q.concept ?? CONCEPT_OF[q.id] ?? "other";
+}

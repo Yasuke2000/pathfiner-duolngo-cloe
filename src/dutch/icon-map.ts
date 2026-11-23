@@ -43,4 +43,8 @@ export const UNIT_ICON: Record<string, string> = {
   "code-volgorde": "steps",
   "code-namen": "tag",
   "code-voorlezen": "speaker",
+  concepten: "idea",
+  machine: "terminal",
+  "code-hoog": "idea",
+  "code-laag": "terminal",
 };

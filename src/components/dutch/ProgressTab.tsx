@@ -1,12 +1,15 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
+import { Kpi } from "./charts";
 import { useUi } from "./settings";
-import { IconCopy, IconDownload, IconTarget, IconUpload } from "./icons";
+import { IconArrow, IconCopy, IconDownload, IconTarget, IconUpload } from "./icons";
 import { decodeTransfer, encodeTransfer, exportSave, importSave, mergeSaves } from "@/dutch/backup";
-import { ALL_CODE_QUESTIONS } from "@/dutch/code";
-import { codeId, type PoolItem } from "@/dutch/lesson";
-import { CODE_GROUP, GROUPS, statsFor, unitIds, unitsOf } from "@/dutch/path";
+import type { CodeQuestion } from "@/dutch/code";
+import { questionsFor, weakConcepts } from "@/dutch/insights";
+import type { PoolItem } from "@/dutch/lesson";
+import { statsFor } from "@/dutch/path";
 import {
   currentStreak,
   DAILY_GOAL,
@@ -16,316 +19,113 @@ import {
   saveProgress,
   type DutchSave,
 } from "@/dutch/progress";
-import { accuracy, activitySeries, strengthBuckets, weakest, type ActivityDay } from "@/dutch/stats";
+import { weakest } from "@/dutch/stats";
 import type { ProgressMap } from "@/dutch/srs";
 import { termId } from "@/dutch/types";
 import { ALL_TERMS, TOTAL_TERMS } from "@/dutch/vocab";
 
+/**
+ * The learner's own progress page. Deliberately short: a few numbers and a list
+ * of what to work on. The detailed analysis lives in the coach view, which
+ * reads a report she chooses to send.
+ */
 export function ProgressTab({
   save,
   progress,
   now,
   onWords,
+  onCode,
   onChanged,
 }: {
   save: DutchSave | null;
   progress: ProgressMap;
   now: number;
   onWords: (title: string, pool: PoolItem[]) => void;
+  onCode: (title: string, questions: CodeQuestion[]) => void;
   onChanged: () => void;
 }) {
-  const { t, pick, lang } = useUi();
+  const { t, pick } = useUi();
   const allIds = ALL_TERMS.map((x) => termId(x.unitId, x.term.nl));
   const overall = statsFor(allIds, progress, now);
-  const acc = accuracy(progress);
   const streak = currentStreak(save, now);
-  const series = activitySeries(save, now, 14);
-  const strength = strengthBuckets(allIds, progress);
-  const weak = weakest(ALL_TERMS, progress, 8);
-
-  const sections = [
-    ...GROUPS.map((g) => ({
-      id: g.id,
-      name: pick(g.title, g.titleEn),
-      ...statsFor(unitsOf(g).flatMap(unitIds), progress, now),
-    })),
-    {
-      id: CODE_GROUP.id,
-      name: pick(CODE_GROUP.title, CODE_GROUP.titleEn),
-      ...statsFor(ALL_CODE_QUESTIONS.map(codeId), progress, now),
-    },
-  ];
+  const weakWords = weakest(ALL_TERMS, progress, 8);
+  const concepts = weakConcepts(progress).slice(0, 6);
 
   return (
     <div className="dk-page">
-      <div className="dk-kpis">
+      <div className="dk-kpis three">
         <Kpi label={t("prog.seen")} value={overall.seen} sub={t("prog.of", { n: TOTAL_TERMS })} />
         <Kpi label={t("prog.known")} value={overall.mastered} sub={t("prog.of", { n: TOTAL_TERMS })} />
-        <Kpi
-          label={t("prog.accuracy")}
-          value={acc.pct === null ? "–" : `${acc.pct}%`}
-          sub={t("prog.accuracy.sub", { n: acc.answers })}
-        />
         <Kpi label={t("prog.streak")} value={streak} sub={t("prog.streak.sub", { goal: DAILY_GOAL })} />
-        <Kpi label={t("prog.xp")} value={save?.xp ?? 0} sub={t("prog.lessons.sub", { n: save?.lessons ?? 0 })} />
       </div>
 
       <div className="dk-panels">
         <section className="dk-panel wide">
-          <ActivityChart series={series} lang={lang} />
-        </section>
+          <h2>{t("work.title")}</h2>
+          <p className="dk-panel-sub wide">{t("work.sub")}</p>
 
-        <section className="dk-panel">
-          <h2>{t("prog.memory")}</h2>
-          <p className="dk-panel-sub">{t("prog.memory.sub")}</p>
-          <MemoryBar strength={strength} total={allIds.length} />
-        </section>
-
-        <section className="dk-panel">
-          <h2>{t("prog.sections")}</h2>
-          <p className="dk-panel-sub">{t("prog.sections.sub")}</p>
-          <ul className="dk-meterlist">
-            {sections.map((s) => (
-              <li key={s.id}>
-                <span className="name">{s.name}</span>
-                <span className="track" aria-hidden>
-                  <span style={{ width: `${(s.seen / s.total) * 100}%` }} />
-                </span>
-                <span className="fig">
-                  {s.seen}/{s.total}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="dk-panel wide">
-          <div className="dk-panel-head">
+          <div className="dk-work">
             <div>
-              <h2>{t("prog.weak")}</h2>
-              <p className="dk-panel-sub">{t("prog.weak.sub")}</p>
+              <h3>{t("work.concepts")}</h3>
+              {concepts.length === 0 ? (
+                <p className="dk-muted dk-work-none">{t("work.concepts.none")}</p>
+              ) : (
+                <ul className="dk-worklist">
+                  {concepts.map((c) => {
+                    const name = pick(c.concept.nl, c.concept.en);
+                    return (
+                      <li key={c.concept.id}>
+                        <span className="name">{name}</span>
+                        <span className="score">{t("work.score", { ok: c.correct, n: c.answers })}</span>
+                        <button className="dk-btn sm" onClick={() => onCode(name, questionsFor(c.concept.id))}>
+                          {t("btn.practise")}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
-            {weak.length > 0 && (
-              <button className="dk-btn primary sm" onClick={() => onWords(t("prog.weak.title"), weak)}>
-                <IconTarget size={15} /> {t("prog.weak.practise")}
-              </button>
-            )}
+
+            <div>
+              <div className="dk-work-head">
+                <h3>{t("work.words")}</h3>
+                {weakWords.length > 0 && (
+                  <button className="dk-btn primary sm" onClick={() => onWords(t("prog.weak.title"), weakWords)}>
+                    <IconTarget size={15} /> {t("prog.weak.practise")}
+                  </button>
+                )}
+              </div>
+              {weakWords.length === 0 ? (
+                <p className="dk-muted dk-work-none">{t("prog.weak.none")}</p>
+              ) : (
+                <ul className="dk-weak">
+                  {weakWords.map((w) => (
+                    <li key={`${w.unitId}:${w.term.nl}`}>
+                      <span className="nl" lang="nl">
+                        {w.term.nl}
+                      </span>
+                      <span className="en">{w.term.en}</span>
+                      <span className="score">{t("work.score", { ok: w.correct, n: w.seen })}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
-          {weak.length === 0 ? (
-            <p className="dk-muted">{t("prog.weak.none")}</p>
-          ) : (
-            <ul className="dk-weak">
-              {weak.map((w) => (
-                <li key={`${w.unitId}:${w.term.nl}`}>
-                  <span className="nl" lang="nl">
-                    {w.term.nl}
-                  </span>
-                  <span className="en">{w.term.en}</span>
-                  <span className="score">{t("prog.weak.score", { ok: w.correct, n: w.seen })}</span>
-                </li>
-              ))}
-            </ul>
-          )}
         </section>
 
         <section className="dk-panel wide">
-          <BackupPanel onChanged={onChanged} />
+          <SharePanel onChanged={onChanged} />
         </section>
       </div>
     </div>
   );
 }
 
-function Kpi({ label, value, sub }: { label: string; value: string | number; sub: string }) {
-  return (
-    <div className="dk-kpi">
-      <span className="label">{label}</span>
-      <b className="value">{value}</b>
-      <span className="sub">{sub}</span>
-    </div>
-  );
-}
+/* ------------------------------------------------- report, backup, transfer */
 
-/* --------------------------------------------------------------- activity */
-
-/** Round the axis top up to a clean number that leaves headroom above the goal. */
-function axisTop(max: number): number {
-  const step = max <= 200 ? 50 : max <= 500 ? 100 : 250;
-  return Math.max(step * 2, Math.ceil(max / step) * step);
-}
-
-function ActivityChart({ series, lang }: { series: ActivityDay[]; lang: string }) {
-  const { t } = useUi();
-  const [active, setActive] = useState<number | null>(null);
-  const [asTable, setAsTable] = useState(false);
-
-  const max = Math.max(DAILY_GOAL, ...series.map((d) => d.xp));
-  const top = axisTop(max);
-  const ticks = [top, top / 2, 0];
-  const empty = series.every((d) => d.xp === 0);
-  const fmt = (day: string) =>
-    new Date(`${day}T12:00:00`).toLocaleDateString(lang === "nl" ? "nl-BE" : "en-GB", {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-    });
-  const hovered = active === null ? null : series[active];
-
-  return (
-    <>
-      <div className="dk-panel-head">
-        <div>
-          <h2>{t("prog.activity")}</h2>
-          <p className="dk-panel-sub">{t("prog.activity.sub")}</p>
-        </div>
-        <button className="dk-btn ghost sm" onClick={() => setAsTable(!asTable)}>
-          {asTable ? t("prog.chart") : t("prog.table")}
-        </button>
-      </div>
-
-      {asTable ? (
-        <table className="dk-table">
-          <thead>
-            <tr>
-              <th>{t("prog.col.day")}</th>
-              <th>{t("prog.col.xp")}</th>
-              <th>{t("prog.col.answers")}</th>
-              <th>{t("prog.col.correct")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[...series].reverse().map((d) => (
-              <tr key={d.day}>
-                <td>{fmt(d.day)}</td>
-                <td>{d.xp}</td>
-                <td>{d.n}</td>
-                <td>{d.ok}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <div className="dk-chart" onMouseLeave={() => setActive(null)}>
-          <div className="dk-chart-y" aria-hidden>
-            {ticks.map((v) => (
-              <span key={v}>{v}</span>
-            ))}
-          </div>
-          <div className="dk-chart-plot">
-            {ticks.map((v) => (
-              <span key={v} className="grid" style={{ bottom: `${(v / top) * 100}%` }} aria-hidden />
-            ))}
-            <span className="goal" style={{ bottom: `${(DAILY_GOAL / top) * 100}%` }} aria-hidden />
-
-            <div className="dk-chart-cols">
-              {series.map((d, i) => (
-                <div
-                  key={d.day}
-                  className={`col ${active === i ? "on" : ""}`}
-                  tabIndex={0}
-                  role="img"
-                  aria-label={`${fmt(d.day)}: ${t("prog.activity.tip", { xp: d.xp, n: d.n, ok: d.ok })}`}
-                  onMouseEnter={() => setActive(i)}
-                  onFocus={() => setActive(i)}
-                  onBlur={() => setActive(null)}
-                >
-                  {d.xp > 0 && (
-                    <span className="bar" style={{ height: `${(d.xp / top) * 100}%` }}>
-                      {d.isToday && <em>{d.xp}</em>}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {hovered && active !== null && (
-              <div
-                className="dk-tip"
-                style={{
-                  left: `${((active + 0.5) / series.length) * 100}%`,
-                  bottom: `calc(${(hovered.xp / top) * 100}% + 10px)`,
-                  transform: `translateX(${active < 2 ? "-20%" : active > series.length - 3 ? "-80%" : "-50%"})`,
-                }}
-                role="status"
-              >
-                <b>{hovered.xp} XP</b>
-                <span>{fmt(hovered.day)}</span>
-                <span>
-                  {hovered.n} · {hovered.ok} ✓
-                </span>
-              </div>
-            )}
-          </div>
-          <div className="dk-chart-x" aria-hidden>
-            {series.map((d) => (
-              <span key={d.day} className={d.isToday ? "today" : ""}>
-                {d.label}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-      {!asTable && (
-        <p className="dk-chart-key">
-          <span className="line" aria-hidden /> {t("prog.activity.goal")} · {DAILY_GOAL} XP
-        </p>
-      )}
-      {empty && !asTable && <p className="dk-muted dk-chart-empty">{t("prog.activity.none")}</p>}
-    </>
-  );
-}
-
-/* ----------------------------------------------------------------- memory */
-
-function MemoryBar({
-  strength,
-  total,
-}: {
-  strength: { unseen: number; learning: number; almost: number; known: number };
-  total: number;
-}) {
-  const { t } = useUi();
-  // Ordered from strongest to weakest, so the bar reads like a progress bar.
-  const parts = [
-    { key: "known", label: t("prog.mem.known"), n: strength.known },
-    { key: "almost", label: t("prog.mem.almost"), n: strength.almost },
-    { key: "learning", label: t("prog.mem.learning"), n: strength.learning },
-    { key: "unseen", label: t("prog.mem.unseen"), n: strength.unseen },
-  ];
-  const share = (n: number) => (total ? (n / total) * 100 : 0);
-
-  return (
-    <>
-      <div className="dk-segbar" role="img" aria-label={parts.map((p) => `${p.label}: ${p.n}`).join(", ")}>
-        {parts
-          .filter((p) => p.n > 0)
-          .map((p) => (
-            <span
-              key={p.key}
-              className={`seg ${p.key}`}
-              style={{ flexGrow: p.n }}
-              title={`${p.label}: ${p.n} (${Math.round(share(p.n))}%)`}
-            >
-              {share(p.n) >= 9 && <i>{Math.round(share(p.n))}%</i>}
-            </span>
-          ))}
-      </div>
-      <ul className="dk-legend">
-        {parts.map((p) => (
-          <li key={p.key}>
-            <span className={`swatch ${p.key}`} aria-hidden />
-            <span className="name">{p.label}</span>
-            <span className="fig">{p.n}</span>
-          </li>
-        ))}
-      </ul>
-    </>
-  );
-}
-
-/* ----------------------------------------------------------------- backup */
-
-function BackupPanel({ onChanged }: { onChanged: () => void }) {
+function SharePanel({ onChanged }: { onChanged: () => void }) {
   const { t } = useUi();
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [message, setMessage] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
@@ -394,18 +194,23 @@ function BackupPanel({ onChanged }: { onChanged: () => void }) {
 
   return (
     <>
-      <h2>{t("backup.title")}</h2>
-      <p className="dk-panel-sub wide">{t("backup.body")}</p>
+      <div className="dk-panel-head">
+        <h2>{t("share.title")}</h2>
+        <Link className="dk-btn ghost sm" href="/dutch/coach">
+          {t("share.coach")} <IconArrow size={15} />
+        </Link>
+      </div>
+      <p className="dk-panel-sub wide">{t("share.body")}</p>
 
       <div className="dk-backup-actions">
         <button className="dk-btn" onClick={download}>
           <IconDownload size={16} /> {t("backup.download")}
         </button>
-        <button className="dk-btn" onClick={() => fileRef.current?.click()}>
-          <IconUpload size={16} /> {t("backup.restore")}
-        </button>
         <button className="dk-btn" onClick={copyCode}>
           <IconCopy size={16} /> {t("backup.copy")}
+        </button>
+        <button className="dk-btn" onClick={() => fileRef.current?.click()}>
+          <IconUpload size={16} /> {t("backup.restore")}
         </button>
         <input
           ref={fileRef}

@@ -201,6 +201,18 @@ const P: Record<string, React.ReactNode> = {
       <circle cx="5" cy="18" r="1" />
     </>
   ),
+  idea: (
+    <>
+      <path d="M9 18h6M10 21h4" />
+      <path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z" />
+    </>
+  ),
+  terminal: (
+    <>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M7 9l3 3-3 3M13 15h4" />
+    </>
+  ),
   speaker: (
     <>
       <path d="M11 5 6 9H3v6h3l5 4V5z" />

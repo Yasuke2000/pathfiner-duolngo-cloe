@@ -17,6 +17,37 @@ export interface DayStat {
   ok: number;
 }
 
+/** One wrong answer, kept so the learner's coach can see what actually went wrong. */
+export interface Mistake {
+  /** When (ms since epoch). */
+  t: number;
+  /** Term or code-question id. */
+  id: string;
+  /** Exercise type: choose, type, article, listen, build, code. */
+  kind: string;
+  /** What was asked. */
+  asked: string;
+  /** What she answered — empty when she chose "I don't know". */
+  given: string;
+  expected: string;
+}
+
+export interface KindStat {
+  n: number;
+  ok: number;
+}
+
+/** Detail about the answer being recorded. */
+export interface AnswerDetail {
+  kind: string;
+  asked: string;
+  given: string;
+  expected: string;
+}
+
+/** How many mistakes to remember. */
+export const LOG_LIMIT = 400;
+
 export interface DutchSave {
   terms: ProgressMap;
   xp: number;
@@ -30,6 +61,10 @@ export interface DutchSave {
   goalDay?: string;
   /** Per-day activity, newest ~180 days. Drives the progress charts. */
   history?: Record<string, DayStat>;
+  /** The most recent mistakes, oldest first. */
+  log?: Mistake[];
+  /** Tallies per exercise type — is it de/het, typing or code that goes wrong? */
+  kinds?: Record<string, KindStat>;
 }
 
 export const emptySave = (): DutchSave => ({ terms: {}, xp: 0, lessons: 0 });
@@ -74,7 +109,13 @@ function pruneHistory(history: Record<string, DayStat>): Record<string, DayStat>
   return Object.fromEntries(keep.map((k) => [k, history[k]]));
 }
 
-export function recordAnswer(save: DutchSave, id: string, correct: boolean, now = Date.now()): DutchSave {
+export function recordAnswer(
+  save: DutchSave,
+  id: string,
+  correct: boolean,
+  now = Date.now(),
+  detail?: AnswerDetail,
+): DutchSave {
   const next: TermState = review(save.terms[id], correct, now);
   const gained = correct ? 10 : 2; // getting it wrong still teaches you something
   const today = dayKey(now);
@@ -93,6 +134,15 @@ export function recordAnswer(save: DutchSave, id: string, correct: boolean, now 
     [today]: { xp: prevDay.xp + gained, n: prevDay.n + 1, ok: prevDay.ok + (correct ? 1 : 0) },
   });
 
+  let { log, kinds } = save;
+  if (detail) {
+    const k = kinds?.[detail.kind] ?? { n: 0, ok: 0 };
+    kinds = { ...(kinds ?? {}), [detail.kind]: { n: k.n + 1, ok: k.ok + (correct ? 1 : 0) } };
+    if (!correct) {
+      log = [...(log ?? []), { t: now, id, ...detail }].slice(-LOG_LIMIT);
+    }
+  }
+
   return {
     ...save,
     terms: { ...save.terms, [id]: next },
@@ -102,6 +152,8 @@ export function recordAnswer(save: DutchSave, id: string, correct: boolean, now 
     streak,
     goalDay,
     history,
+    log,
+    kinds,
   };
 }
 

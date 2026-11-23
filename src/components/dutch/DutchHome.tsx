@@ -214,7 +214,14 @@ function App() {
         {tab === "dict" && <DictionaryTab audio={audio} />}
         {tab === "grammar" && <GrammarTab />}
         {tab === "progress" && (
-          <ProgressTab save={save} progress={progress} now={now} onWords={startWords} onChanged={refresh} />
+          <ProgressTab
+            save={save}
+            progress={progress}
+            now={now}
+            onWords={startWords}
+            onCode={startCode}
+            onChanged={refresh}
+          />
         )}
       </div>
     </div>
