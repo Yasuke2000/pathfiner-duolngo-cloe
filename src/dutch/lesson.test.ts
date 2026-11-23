@@ -49,6 +49,18 @@ describe("the vocabulary itself", () => {
     }
   });
 
+  it("teaches how to read Dutch variable names, ambiguity included", () => {
+    const namen = UNIT_BY_ID.get("namen");
+    expect(namen).toBeDefined();
+    expect(namen!.terms.length).toBeGreaterThanOrEqual(30);
+    // Most entries must say what the variable actually HOLDS, not just translate.
+    const withDef = namen!.terms.filter((t) => t.def);
+    expect(withDef.length / namen!.terms.length).toBeGreaterThan(0.7);
+    // The trap worth failing a test over: teller = counter, but also numerator.
+    const teller = namen!.terms.find((t) => t.nl === "de teller");
+    expect(teller?.note).toMatch(/noemer|numerator/i);
+  });
+
   it("gives every term a unique id within its unit", () => {
     for (const u of UNITS) {
       const ids = u.terms.map((t) => termId(u.id, t.nl));

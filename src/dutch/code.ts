@@ -748,6 +748,273 @@ aftellen(3)`,
       },
     ],
   },
+  {
+    id: "code-namen",
+    title: "Variabelen raden",
+    subtitle: "Guessing what a Dutch variable holds",
+    blurb: "Code written the way a Flemish prof writes it. What is in 'teller'? What does this compute?",
+    accent: "85 60% 55%",
+    questions: [
+      {
+        id: "naam-teller",
+        lang: "java",
+        code: `int teller = 0;
+for (int i = 0; i < namen.length; i++) {
+    if (namen[i].startsWith("A")) {
+        teller++;
+    }
+}`,
+        question: "Wat zit er in 'teller' als de lus klaar is?",
+        questionEn: "What's in 'teller' when the loop finishes?",
+        options: [
+          "Het aantal namen dat met een A begint.",
+          "De eerste naam die met een A begint.",
+          "Het aantal namen in de rij.",
+          "De lengte van de langste naam.",
+        ],
+        answer: "Het aantal namen dat met een A begint.",
+        explain:
+          "'Teller' komt van 'tellen'. Een teller houdt bij hoe vaak iets gebeurt — hier wordt ze alleen opgehoogd als de naam met een A begint.",
+        explainEn:
+          "'Teller' comes from 'tellen' (to count). A counter tracks how often something happens — here it only goes up when the name starts with an A.",
+      },
+      {
+        id: "naam-gemiddelde",
+        lang: "java",
+        code: `int som = 0;
+for (int getal : getallen) {
+    som += getal;
+}
+double gemiddelde = (double) som / getallen.length;`,
+        question: "Wat berekent deze code?",
+        questionEn: "What does this code compute?",
+        options: [
+          "Het gemiddelde van de getallen.",
+          "De som van de getallen.",
+          "Het grootste getal.",
+          "Het aantal getallen.",
+        ],
+        answer: "Het gemiddelde van de getallen.",
+        explain:
+          "'som' is de optelling, 'getallen' zijn de getallen, en 'gemiddelde' is het gemiddelde: de som gedeeld door het aantal. De namen vertellen het hele verhaal.",
+        explainEn:
+          "'som' is the sum, 'getallen' are the numbers, and 'gemiddelde' is the average: the sum divided by the count. The names tell you the whole story.",
+      },
+      {
+        id: "naam-gevonden",
+        lang: "java",
+        code: `boolean gevonden = false;
+for (String woord : woorden) {
+    if (woord.equals(zoekterm)) {
+        gevonden = true;
+        break;
+    }
+}`,
+        question: "Wat betekent 'gevonden' hier?",
+        questionEn: "What does 'gevonden' mean here?",
+        options: [
+          "Of het gezochte woord gevonden is.",
+          "Hoeveel woorden er gevonden zijn.",
+          "Welk woord er gevonden is.",
+          "Of de lijst leeg is.",
+        ],
+        answer: "Of het gezochte woord gevonden is.",
+        explain:
+          "'Gevonden' is het voltooid deelwoord van 'vinden'. Als naam van een boolean betekent het: ja of nee, is het gevonden? 'zoekterm' is de term waarnaar je zoekt.",
+        explainEn:
+          "'Gevonden' is the past participle of 'vinden' (to find). As a boolean name it means: yes or no, was it found? 'zoekterm' is the search term.",
+      },
+      {
+        id: "naam-grootste",
+        lang: "java",
+        code: `int grootste = getallen[0];
+for (int getal : getallen) {
+    if (getal > grootste) {
+        grootste = getal;
+    }
+}`,
+        question: "Wat doet deze code?",
+        questionEn: "What does this code do?",
+        options: [
+          "Ze zoekt het grootste getal.",
+          "Ze zoekt het kleinste getal.",
+          "Ze telt de getallen op.",
+          "Ze sorteert de getallen.",
+        ],
+        answer: "Ze zoekt het grootste getal.",
+        explain:
+          "'Grootste' is de overtreffende trap van 'groot': de grootste. Telkens een getal groter is, wordt het de nieuwe grootste. Het tegenovergestelde zou 'kleinste' heten.",
+        explainEn:
+          "'Grootste' is the superlative of 'groot' (big): the largest. Whenever a number is bigger, it becomes the new largest. The opposite would be called 'kleinste'.",
+      },
+      {
+        id: "naam-hulp",
+        lang: "java",
+        code: `int hulp = a;
+a = b;
+b = hulp;`,
+        question: "Waarvoor dient 'hulp'?",
+        questionEn: "What is 'hulp' for?",
+        options: [
+          "Om tijdelijk een waarde te bewaren terwijl je wisselt.",
+          "Om de twee waarden op te tellen.",
+          "Om te controleren of a groter is dan b.",
+          "Om a en b te verwijderen.",
+        ],
+        answer: "Om tijdelijk een waarde te bewaren terwijl je wisselt.",
+        explain:
+          "'Hulp' betekent letterlijk help: een hulpvariabele. Zonder haar zou je de waarde van a kwijt zijn zodra je er b in zet. Dit heet wisselen.",
+        explainEn:
+          "'Hulp' literally means help: a helper variable. Without it you'd lose a's value the moment you put b into it. This is called swapping.",
+      },
+      {
+        id: "naam-vorige",
+        lang: "java",
+        code: `String vorige = null;
+for (String naam : namen) {
+    if (naam.equals(vorige)) {
+        System.out.println("dubbel: " + naam);
+    }
+    vorige = naam;
+}`,
+        question: "Wat houdt 'vorige' bij?",
+        questionEn: "What does 'vorige' keep track of?",
+        options: [
+          "De naam van de vorige ronde van de lus.",
+          "De eerste naam in de lijst.",
+          "Het aantal dubbele namen.",
+          "De langste naam.",
+        ],
+        answer: "De naam van de vorige ronde van de lus.",
+        explain:
+          "'Vorige' betekent previous. Op het einde van elke ronde wordt de huidige naam de vorige, zodat je de volgende keer kunt vergelijken. Zo vind je dubbels in een gesorteerde lijst.",
+        explainEn:
+          "'Vorige' means previous. At the end of each pass the current name becomes the previous one, so you can compare next time. That's how you find duplicates in a sorted list.",
+      },
+      {
+        id: "naam-samenstelling",
+        lang: "java",
+        code: `int aantalStudenten = studenten.length;
+int maximumAantal = 250;`,
+        question: "Wat betekent 'aantalStudenten'?",
+        questionEn: "What does 'aantalStudenten' mean?",
+        options: [
+          "het aantal studenten",
+          "de studenten die tellen",
+          "een student met een nummer",
+          "de lijst van studenten",
+        ],
+        answer: "het aantal studenten",
+        explain:
+          "Nederlands plakt woorden aan elkaar. Lees zo'n samenstelling van achter naar voor: 'aantalStudenten' = het aantal ván studenten. 'maximumAantal' = het maximale aantal.",
+        explainEn:
+          "Dutch glues words together. Read such a compound back to front: 'aantalStudenten' = the number OF students. 'maximumAantal' = the maximum number.",
+      },
+      {
+        id: "naam-boolean",
+        lang: "java",
+        code: `boolean isLeeg = lijst.size() == 0;
+boolean heeftKinderen = knoop.links != null || knoop.rechts != null;`,
+        question: "Wat vertelt een naam die met 'is' of 'heeft' begint je?",
+        questionEn: "What does a name starting with 'is' or 'heeft' tell you?",
+        options: [
+          "Dat het een ja-of-nee-waarde is (een boolean).",
+          "Dat het een getal is.",
+          "Dat het een lijst is.",
+          "Dat het een methode zonder resultaat is.",
+        ],
+        answer: "Dat het een ja-of-nee-waarde is (een boolean).",
+        explain:
+          "'isLeeg' = is het leeg? 'heeftKinderen' = heeft het kinderen? Beide beantwoorden een ja-of-nee-vraag, dus het zijn booleans. 'links' en 'rechts' zijn hier de twee takken van een knoop.",
+        explainEn:
+          "'isLeeg' = is it empty? 'heeftKinderen' = does it have children? Both answer a yes-or-no question, so they're booleans. 'links' and 'rechts' are the two branches of a node here.",
+      },
+      {
+        id: "naam-teller-breuk",
+        lang: "java",
+        code: `double teller = 3;
+double noemer = 4;
+double breuk = teller / noemer;`,
+        question: "Wat betekent 'teller' in deze code?",
+        questionEn: "What does 'teller' mean in this code?",
+        options: [
+          "de teller van een breuk (het getal bovenaan)",
+          "een variabele die telt hoe vaak iets gebeurt",
+          "het aantal breuken",
+          "de uitkomst van de deling",
+        ],
+        answer: "de teller van een breuk (het getal bovenaan)",
+        explain:
+          "Opgelet: 'teller' heeft twee betekenissen. In een lus is het een counter, maar samen met 'noemer' gaat het over een breuk: teller / noemer. De context beslist.",
+        explainEn:
+          "Careful: 'teller' has two meanings. In a loop it's a counter, but next to 'noemer' it's the numerator of a fraction: numerator / denominator. Context decides.",
+      },
+      {
+        id: "naam-pogingen",
+        lang: "java",
+        code: `int pogingen = 0;
+while (!gelukt && pogingen < 3) {
+    gelukt = probeer();
+    pogingen++;
+}`,
+        question: "Wanneer stopt deze lus?",
+        questionEn: "When does this loop stop?",
+        options: [
+          "Zodra het gelukt is, of na drie pogingen.",
+          "Pas na drie pogingen, altijd.",
+          "Zodra het mislukt.",
+          "Nooit.",
+        ],
+        answer: "Zodra het gelukt is, of na drie pogingen.",
+        explain:
+          "'Pogingen' zijn attempts en 'gelukt' betekent dat het werkte. Het uitroepteken betekent 'niet', dus de lus loopt zolang het níét gelukt is én er minder dan drie pogingen waren.",
+        explainEn:
+          "'Pogingen' are attempts and 'gelukt' means it worked. The exclamation mark means 'not', so the loop runs while it has NOT succeeded AND there have been fewer than three attempts.",
+      },
+      {
+        id: "naam-knoop",
+        lang: "java",
+        code: `Knoop huidige = hoofd;
+while (huidige.volgende != null) {
+    huidige = huidige.volgende;
+}`,
+        question: "Wat doet deze code?",
+        questionEn: "What does this code do?",
+        options: [
+          "Ze loopt naar de laatste knoop van de lijst.",
+          "Ze telt de knopen.",
+          "Ze verwijdert de eerste knoop.",
+          "Ze keert de lijst om.",
+        ],
+        answer: "Ze loopt naar de laatste knoop van de lijst.",
+        explain:
+          "'hoofd' is de eerste knoop, 'huidige' is waar je nu staat en 'volgende' wijst naar de knoop erna. Zolang er een volgende is, schuif je op — dus je eindigt op de laatste.",
+        explainEn:
+          "'hoofd' is the first node, 'huidige' is where you are now and 'volgende' points to the node after it. As long as there is a next one you move along — so you end on the last.",
+      },
+      {
+        id: "naam-python-totaal",
+        lang: "python",
+        code: `totaal = 0
+for prijs in prijzen:
+    totaal += prijs
+print(totaal)`,
+        question: "Wat drukt deze code af?",
+        questionEn: "What does this code print?",
+        options: [
+          "De som van alle prijzen.",
+          "De duurste prijs.",
+          "Het aantal prijzen.",
+          "De gemiddelde prijs.",
+        ],
+        answer: "De som van alle prijzen.",
+        explain:
+          "'totaal' begint op nul en elke 'prijs' uit 'prijzen' wordt erbij opgeteld. Een naam in het meervoud ('prijzen') is bijna altijd de verzameling; het enkelvoud ('prijs') is één element eruit.",
+        explainEn:
+          "'totaal' starts at zero and every 'prijs' (price) from 'prijzen' (prices) is added to it. A plural name is nearly always the collection; the singular is one element from it.",
+      },
+    ],
+  },
 ];
 
 export const ALL_CODE_QUESTIONS = CODE_UNITS.flatMap((u) => u.questions);
