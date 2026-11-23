@@ -7,6 +7,9 @@ export interface Example {
 }
 
 export interface Term {
+  /** A whole sentence drills differently from a word: it is built from a word
+   *  bank or typed out, never asked as "de of het?". */
+  kind?: "word" | "sentence";
   /** Dutch, nouns written with their article ("het bestand") — the article is
    *  half the battle in Dutch, so we always teach it attached. */
   nl: string;

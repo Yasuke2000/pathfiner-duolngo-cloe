@@ -1,3 +1,4 @@
+import type { CodeQuestion } from "./code";
 import { acceptedAnswers } from "./grade";
 import type { ProgressMap } from "./srs";
 import { isDue } from "./srs";
@@ -11,15 +12,24 @@ export interface PoolItem {
 interface Base {
   id: string;
   unitId: string;
+}
+
+interface WordBase extends Base {
   term: Term;
 }
 
 export type Exercise =
-  | (Base & { kind: "choose"; dir: Dir; prompt: string; options: string[]; answer: string })
-  | (Base & { kind: "type"; dir: Dir; prompt: string; accepted: string[] })
-  | (Base & { kind: "article"; noun: string; answer: "de" | "het" })
-  | (Base & { kind: "listen"; spoken: string; accepted: string[] })
-  | (Base & { kind: "build"; prompt: string; words: string[]; answer: string });
+  | (WordBase & { kind: "choose"; dir: Dir; prompt: string; options: string[]; answer: string })
+  | (WordBase & { kind: "type"; dir: Dir; prompt: string; accepted: string[] })
+  | (WordBase & { kind: "article"; noun: string; answer: "de" | "het" })
+  | (WordBase & { kind: "listen"; spoken: string; accepted: string[] })
+  | (WordBase & { kind: "build"; prompt: string; words: string[]; answer: string })
+  | (Base & { kind: "code"; q: CodeQuestion; options: string[] });
+
+/** The vocabulary term an exercise drills, when it drills one at all. */
+export function termOf(ex: Exercise): Term | undefined {
+  return "term" in ex ? ex.term : undefined;
+}
 
 /** Small deterministic RNG so lessons are reproducible in tests. */
 export function rng(seed: number): () => number {
@@ -94,7 +104,8 @@ function makeExercise(
   const { unitId, term } = item;
   const id = termId(unitId, term.nl);
   const base = { id, unitId, term };
-  const noun = articleOf(term.nl);
+  const noun = term.kind === "sentence" ? null : articleOf(term.nl);
+  const isSentence = term.kind === "sentence";
 
   // A brand-new word is shown as recognition first — never ask someone to
   // produce a word they have not met.
@@ -111,10 +122,13 @@ function makeExercise(
     };
   }
 
-  const kinds: Exercise["kind"][] = ["type", "type", "choose"];
+  // A sentence is practised by assembling it or typing it, never by article.
+  const kinds: Exercise["kind"][] = isSentence
+    ? ["build", "build", "type", "choose"]
+    : ["type", "type", "choose"];
   if (noun) kinds.push("article");
   if (audio) kinds.push("listen");
-  if (term.example) kinds.push("build");
+  if (!isSentence && term.example) kinds.push("build");
   const kind = kinds[Math.floor(rand() * kinds.length)];
 
   if (kind === "article" && noun) {
@@ -123,15 +137,20 @@ function makeExercise(
   if (kind === "listen") {
     return { ...base, kind: "listen", spoken: term.nl, accepted: acceptedAnswers(term, "en>nl") };
   }
-  if (kind === "build" && term.example) {
-    const words = term.example.nl.replace(/\s+/g, " ").trim().split(" ");
-    return {
-      ...base,
-      kind: "build",
-      prompt: term.example.en,
-      words: shuffle(words, rand),
-      answer: term.example.nl,
-    };
+  if (kind === "build") {
+    // For a sentence the sentence itself is the target; for a word we use its
+    // example sentence.
+    const target = isSentence ? { nl: term.nl, en: term.en } : term.example;
+    if (target) {
+      const words = target.nl.replace(/\s+/g, " ").trim().split(" ");
+      return {
+        ...base,
+        kind: "build",
+        prompt: target.en,
+        words: shuffle(words, rand),
+        answer: target.nl,
+      };
+    }
   }
   if (kind === "choose") {
     const dir: Dir = rand() < 0.5 ? "nl>en" : "en>nl";
@@ -178,5 +197,36 @@ export function expectedOf(ex: Exercise): string {
       return ex.accepted[0];
     case "build":
       return ex.answer;
+    case "code":
+      return ex.q.answer;
   }
+}
+
+/**
+ * A lesson of code-reading questions. Unseen questions come first, then the
+ * ones due for review — the same spacing as the vocabulary.
+ */
+export function buildCodeLesson(
+  questions: CodeQuestion[],
+  opts: LessonOptions = {},
+): Exercise[] {
+  const { size = 8, seed = 1, progress = {}, now = Date.now() } = opts;
+  const rand = rng(seed + 11);
+  const fresh = questions.filter((q) => !progress[codeId(q)]);
+  const due = questions.filter((q) => progress[codeId(q)] && isDue(progress[codeId(q)], now));
+  const resting = questions.filter(
+    (q) => progress[codeId(q)] && !isDue(progress[codeId(q)], now),
+  );
+  const ordered = [...shuffle(fresh, rand), ...shuffle(due, rand), ...shuffle(resting, rand)];
+  return ordered.slice(0, Math.min(size, questions.length)).map((q) => ({
+    id: codeId(q),
+    unitId: "code",
+    kind: "code" as const,
+    q,
+    options: shuffle(q.options, rand),
+  }));
+}
+
+export function codeId(q: CodeQuestion): string {
+  return `code:${q.id}`;
 }

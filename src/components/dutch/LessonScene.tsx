@@ -1,24 +1,25 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { judge, type Verdict } from "@/dutch/grade";
-import { buildLesson, expectedOf, type Exercise, type PoolItem } from "@/dutch/lesson";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { judge, normalize, type Verdict } from "@/dutch/grade";
+import { expectedOf, termOf, type Exercise } from "@/dutch/lesson";
 import { loadProgress, recordAnswer, saveProgress, type DutchSave } from "@/dutch/progress";
-import { normalize } from "@/dutch/grade";
+import type { ProgressMap } from "@/dutch/srs";
 import { canSpeak, onVoicesReady, speakDutch } from "@/lib/speech";
 import { sfx } from "@/lib/sound";
 
 type Phase = "answer" | "checked" | "done";
 
-const LESSON_SIZE = 12;
+/** Builds the lesson once we know what this learner already knows. */
+export type LessonBuilder = (progress: ProgressMap, audio: boolean) => Exercise[];
 
 export function LessonScene({
   title,
-  pool,
+  build,
   onExit,
 }: {
   title: string;
-  pool: PoolItem[];
+  build: LessonBuilder;
   onExit: () => void;
 }) {
   const [save, setSave] = useState<DutchSave | null>(null);
@@ -34,21 +35,13 @@ export function LessonScene({
   const retried = useRef<Set<string>>(new Set());
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // Build the lesson once we know what this learner already knows.
   useEffect(() => {
     const loaded = loadProgress();
     setSave(loaded);
     const withAudio = canSpeak();
     setAudio(withAudio);
-    setQueue(
-      buildLesson(pool, {
-        size: LESSON_SIZE,
-        seed: Math.floor(Math.random() * 1e9),
-        progress: loaded.terms,
-        audio: withAudio,
-      }),
-    );
-  }, [pool]);
+    setQueue(build(loaded.terms, withAudio));
+  }, [build]);
 
   // Some browsers load voices late; re-check so the listen exercises light up.
   useEffect(() => onVoicesReady(() => setAudio(canSpeak())), []);
@@ -64,8 +57,7 @@ export function LessonScene({
 
   const answerOf = useCallback(
     (e: Exercise): string => {
-      if (e.kind === "choose") return picked ?? "";
-      if (e.kind === "article") return picked ?? "";
+      if (e.kind === "choose" || e.kind === "article" || e.kind === "code") return picked ?? "";
       if (e.kind === "build") return built.map((i) => e.words[i]).join(" ");
       return typed;
     },
@@ -80,6 +72,7 @@ export function LessonScene({
     let v: Verdict;
     if (ex.kind === "choose") v = given === ex.answer ? "correct" : "wrong";
     else if (ex.kind === "article") v = given === ex.answer ? "correct" : "wrong";
+    else if (ex.kind === "code") v = given === ex.q.answer ? "correct" : "wrong";
     else if (ex.kind === "build") v = normalize(given) === normalize(ex.answer) ? "correct" : "wrong";
     else v = judge(given, ex.accepted).verdict;
 
@@ -91,9 +84,9 @@ export function LessonScene({
 
     setSave((prev) => {
       const base = prev ?? loadProgress();
-      const next = recordAnswer(base, ex.id, ok);
-      saveProgress(next);
-      return next;
+      const updated = recordAnswer(base, ex.id, ok);
+      saveProgress(updated);
+      return updated;
     });
     setStats((s) => ({ asked: s.asked + 1, right: s.right + (ok ? 1 : 0), xp: s.xp + (ok ? 10 : 2) }));
 
@@ -114,9 +107,9 @@ export function LessonScene({
       sfx.victory();
       setSave((prev) => {
         const base = prev ?? loadProgress();
-        const next = { ...base, lessons: base.lessons + 1 };
-        saveProgress(next);
-        return next;
+        const updated = { ...base, lessons: base.lessons + 1 };
+        saveProgress(updated);
+        return updated;
       });
     } else {
       setIdx(idx + 1);
@@ -150,8 +143,8 @@ export function LessonScene({
         </p>
         <p className="muted">
           {pct >= 80
-            ? "Goed bezig! De woorden die je miste komen vanzelf terug."
-            : "Niet erg — de woorden die je miste komen binnenkort opnieuw aan bod."}
+            ? "Goed bezig! De vragen die je miste komen vanzelf terug."
+            : "Niet erg — wat je miste komt binnenkort opnieuw aan bod."}
         </p>
         <div className="actions">
           <button className="btn primary" onClick={onExit}>
@@ -163,7 +156,9 @@ export function LessonScene({
   }
 
   const total = queue.length;
-  const note = phase === "checked" ? ex.term.note : undefined;
+  const term = termOf(ex);
+  const options = ex.kind === "choose" || ex.kind === "code" ? ex.options : null;
+  const correctOption = ex.kind === "choose" ? ex.answer : ex.kind === "code" ? ex.q.answer : null;
 
   return (
     <div className="card d-lesson" onKeyDown={onKeyDown}>
@@ -182,14 +177,14 @@ export function LessonScene({
       <span className="speaker">{title}</span>
       <Prompt ex={ex} audio={audio} />
 
-      {ex.kind === "choose" && (
-        <div className="d-options">
-          {ex.options.map((o) => (
+      {options && (
+        <div className={`d-options ${ex.kind === "code" ? "stack" : ""}`}>
+          {options.map((o) => (
             <button
               key={o}
               className={`d-option ${picked === o ? "sel" : ""} ${
-                phase === "checked" && o === ex.answer ? "right" : ""
-              } ${phase === "checked" && picked === o && o !== ex.answer ? "wrong" : ""}`}
+                phase === "checked" && o === correctOption ? "right" : ""
+              } ${phase === "checked" && picked === o && o !== correctOption ? "wrong" : ""}`}
               onClick={() => phase === "answer" && setPicked(o)}
               disabled={phase === "checked"}
             >
@@ -275,11 +270,17 @@ export function LessonScene({
             {verdict === "wrong" && "Niet juist — het juiste antwoord is:"}
           </b>{" "}
           <span className="d-answer">{expectedOf(ex)}</span>
-          {phase === "checked" && ex.term.def && <p className="d-def">{ex.term.def}</p>}
-          {note && <p className="d-note">💡 {note}</p>}
-          {ex.kind !== "listen" && ex.term.example && (
+          {ex.kind === "code" && (
+            <>
+              <p className="d-def">{ex.q.explain}</p>
+              <p className="d-example">{ex.q.explainEn}</p>
+            </>
+          )}
+          {term?.def && <p className="d-def">{term.def}</p>}
+          {term?.note && <p className="d-note">💡 {term.note}</p>}
+          {ex.kind !== "listen" && term?.example && (
             <p className="d-example">
-              <i>{ex.term.example.nl}</i> — {ex.term.example.en}
+              <i>{term.example.nl}</i> — {term.example.en}
             </p>
           )}
         </div>
@@ -301,6 +302,20 @@ export function LessonScene({
 }
 
 function Prompt({ ex, audio }: { ex: Exercise; audio: boolean }) {
+  if (ex.kind === "code") {
+    return (
+      <div className="d-prompt">
+        <div className="d-codewrap">
+          <span className="d-lang">{ex.q.lang}</span>
+          <pre className="d-code">
+            <code>{ex.q.code}</code>
+          </pre>
+        </div>
+        <h2 className="d-word d-q">{ex.q.question}</h2>
+        <span className="muted">{ex.q.questionEn}</span>
+      </div>
+    );
+  }
   if (ex.kind === "listen") {
     return (
       <div className="d-prompt">

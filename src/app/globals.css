@@ -1871,3 +1871,46 @@ html[data-motion="reduce"] *::after {
   justify-content: center;
   flex-wrap: wrap;
 }
+
+/* ---------- code-reading exercises ---------- */
+.d-codewrap {
+  position: relative;
+  margin: 4px 0 14px;
+}
+.d-lang {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: hsl(var(--accent) / 0.12);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+.d-code {
+  margin: 0;
+  padding: 16px 16px 16px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  border-left: 3px solid hsl(var(--accent) / 0.7);
+  background: #140f22;
+  overflow-x: auto;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #e7e2f5;
+  tab-size: 4;
+}
+.d-code code {
+  font: inherit;
+  white-space: pre;
+}
+.d-q {
+  font-size: clamp(19px, 3.4vw, 24px);
+}
+.d-options.stack {
+  grid-template-columns: 1fr;
+}

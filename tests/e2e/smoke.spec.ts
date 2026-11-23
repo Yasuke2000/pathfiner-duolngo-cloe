@@ -241,3 +241,27 @@ test("Dutch: the word list shows Flemish usage notes", async ({ page }) => {
   await expect(page.locator(".d-list").first()).toBeVisible();
   await expect(page.locator(".d-note").first()).toBeVisible();
 });
+
+test("Dutch: code-reading shows real code and explains the answer in Dutch", async ({ page }) => {
+  await page.goto("/dutch");
+  await page.getByRole("button", { name: /Code lezen$/ }).click();
+  await expect(page.locator(".d-code")).toBeVisible();
+  await expect(page.locator(".d-lang")).toBeVisible();
+
+  await page.locator(".d-option").first().click();
+  await page.getByRole("button", { name: "Controleren" }).click();
+
+  const feedback = page.locator(".d-feedback");
+  await expect(feedback).toBeVisible();
+  // The teaching moment: a Dutch explanation of why.
+  await expect(feedback.locator(".d-def")).toBeVisible();
+  await expect(page.getByRole("button", { name: /Volgende|Afronden/ })).toBeVisible();
+});
+
+test("Dutch: a sentence is assembled from a word bank", async ({ page }) => {
+  await page.goto("/dutch");
+  const unit = page.locator(".d-unit", { hasText: "Zinnen: over code praten" });
+  await unit.getByRole("button", { name: "Oefenen" }).click();
+  // New sentences are introduced by recognition; options are full sentences.
+  await expect(page.locator(".d-option, .d-chip").first()).toBeVisible();
+});

@@ -1,5 +1,6 @@
 import type { Unit } from "./types";
 import { CS_UNITS } from "./vocab-cs";
+import { SENTENCE_UNITS } from "./vocab-sentences";
 
 /**
  * Vocabulary for a computer-science student living in Flanders.
@@ -478,7 +479,7 @@ const LIFE_UNITS: Unit[] = [
   },
 ];
 
-export const UNITS: Unit[] = [...LIFE_UNITS, ...CS_UNITS];
+export const UNITS: Unit[] = [...LIFE_UNITS, ...CS_UNITS, ...SENTENCE_UNITS];
 
 export const UNIT_BY_ID = new Map(UNITS.map((u) => [u.id, u]));
 
