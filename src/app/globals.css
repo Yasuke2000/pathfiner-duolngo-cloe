@@ -1527,3 +1527,28 @@ html[data-motion="reduce"] *::after {
   flex-wrap: wrap;
 }
 
+
+/* ---------- Touch: thumb-sized targets and no zoom-on-focus ---------- */
+@media (pointer: coarse), (max-width: 640px) {
+  .text-btn {
+    display: inline-block;
+    padding: 10px 6px;
+  }
+  .seg-btn,
+  .mute-btn {
+    min-height: 40px;
+  }
+  a.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+  }
+}
+@media (max-width: 640px) {
+  textarea,
+  input[type="text"],
+  input:not([type]) {
+    font-size: 16px;
+  }
+}

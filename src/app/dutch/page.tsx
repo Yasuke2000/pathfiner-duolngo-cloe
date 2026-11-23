@@ -2,7 +2,7 @@ import { DutchHome } from "@/components/dutch/DutchHome";
 import "./dutch.css";
 
 export const metadata = {
-  title: "Code & Koffie — Nederlands voor informatici",
+  title: "Code & Koffie — Nederlands & Engels voor IT",
   description:
     "Leer Nederlands (Vlaams) en tech-Engels in beide richtingen: de les, het labo, de code, de examens en het dagelijks leven in Vlaanderen.",
 };

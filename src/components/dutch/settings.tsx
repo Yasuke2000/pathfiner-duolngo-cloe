@@ -1,12 +1,13 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { DEFAULT_SETTINGS, loadSettings, saveSettings, type Lang, type Theme, type UiSettings } from "@/dutch/settings";
+import { DEFAULT_SETTINGS, loadSettings, saveSettings, type Lang, type Theme, type TrackChoice, type UiSettings } from "@/dutch/settings";
 import { translate, type UiKey } from "@/dutch/ui";
 
 interface Ctx extends UiSettings {
   setLang: (lang: Lang) => void;
   setTheme: (theme: Theme) => void;
+  setTrack: (track: TrackChoice) => void;
   t: (key: UiKey, vars?: Record<string, string | number>) => string;
   /** Pick the Dutch or the English name of something, following the interface language. */
   pick: (nl: string, en: string) => string;
@@ -33,6 +34,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       ...settings,
       setLang: (lang) => update({ lang }),
       setTheme: (theme) => update({ theme }),
+      setTrack: (track) => update({ track }),
       t: (key, vars) => translate(settings.lang, key, vars),
       pick: (nl, en) => (settings.lang === "nl" ? nl : en),
     }),

@@ -5,7 +5,7 @@
  * concept it says a lot: nine mistakes spread over the course are noise, nine
  * mistakes on pointers are a topic to sit down and explain.
  */
-export type Level = "basis" | "high" | "low" | "web" | "data" | "taal";
+export type Level = "basis" | "high" | "low" | "web" | "data" | "ops" | "ai" | "taal";
 
 export interface Concept {
   id: string;
@@ -20,6 +20,8 @@ export const LEVELS: Record<Level, { nl: string; en: string }> = {
   low: { nl: "Laag niveau", en: "Low-level" },
   web: { nl: "Web", en: "Web" },
   data: { nl: "Data", en: "Data" },
+  ops: { nl: "Beheer & tools", en: "Operations & tooling" },
+  ai: { nl: "AI", en: "AI" },
   taal: { nl: "Taal", en: "Language" },
 };
 
@@ -60,6 +62,17 @@ export const CONCEPTS: Concept[] = [
 
   { id: "sqlquery", nl: "SQL: opvragen & filteren", en: "SQL: querying & filtering", level: "data" },
   { id: "sqljoin", nl: "SQL: tabellen koppelen", en: "SQL: joining tables", level: "data" },
+
+  { id: "shell", nl: "Commando's & shell", en: "Commands & shell", level: "ops" },
+  { id: "gitflow", nl: "Git in de praktijk", en: "Git in practice", level: "ops" },
+  { id: "netdiag", nl: "Netwerkdiagnose", en: "Network troubleshooting", level: "ops" },
+  { id: "config", nl: "Configuratiebestanden", en: "Configuration files", level: "ops" },
+  { id: "logs", nl: "Logs & foutsporen", en: "Logs & stack traces", level: "ops" },
+  { id: "http", nl: "HTTP & API's", en: "HTTP & APIs", level: "ops" },
+
+  { id: "aiuse", nl: "AI gebruiken", en: "Using AI well", level: "ai" },
+  { id: "aimodel", nl: "Hoe taalmodellen werken", en: "How language models work", level: "ai" },
+  { id: "airisk", nl: "Risico's van AI", en: "AI risks", level: "ai" },
 
   { id: "aloud", nl: "Code voorlezen", en: "Reading code aloud", level: "taal" },
 ];

@@ -6,7 +6,7 @@ import { ActivityChart, Kpi, MemoryBar } from "./charts";
 import { SettingsProvider, useUi } from "./settings";
 import { IconMoon, IconSun, IconUpload } from "./icons";
 import { decodeTransfer, importSave } from "@/dutch/backup";
-import { ALL_CODE_QUESTIONS } from "@/dutch/code";
+import { ALL_CODE_QUESTIONS, wrapsOnPhone } from "@/dutch/code";
 import { LEVELS } from "@/dutch/concepts";
 import {
   conceptStats,
@@ -259,7 +259,7 @@ function Dashboard({ report, onClose }: { report: DutchSave; onClose: () => void
                   <div className="body">
                     <div className="d-codewrap">
                       <span className="d-lang">{m.question.lang}</span>
-                      <pre className="d-code">
+                      <pre className={`d-code ${wrapsOnPhone(m.question.lang) ? "wrap" : ""}`}>
                         <code>{m.question.code}</code>
                       </pre>
                     </div>
@@ -314,8 +314,8 @@ function Dashboard({ report, onClose }: { report: DutchSave; onClose: () => void
                         <b>{c.pct === null ? "–" : `${c.pct}%`}</b>
                       </span>
                     </td>
-                    <td>{c.answers ? `${c.correct}/${c.answers}` : "–"}</td>
-                    <td>
+                    <td data-label={t("coach.col.answers")}>{c.answers ? `${c.correct}/${c.answers}` : "–"}</td>
+                    <td data-label={t("coach.col.coverage")}>
                       {c.attempted}/{c.questions}
                     </td>
                   </tr>
@@ -380,8 +380,12 @@ function Dashboard({ report, onClose }: { report: DutchSave; onClose: () => void
                       <td>{when(m.t)}</td>
                       <td>{t(`kind.${m.kind}` as UiKey)}</td>
                       <td>{codeById.get(m.id)?.question ?? m.asked}</td>
-                      <td className="bad">{answerText(m.given)}</td>
-                      <td className="good">{m.expected}</td>
+                      <td className="bad" data-label={t("coach.her")}>
+                        {answerText(m.given)}
+                      </td>
+                      <td className="good" data-label={t("coach.right")}>
+                        {m.expected}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

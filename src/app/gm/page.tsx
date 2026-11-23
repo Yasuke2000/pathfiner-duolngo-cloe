@@ -41,7 +41,7 @@ export default function GmPage() {
         <textarea
           className="text-input"
           rows={5}
-          style={{ fontFamily: "monospace", fontSize: 14, resize: "vertical" }}
+          style={{ fontFamily: "monospace", fontSize: 16, resize: "vertical" }}
           placeholder="PFTS1.…"
           value={input}
           onChange={(e) => setInput(e.target.value)}

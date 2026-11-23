@@ -34,8 +34,17 @@ describe("concept tags", () => {
 
   it("covers C and JavaScript as well as Java", () => {
     const langs = new Set(ALL_CODE_QUESTIONS.map((q) => q.lang));
-    for (const l of ["java", "c", "javascript", "python", "sql", "css"]) expect(langs.has(l as never), l).toBe(true);
-    expect(CODE_UNITS.length).toBeGreaterThanOrEqual(8);
+    for (const l of ["java", "c", "javascript", "python", "sql", "css", "bash", "powershell", "json", "yaml", "log", "prompt"]) {
+      expect(langs.has(l as never), l).toBe(true);
+    }
+    expect(CODE_UNITS.length).toBeGreaterThanOrEqual(11);
+  });
+
+  it("covers operations and AI, not only programming", () => {
+    const byLevel = (level: string) =>
+      ALL_CODE_QUESTIONS.filter((q) => CONCEPT_BY_ID.get(conceptOf(q))?.level === level).length;
+    expect(byLevel("ops")).toBeGreaterThanOrEqual(25);
+    expect(byLevel("ai")).toBeGreaterThanOrEqual(10);
   });
 });
 

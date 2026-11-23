@@ -40,7 +40,7 @@ export default function AboutPage() {
         </p>
 
         <div className="actions" style={{ marginTop: 18 }}>
-          <Link className="btn primary" href="/" style={{ textAlign: "center" }}>
+          <Link className="btn primary" href="/play" style={{ textAlign: "center" }}>
             Play
           </Link>
         </div>

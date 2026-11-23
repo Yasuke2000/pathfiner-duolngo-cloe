@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { GRAMMAR } from "./grammar";
-import { GROUPS, recommend, statsFor, unitIds, unitsOf, unplacedUnits } from "./path";
+import { GROUPS, groupsFor, recommend, statsFor, TRACKS, unitIds, unitsOf, unplacedUnits } from "./path";
 import { review, type ProgressMap } from "./srs";
 import { UNITS, UNIT_BY_ID } from "./vocab";
 
@@ -45,6 +45,42 @@ describe("the learning path", () => {
       b: { box: 1, due: NOW - 1, seen: 1, correct: 0 },
     };
     expect(statsFor(["a", "b", "c"], progress, NOW)).toEqual({ total: 3, seen: 2, mastered: 1, due: 1 });
+  });
+});
+
+describe("learning paths", () => {
+  it("offers a path for a student, an IT professional and a developer, plus everything", () => {
+    expect(TRACKS.map((t) => t.id)).toEqual(["all", "student", "it", "dev"]);
+    expect(groupsFor("all")).toEqual(GROUPS);
+  });
+
+  it("only refers to groups that exist, without repeating one", () => {
+    const known = new Set(GROUPS.map((g) => g.id));
+    for (const track of TRACKS) {
+      for (const id of track.groupIds) expect(known.has(id), `${track.id} -> ${id}`).toBe(true);
+      expect(new Set(track.groupIds).size).toBe(track.groupIds.length);
+    }
+  });
+
+  it("puts every group on at least one role path", () => {
+    const used = new Set(TRACKS.flatMap((t) => t.groupIds));
+    for (const g of GROUPS) expect(used.has(g.id), g.id).toBe(true);
+  });
+
+  it("gives the IT path operations first and leaves out student life", () => {
+    const it = groupsFor("it").map((g) => g.id);
+    expect(it.indexOf("it-ops")).toBe(1);
+    expect(it).not.toContain("leven");
+    expect(it).not.toContain("wiskunde");
+  });
+
+  it("recommends the first unit of the chosen path, not of the whole course", () => {
+    const start = unitsOf(GROUPS[0]);
+    const progress: ProgressMap = {};
+    for (const u of start) for (const id of unitIds(u)) progress[id] = review(undefined, true, NOW);
+    const rec = recommend(progress, NOW, 0, groupsFor("it"));
+    expect(rec.kind).toBe("unit");
+    if (rec.kind === "unit") expect(rec.unit.id).toBe("sysadmin");
   });
 });
 

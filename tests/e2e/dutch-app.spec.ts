@@ -187,7 +187,7 @@ test("the coach view shows what she got wrong, from a report she sent", async ({
   await expect(missed.first().locator("dd.good")).toBeVisible();
 
   // The full concept table, per-type accuracy and the mistake log are there.
-  await expect(coach.locator(".dk-table.concept tbody tr")).toHaveCount(33);
+  await expect(coach.locator(".dk-table.concept tbody tr")).toHaveCount(42);
   await expect(coach.locator(".dk-panel", { hasText: "By exercise type" })).toContainText("Read the code");
   await expect(coach.locator(".dk-table.mistakes tbody tr").first()).toBeVisible();
   await expect(coach.locator(".dk-chart")).toBeVisible();
@@ -208,4 +208,25 @@ test("the coach view can also read the progress of this browser", async ({ page 
   await expect(page.getByText("No code question missed so far.")).toBeVisible();
   await page.getByRole("button", { name: "Open another report" }).click();
   await expect(page.getByRole("button", { name: "Open report file" })).toBeVisible();
+});
+
+test("a learning path narrows the course to one role and is remembered", async ({ page }) => {
+  await page.goto("/dutch");
+  // Everything: student material and professional material are both there.
+  await expect(page.getByRole("heading", { name: "Life in Flanders", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "IT operations & support", exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "IT professional" }).click();
+  await expect(page.getByRole("heading", { name: "IT operations & support", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Artificial intelligence", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Life in Flanders", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Maths & theory", exact: true })).toHaveCount(0);
+
+  await page.reload();
+  await expect(page.getByRole("button", { name: "IT professional" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("heading", { name: "Life in Flanders", exact: true })).toHaveCount(0);
+
+  // The professional material is really there and runs.
+  await page.locator(".d-unit", { hasText: "Working with AI" }).getByRole("button", { name: "Practise" }).click();
+  await expect(page.locator(".d-code")).toBeVisible();
 });

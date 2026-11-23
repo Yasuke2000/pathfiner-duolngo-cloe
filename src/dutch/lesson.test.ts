@@ -29,7 +29,9 @@ describe("the vocabulary itself", () => {
   it("teaches the CS vocabulary, not just translates it", () => {
     // The point of the CS track is that a first-year meets the concept and the
     // Dutch word together, so most technical terms must say what they ARE.
-    const csTerms = UNITS.filter((u) => u.track === "cs").flatMap((u) => u.terms);
+    const csTerms = UNITS.filter((u) => u.track === "cs")
+      .flatMap((u) => u.terms)
+      .filter((t) => t.kind !== "sentence");
     expect(csTerms.length).toBeGreaterThanOrEqual(250);
     const withDef = csTerms.filter((t) => t.def && t.def.length > 20);
     expect(withDef.length / csTerms.length).toBeGreaterThan(0.4);

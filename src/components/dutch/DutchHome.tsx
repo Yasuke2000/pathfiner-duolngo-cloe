@@ -21,7 +21,7 @@ import {
 import { ALL_CODE_QUESTIONS, CODE_UNITS, type CodeQuestion, type CodeUnit } from "@/dutch/code";
 import { GRAMMAR } from "@/dutch/grammar";
 import { buildCodeLesson, buildLesson, codeId, type PoolItem } from "@/dutch/lesson";
-import { CODE_GROUP, GROUPS, recommend, statsFor, unitIds, unitsOf } from "@/dutch/path";
+import { CODE_GROUP, groupsFor, recommend, statsFor, TRACKS, unitIds, unitsOf } from "@/dutch/path";
 import { currentStreak, DAILY_GOAL, loadProgress, todayXp, type DutchSave } from "@/dutch/progress";
 import { searchTerms } from "@/dutch/search";
 import { isDue, type ProgressMap } from "@/dutch/srs";
@@ -282,12 +282,13 @@ function LearnTab({
   onWords: (title: string, pool: PoolItem[]) => void;
   onCode: (title: string, questions: CodeQuestion[]) => void;
 }) {
-  const { t, pick } = useUi();
+  const { t, pick, track, setTrack } = useUi();
   const [open, setOpen] = useState<string | null>(null);
 
+  const groups = groupsFor(track);
   const allIds = ALL_TERMS.map((x) => termId(x.unitId, x.term.nl));
   const overall = statsFor(allIds, progress, now);
-  const rec = recommend(progress, now, dueTotal);
+  const rec = recommend(progress, now, dueTotal, groups);
   const csPool = UNITS.filter((u) => u.track === "cs").flatMap(poolOf);
   const isNew = overall.seen === 0;
   const coursePct = Math.round((overall.seen / overall.total) * 100);
@@ -296,6 +297,25 @@ function LearnTab({
 
   return (
     <div className="dk-page">
+      <div className="dk-path">
+        <span className="dk-path-label" id="dk-path-label">
+          {t("path.label")}
+        </span>
+        <div className="dk-path-chips" role="group" aria-labelledby="dk-path-label">
+          {TRACKS.map((tr) => (
+            <button
+              key={tr.id}
+              className={`dk-chip-btn ${track === tr.id ? "on" : ""}`}
+              aria-pressed={track === tr.id}
+              onClick={() => setTrack(tr.id)}
+              title={t("path.hint")}
+            >
+              {pick(tr.nl, tr.en)}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <section className="dk-next" aria-label={t("next.label")}>
         <div className="dk-next-main">
           {rec.kind === "review" && (
@@ -393,7 +413,7 @@ function LearnTab({
         </button>
       </div>
 
-      {GROUPS.map((group, gi) => {
+      {groups.map((group, gi) => {
         const units = unitsOf(group);
         const gStats = statsFor(units.flatMap(unitIds), progress, now);
         return (
@@ -429,7 +449,7 @@ function LearnTab({
       <section className="dk-group">
         <div className="dk-group-head">
           <span className="dk-step" aria-hidden>
-            {GROUPS.length + 1}
+            {groups.length + 1}
           </span>
           <div>
             <h2>{pick(CODE_GROUP.title, CODE_GROUP.titleEn)}</h2>

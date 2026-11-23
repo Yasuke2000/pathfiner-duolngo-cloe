@@ -176,6 +176,8 @@ const en = {
   "backup.reset.confirm": "Erase all progress? This cannot be undone.",
   "backup.privacy": "No account, no analytics, no cookies: nothing leaves this device unless you export it.",
 
+  "path.label": "Learning path",
+  "path.hint": "Pick the path that fits your role. You can switch at any time; your progress is kept.",
   "work.title": "What to work on",
   "work.sub": "Picked from your own answers. Practise a few minutes of each and they will disappear from this list.",
   "work.concepts": "Coding concepts",
@@ -409,6 +411,8 @@ const nl: Record<Key, string> = {
   "backup.reset.confirm": "Alle voortgang wissen? Dit kan niet ongedaan worden gemaakt.",
   "backup.privacy": "Geen account, geen analytics, geen cookies: niets verlaat dit toestel tenzij je het zelf exporteert.",
 
+  "path.label": "Leerpad",
+  "path.hint": "Kies het pad dat bij je rol past. Je kan altijd wisselen; je voortgang blijft bewaard.",
   "work.title": "Waar je aan kan werken",
   "work.sub": "Gekozen uit je eigen antwoorden. Oefen elk een paar minuten en ze verdwijnen uit deze lijst.",
   "work.concepts": "Programmeerconcepten",

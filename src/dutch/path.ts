@@ -44,7 +44,7 @@ export const GROUPS: Group[] = [
     title: "Informatica: verdieping",
     titleEn: "Computer science: in depth",
     subtitle: "Compilers, algorithms, data structures, systems, networks, software, hardware, AI.",
-    unitIds: ["compiler", "algo", "ds", "os", "machine", "net", "se", "architectuur", "ai"],
+    unitIds: ["compiler", "algo", "ds", "os", "machine", "net", "se", "architectuur"],
   },
   {
     id: "wiskunde",
@@ -60,13 +60,84 @@ export const GROUPS: Group[] = [
     subtitle: "Lecture language, exam wording, and whole sentences for class, code and e-mail.",
     unitIds: ["auditorium", "examen", "zin-les", "zin-code", "zin-scheidbaar", "zin-mail"],
   },
+  {
+    id: "it-ops",
+    title: "IT-beheer & support",
+    titleEn: "IT operations & support",
+    subtitle: "Running systems and networks, the helpdesk, the digital workplace.",
+    unitIds: ["sysadmin", "netwerk2", "helpdesk", "m365", "zin-support"],
+  },
+  {
+    id: "dev-ops",
+    title: "Bouwen & beveiligen",
+    titleEn: "Building & securing",
+    subtitle: "Developer shop talk, cloud and DevOps, information security and privacy.",
+    unitIds: ["devjargon", "cloud", "security"],
+  },
+  {
+    id: "business",
+    title: "Business-IT & projecten",
+    titleEn: "Business IT & projects",
+    subtitle: "ERP, data and reporting, and the language of projects and meetings.",
+    unitIds: ["erp", "projecten"],
+  },
+  {
+    id: "ai",
+    title: "Artificiële intelligentie",
+    titleEn: "Artificial intelligence",
+    subtitle: "Machine learning, generative AI and language models, and using them responsibly.",
+    unitIds: ["ai", "genai"],
+  },
 ];
+
+/**
+ * Learning paths. The course serves different people: a computer-science
+ * student, someone in IT operations, a developer. A path picks the groups that
+ * matter for that role and puts them in a sensible order; "all" shows the lot.
+ */
+export type TrackId = "all" | "student" | "it" | "dev";
+
+export interface Track {
+  id: TrackId;
+  nl: string;
+  en: string;
+  groupIds: string[];
+}
+
+export const TRACKS: Track[] = [
+  { id: "all", nl: "Alles", en: "Everything", groupIds: [] },
+  {
+    id: "student",
+    nl: "Student informatica",
+    en: "CS student",
+    groupIds: ["start", "leven", "cs-basis", "cs-diep", "wiskunde", "lessen", "ai"],
+  },
+  {
+    id: "it",
+    nl: "IT-professional",
+    en: "IT professional",
+    groupIds: ["start", "it-ops", "dev-ops", "business", "ai", "cs-basis"],
+  },
+  {
+    id: "dev",
+    nl: "Developer",
+    en: "Developer",
+    groupIds: ["start", "cs-basis", "dev-ops", "cs-diep", "ai", "business"],
+  },
+];
+
+/** The groups of a learning path, in its order. */
+export function groupsFor(trackId: TrackId): Group[] {
+  const track = TRACKS.find((t) => t.id === trackId);
+  if (!track || track.groupIds.length === 0) return GROUPS;
+  return track.groupIds.map((id) => GROUPS.find((g) => g.id === id)).filter((g): g is Group => !!g);
+}
 
 export const CODE_GROUP = {
   id: "code",
-  title: "Code lezen",
-  titleEn: "Reading code",
-  subtitle: "Real Java, C, JavaScript, Python, SQL, CSS and HTML — questions, options and explanations in Dutch.",
+  title: "Code & praktijk lezen",
+  titleEn: "Reading code & practice",
+  subtitle: "Real code, commands, logs, config and prompts — questions, options and explanations in Dutch.",
 };
 
 export function unitsOf(group: Group): Unit[] {
@@ -108,9 +179,14 @@ export type Recommendation =
  * What to do next. Review once enough has piled up (that is where the learning
  * happens); otherwise the first unit on the path that still has unseen words.
  */
-export function recommend(progress: ProgressMap, now: number, dueTotal: number): Recommendation {
+export function recommend(
+  progress: ProgressMap,
+  now: number,
+  dueTotal: number,
+  groups: Group[] = GROUPS,
+): Recommendation {
   if (dueTotal >= 8) return { kind: "review", due: dueTotal };
-  for (const group of GROUPS) {
+  for (const group of groups) {
     for (const unit of unitsOf(group)) {
       const st = statsFor(unitIds(unit), progress, now);
       if (st.seen < st.total) return { kind: "unit", unit, started: st.seen > 0 };

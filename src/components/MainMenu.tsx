@@ -37,13 +37,13 @@ export function MainMenu() {
             ☕
           </span>
           <h2>Code &amp; Koffie</h2>
-          <p className="menu-tag">Nederlands voor informatici — Dutch &amp; tech English</p>
+          <p className="menu-tag">Nederlands &amp; Engels voor IT — Dutch &amp; English for tech people</p>
           <p className="menu-blurb">
-            Belgian Dutch for a computer-science student in Flanders: over a thousand words and
-            sentences from the lecture hall, the lab and the shop on the corner, code-reading
-            questions, a grammar reference and a dictionary.
+            The working language of IT, both ways: programming, systems, networks, cloud, security,
+            the helpdesk, business IT and AI — plus everyday Flemish. Vocabulary, sentences,
+            real code and commands, grammar and a dictionary.
           </p>
-          <span className="menu-meta">A few minutes a day · both directions · spaced repetition</span>
+          <span className="menu-meta">Paths for students, IT staff and developers · works on your phone</span>
           <span className="menu-go">Start →</span>
         </Link>
       </div>

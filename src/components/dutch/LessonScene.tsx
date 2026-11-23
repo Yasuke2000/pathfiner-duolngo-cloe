@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { judge, normalize, type Verdict } from "@/dutch/grade";
+import { wrapsOnPhone } from "@/dutch/code";
 import { expectedOf, termOf, type Exercise } from "@/dutch/lesson";
 import {
   DAILY_GOAL,
@@ -472,7 +473,7 @@ function Prompt({ ex, audio, t }: { ex: Exercise; audio: boolean; t: T }) {
       <div className="d-prompt">
         <div className="d-codewrap">
           <span className="d-lang">{ex.q.lang}</span>
-          <pre className="d-code">
+          <pre className={`d-code ${wrapsOnPhone(ex.q.lang) ? "wrap" : ""}`}>
             <code>{ex.q.code}</code>
           </pre>
         </div>
