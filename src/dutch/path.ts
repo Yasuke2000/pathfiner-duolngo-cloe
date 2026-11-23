@@ -10,7 +10,9 @@ import { UNIT_BY_ID, UNITS } from "./vocab";
  */
 export interface Group {
   id: string;
+  /** Dutch title. */
   title: string;
+  titleEn: string;
   subtitle: string;
   unitIds: string[];
 }
@@ -19,36 +21,42 @@ export const GROUPS: Group[] = [
   {
     id: "start",
     title: "Start hier",
+    titleEn: "Start here",
     subtitle: "First contact, the classroom, numbers and time.",
     unitIds: ["contact", "les", "tijd", "getallen"],
   },
   {
     id: "leven",
     title: "Leven in Vlaanderen",
+    titleEn: "Life in Flanders",
     subtitle: "Daily life, Flemish words, the university, paperwork and student life.",
     unitIds: ["dagelijks", "vlaams", "unief", "admin", "studentenleven"],
   },
   {
     id: "cs-basis",
     title: "Informatica: de basis",
+    titleEn: "Computer science: the basics",
     subtitle: "The computer, first-year programming, reading names and symbols, debugging.",
     unitIds: ["computer", "prog1", "namen", "symbolen", "debug", "oop", "data", "git"],
   },
   {
     id: "cs-diep",
     title: "Informatica: verdieping",
+    titleEn: "Computer science: in depth",
     subtitle: "Compilers, algorithms, data structures, systems, networks, software, hardware, AI.",
     unitIds: ["compiler", "algo", "ds", "os", "net", "se", "architectuur", "ai"],
   },
   {
     id: "wiskunde",
     title: "Wiskunde & theorie",
+    titleEn: "Maths & theory",
     subtitle: "Proofs and automata, calculus, linear algebra, statistics, bits.",
     unitIds: ["theorie", "analyse", "bits"],
   },
   {
     id: "lessen",
     title: "Lessen, examens & zinnen",
+    titleEn: "Lectures, exams & sentences",
     subtitle: "Lecture language, exam wording, and whole sentences for class, code and e-mail.",
     unitIds: ["auditorium", "examen", "zin-les", "zin-code", "zin-scheidbaar", "zin-mail"],
   },
@@ -57,6 +65,7 @@ export const GROUPS: Group[] = [
 export const CODE_GROUP = {
   id: "code",
   title: "Code lezen",
+  titleEn: "Reading code",
   subtitle: "Real Java, CSS, HTML, Python and SQL — questions, options and explanations in Dutch.",
 };
 

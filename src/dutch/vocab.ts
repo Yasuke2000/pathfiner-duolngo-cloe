@@ -390,7 +390,7 @@ const LIFE_UNITS: Unit[] = [
   {
     id: "tijd",
     title: "Tellen, dagen & de klok",
-    subtitle: "Numbers to ten, weekdays, telling the time",
+    subtitle: "Counting, weekdays & the clock",
     blurb: "Includes the clock trap that makes foreigners an hour early. Or late.",
     accent: "200 70% 58%",
     track: "life",

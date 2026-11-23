@@ -110,6 +110,26 @@ describe("buildLesson", () => {
     }
   });
 
+  it("never offers the same option twice, in any unit, new or seen", () => {
+    // Regression: "merci" and "bedankt" both translate to "thanks", and both
+    // could turn up as options in one question.
+    for (const u of UNITS) {
+      const unitPool: PoolItem[] = u.terms.map((term) => ({ unitId: u.id, term }));
+      const seenAll: ProgressMap = {};
+      for (const p of unitPool) seenAll[termId(p.unitId, p.term.nl)] = review(undefined, true, NOW);
+      for (let seed = 0; seed < 12; seed++) {
+        for (const progress of [{}, seenAll]) {
+          for (const ex of buildLesson(unitPool, { size: 12, seed, progress, now: NOW + 1e9 })) {
+            if (ex.kind !== "choose") continue;
+            expect(new Set(ex.options).size, `${u.id}: ${ex.options.join(" | ")}`).toBe(ex.options.length);
+            expect(ex.options).toContain(ex.answer);
+            expect(ex.options.length).toBeGreaterThanOrEqual(2);
+          }
+        }
+      }
+    }
+  });
+
   it("moves on to recall once a word has been seen", () => {
     const progress: ProgressMap = {};
     for (const p of pool) progress[termId(p.unitId, p.term.nl)] = review(undefined, true, NOW);

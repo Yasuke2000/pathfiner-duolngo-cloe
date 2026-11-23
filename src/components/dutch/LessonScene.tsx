@@ -12,11 +12,14 @@ import {
   type DutchSave,
 } from "@/dutch/progress";
 import type { ProgressMap } from "@/dutch/srs";
+import type { UiKey } from "@/dutch/ui";
 import { canSpeak, onVoicesReady, speakDutch } from "@/lib/speech";
 import { sfx } from "@/lib/sound";
 import { IconSpeaker } from "./icons";
+import { useUi } from "./settings";
 
 type Phase = "answer" | "checked" | "done";
+type T = (key: UiKey, vars?: Record<string, string | number>) => string;
 
 /** Builds the lesson once we know what this learner already knows. */
 export type LessonBuilder = (progress: ProgressMap, audio: boolean) => Exercise[];
@@ -28,29 +31,20 @@ interface Miss {
 }
 
 /** A one-line description of what an exercise asked, for the end-of-lesson recap. */
-function askedOf(ex: Exercise): string {
+function askedOf(ex: Exercise, t: T): string {
   switch (ex.kind) {
     case "choose":
     case "type":
     case "build":
       return ex.prompt;
     case "article":
-      return `… ${ex.noun} (de of het?)`;
+      return t("asked.article", { noun: ex.noun });
     case "listen":
-      return "Luisteroefening";
+      return t("asked.listen");
     case "code":
       return ex.q.question;
   }
 }
-
-const KIND_LABEL: Record<Exercise["kind"], string> = {
-  choose: "Kies de vertaling",
-  type: "Vertaal",
-  article: "De of het?",
-  listen: "Luister",
-  build: "Bouw de zin",
-  code: "Lees de code",
-};
 
 export function LessonScene({
   title,
@@ -63,6 +57,7 @@ export function LessonScene({
   onExit: () => void;
   onAgain: () => void;
 }) {
+  const { t } = useUi();
   const [save, setSave] = useState<DutchSave | null>(null);
   const [audio, setAudio] = useState(false);
   const [queue, setQueue] = useState<Exercise[] | null>(null);
@@ -84,6 +79,8 @@ export function LessonScene({
     const withAudio = canSpeak();
     setAudio(withAudio);
     setQueue(build(loaded.terms, withAudio));
+    // Ask the browser not to evict this site's storage under disk pressure.
+    void navigator.storage?.persist?.().catch(() => undefined);
   }, [build]);
 
   // Some browsers load voices late; re-check so the listen exercises light up.
@@ -126,7 +123,7 @@ export function LessonScene({
 
     if (!ok) {
       setMisses((m) =>
-        m.some((x) => x.id === ex.id) ? m : [...m, { id: ex.id, asked: askedOf(ex), answer: expectedOf(ex) }],
+        m.some((x) => x.id === ex.id) ? m : [...m, { id: ex.id, asked: askedOf(ex, t), answer: expectedOf(ex) }],
       );
       // Anything missed comes back once more before the lesson ends.
       if (!retried.current.has(ex.id)) {
@@ -191,7 +188,7 @@ export function LessonScene({
   if (queue === null) {
     return (
       <div className="dk-card d-lesson">
-        <p className="dk-muted">Les wordt klaargezet…</p>
+        <p className="dk-muted">{t("lesson.loading")}</p>
       </div>
     );
   }
@@ -199,11 +196,11 @@ export function LessonScene({
   if (queue.length === 0) {
     return (
       <div className="dk-card d-done">
-        <h2>Niets te oefenen</h2>
-        <p className="dk-muted">Hier staat op dit moment niets klaar.</p>
+        <h2>{t("lesson.empty.title")}</h2>
+        <p className="dk-muted">{t("lesson.empty.body")}</p>
         <div className="d-actions">
           <button className="dk-btn primary" onClick={onExit}>
-            Terug naar het overzicht
+            {t("lesson.back")}
           </button>
         </div>
       </div>
@@ -212,33 +209,34 @@ export function LessonScene({
 
   if (phase === "done") {
     const pct = stats.asked ? Math.round((stats.right / stats.asked) * 100) : 0;
-    const today = todayXp(save);
-    const goalPct = Math.min(100, Math.round((today / DAILY_GOAL) * 100));
+    const goalPct = Math.min(100, Math.round((todayXp(save) / DAILY_GOAL) * 100));
     return (
       <div className="dk-card d-done">
-        <p className="dk-eyebrow">Les afgerond · {title}</p>
-        <h2>{pct}% juist</h2>
+        <p className="dk-eyebrow">
+          {t("lesson.done")} · {title}
+        </p>
+        <h2>{t("lesson.pct", { n: pct })}</h2>
         <div className="d-done-stats">
           <div>
             <b>
               {stats.right}/{stats.asked}
             </b>
-            <span>goed beantwoord</span>
+            <span>{t("lesson.stat.right")}</span>
           </div>
           <div>
             <b>+{stats.xp}</b>
-            <span>XP verdiend</span>
+            <span>{t("lesson.stat.xp")}</span>
           </div>
           <div>
             <b>{goalPct}%</b>
-            <span>van je dagdoel</span>
+            <span>{t("lesson.stat.goal")}</span>
           </div>
         </div>
 
         {misses.length > 0 ? (
           <div className="d-recap">
-            <h3>Nog even bekijken</h3>
-            <p className="dk-muted">Deze komen binnenkort vanzelf terug in je herhaling.</p>
+            <h3>{t("lesson.recap")}</h3>
+            <p className="dk-muted">{t("lesson.recap.sub")}</p>
             <ul>
               {misses.map((m) => (
                 <li key={m.id}>
@@ -249,15 +247,15 @@ export function LessonScene({
             </ul>
           </div>
         ) : (
-          <p className="dk-muted">Alles juist — goed bezig!</p>
+          <p className="dk-muted">{t("lesson.perfect")}</p>
         )}
 
         <div className="d-actions">
           <button className="dk-btn" onClick={onExit}>
-            Terug naar het overzicht
+            {t("lesson.back")}
           </button>
           <button className="dk-btn primary" onClick={onAgain} autoFocus>
-            Nog een les
+            {t("lesson.again")}
           </button>
         </div>
       </div>
@@ -275,7 +273,7 @@ export function LessonScene({
   return (
     <div className="dk-card d-lesson" onKeyDown={onKeyDown} ref={cardRef} tabIndex={-1}>
       <div className="d-head">
-        <button className="dk-link" onClick={onExit} aria-label="Les stoppen">
+        <button className="dk-link" onClick={onExit} aria-label={t("lesson.stop")}>
           ✕
         </button>
         <div
@@ -284,7 +282,7 @@ export function LessonScene({
           aria-valuemin={0}
           aria-valuemax={total}
           aria-valuenow={idx}
-          aria-label={`Vraag ${idx + 1} van ${total}`}
+          aria-label={t("lesson.progress", { a: idx + 1, b: total })}
         >
           <span style={{ width: `${(idx / total) * 100}%` }} />
         </div>
@@ -294,9 +292,9 @@ export function LessonScene({
       </div>
 
       <p className="dk-eyebrow">
-        {title} · {KIND_LABEL[ex.kind]}
+        {title} · {t(`kind.${ex.kind}` as UiKey)}
       </p>
-      <Prompt ex={ex} audio={audio} />
+      <Prompt ex={ex} audio={audio} t={t} />
 
       {options && (
         <div className={`d-options ${ex.kind === "code" ? "stack" : ""}`} lang={ex.kind === "code" ? "nl" : answerLang}>
@@ -339,7 +337,7 @@ export function LessonScene({
       {ex.kind === "build" && (
         <div lang="nl">
           <div className="d-build-line">
-            {built.length === 0 && <span className="dk-muted">Tik de woorden in de juiste volgorde aan…</span>}
+            {built.length === 0 && <span className="dk-muted">{t("prompt.buildHint")}</span>}
             {built.map((wi, pos) => (
               <button
                 key={`${wi}-${pos}`}
@@ -381,12 +379,12 @@ export function LessonScene({
             onChange={(e) => setTyped(e.target.value)}
             placeholder={
               ex.kind === "listen"
-                ? "Typ wat je hoort…"
+                ? t("input.listen")
                 : ex.dir === "en>nl"
-                  ? "Typ het in het Nederlands…"
-                  : "Typ het in het Engels…"
+                  ? t("input.toDutch")
+                  : t("input.toEnglish")
             }
-            aria-label="Je antwoord"
+            aria-label={t("input.label")}
             disabled={phase === "checked"}
             autoComplete="off"
             autoCorrect="off"
@@ -394,21 +392,19 @@ export function LessonScene({
             spellCheck={false}
             lang={ex.kind === "listen" || ex.dir === "en>nl" ? "nl" : "en"}
           />
-          <p className="d-hint">Hoofdletters, accenten en leestekens hoeven niet.</p>
+          <p className="d-hint">{t("input.hint")}</p>
         </>
       )}
 
       {phase === "checked" && (
         <div className={`d-feedback ${verdict}`} role="status">
           <p className="d-verdict">
-            {verdict === "correct" && "Juist!"}
-            {verdict === "typo" && "Juist — let op de spelling"}
-            {verdict === "wrong" && "Niet juist"}
+            {verdict === "correct" && t("verdict.correct")}
+            {verdict === "typo" && t("verdict.typo")}
+            {verdict === "wrong" && t("verdict.wrong")}
           </p>
           {(verdict !== "correct" || ex.kind === "type" || ex.kind === "listen") && (
-            <p className="d-answer" lang="nl">
-              {expectedOf(ex)}
-            </p>
+            <p className="d-answer">{expectedOf(ex)}</p>
           )}
           {ex.kind === "code" && (
             <>
@@ -432,15 +428,15 @@ export function LessonScene({
         {phase === "answer" ? (
           <>
             <button className="dk-btn ghost" onClick={() => settle("wrong")}>
-              Ik weet het niet
+              {t("btn.idk")}
             </button>
             <button className="dk-btn primary" onClick={check} disabled={!ready}>
-              Controleren
+              {t("btn.check")}
             </button>
           </>
         ) : (
           <button className="dk-btn primary" onClick={next} autoFocus>
-            {idx + 1 >= queue.length ? "Afronden" : "Volgende"}
+            {idx + 1 >= queue.length ? t("btn.finish") : t("btn.next")}
           </button>
         )}
       </div>
@@ -448,7 +444,7 @@ export function LessonScene({
   );
 }
 
-function Prompt({ ex, audio }: { ex: Exercise; audio: boolean }) {
+function Prompt({ ex, audio, t }: { ex: Exercise; audio: boolean; t: T }) {
   if (ex.kind === "code") {
     return (
       <div className="d-prompt">
@@ -468,10 +464,10 @@ function Prompt({ ex, audio }: { ex: Exercise; audio: boolean }) {
   if (ex.kind === "listen") {
     return (
       <div className="d-prompt">
-        <button className="d-speak" onClick={() => speakDutch(ex.spoken)} aria-label="Speel opnieuw af">
+        <button className="d-speak" onClick={() => speakDutch(ex.spoken)} aria-label={t("prompt.replay")}>
           <IconSpeaker size={26} />
         </button>
-        <p className="d-gloss">Luister en typ het in het Nederlands.</p>
+        <p className="d-gloss">{t("prompt.listen")}</p>
       </div>
     );
   }
@@ -482,7 +478,7 @@ function Prompt({ ex, audio }: { ex: Exercise; audio: boolean }) {
           … {ex.noun}
         </h2>
         <p className="d-gloss">
-          {ex.term.en} — is het <b>de</b> of <b>het</b>?
+          {ex.term.en} — {t("prompt.article")}
         </p>
       </div>
     );
@@ -490,7 +486,7 @@ function Prompt({ ex, audio }: { ex: Exercise; audio: boolean }) {
   if (ex.kind === "build") {
     return (
       <div className="d-prompt">
-        <p className="d-gloss">Zeg dit in het Nederlands:</p>
+        <p className="d-gloss">{t("prompt.build")}</p>
         <h2 className="d-word">{ex.prompt}</h2>
       </div>
     );
@@ -498,11 +494,11 @@ function Prompt({ ex, audio }: { ex: Exercise; audio: boolean }) {
   const dutchSide = ex.dir === "nl>en";
   return (
     <div className="d-prompt">
-      <p className="d-gloss">{dutchSide ? "Wat betekent dit?" : "Hoe zeg je dit in het Nederlands?"}</p>
+      <p className="d-gloss">{dutchSide ? t("prompt.meaning") : t("prompt.toDutch")}</p>
       <h2 className="d-word" lang={dutchSide ? "nl" : "en"}>
         {ex.prompt}
         {dutchSide && audio && (
-          <button className="d-speak small" onClick={() => speakDutch(ex.prompt)} aria-label="Spreek uit">
+          <button className="d-speak small" onClick={() => speakDutch(ex.prompt)} aria-label={t("speak", { word: ex.prompt })}>
             <IconSpeaker size={16} />
           </button>
         )}

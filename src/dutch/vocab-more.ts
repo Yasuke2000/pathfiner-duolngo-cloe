@@ -60,7 +60,7 @@ export const MORE_UNITS: Unit[] = [
   {
     id: "getallen",
     title: "Grote getallen & datums",
-    subtitle: "Eleven and up, months, marks out of twenty",
+    subtitle: "Big numbers & dates",
     blurb: "Dutch says the units first: vierentwintig is 24. Line numbers, marks out of twenty, dates.",
     accent: "215 75% 62%",
     track: "life",

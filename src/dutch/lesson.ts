@@ -59,10 +59,19 @@ function face(term: Term, dir: Dir): string {
 
 function distractors(target: Term, pool: PoolItem[], dir: Dir, rand: () => number): string[] {
   const want = face(target, dir);
-  const others = pool
-    .map((p) => p.term)
-    .filter((t) => t !== target && face(t, dir) !== want);
-  return shuffle(others, rand).slice(0, 3).map((t) => face(t, dir));
+  // Several words can share a translation ("merci" and "bedankt" are both
+  // "thanks"), so de-duplicate by what is shown, not by term: two identical
+  // options would make the question unanswerable.
+  const seen = new Set<string>([want]);
+  const out: string[] = [];
+  for (const t of shuffle(pool.map((p) => p.term), rand)) {
+    const f = face(t, dir);
+    if (seen.has(f)) continue;
+    seen.add(f);
+    out.push(f);
+    if (out.length === 3) break;
+  }
+  return out;
 }
 
 export interface LessonOptions {

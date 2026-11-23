@@ -190,6 +190,14 @@ test("the capstone fight uses YOUR built character, not the pregen", async ({ pa
   throw new Error("never reached a capstone fight using the built character");
 });
 
+// The Dutch-course tests below were written against the Dutch interface; the
+// English default and the switch itself are covered in dutch-app.spec.ts.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem("dutch-ui-v1", JSON.stringify({ lang: "nl", theme: "dark" }));
+  });
+});
+
 test("the menu offers both courses and routes to each", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "The Academy" })).toBeVisible();

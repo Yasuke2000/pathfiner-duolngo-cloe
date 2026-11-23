@@ -1,10 +1,21 @@
 import type { ProgressMap, TermState } from "./srs";
 import { review } from "./srs";
 
-const KEY = "dutch-progress-v1";
+export const SAVE_KEY = "dutch-progress-v1";
 
 /** XP per day that counts as "done for today" — roughly one lesson. */
 export const DAILY_GOAL = 100;
+
+/** How many days of activity history to keep. */
+const HISTORY_DAYS = 180;
+
+export interface DayStat {
+  xp: number;
+  /** Answers given. */
+  n: number;
+  /** Of which correct. */
+  ok: number;
+}
 
 export interface DutchSave {
   terms: ProgressMap;
@@ -17,9 +28,11 @@ export interface DutchSave {
   streak?: number;
   /** Last day the goal was reached. */
   goalDay?: string;
+  /** Per-day activity, newest ~180 days. Drives the progress charts. */
+  history?: Record<string, DayStat>;
 }
 
-const empty = (): DutchSave => ({ terms: {}, xp: 0, lessons: 0 });
+export const emptySave = (): DutchSave => ({ terms: {}, xp: 0, lessons: 0 });
 
 export function dayKey(now: number): string {
   const d = new Date(now);
@@ -27,31 +40,38 @@ export function dayKey(now: number): string {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 
-function previousDay(now: number): string {
+export function previousDay(now: number): string {
   const d = new Date(now);
   d.setDate(d.getDate() - 1);
   return dayKey(d.getTime());
 }
 
 export function loadProgress(): DutchSave {
-  if (typeof window === "undefined") return empty();
+  if (typeof window === "undefined") return emptySave();
   try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) return empty();
+    const raw = window.localStorage.getItem(SAVE_KEY);
+    if (!raw) return emptySave();
     const parsed = JSON.parse(raw) as Partial<DutchSave>;
     return { ...parsed, terms: parsed.terms ?? {}, xp: parsed.xp ?? 0, lessons: parsed.lessons ?? 0 };
   } catch {
-    return empty();
+    return emptySave();
   }
 }
 
 export function saveProgress(save: DutchSave): void {
   if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(KEY, JSON.stringify(save));
+    window.localStorage.setItem(SAVE_KEY, JSON.stringify(save));
   } catch {
     // Private mode / blocked storage: practising still works, it just won't persist.
   }
+}
+
+function pruneHistory(history: Record<string, DayStat>): Record<string, DayStat> {
+  const keys = Object.keys(history).sort();
+  if (keys.length <= HISTORY_DAYS) return history;
+  const keep = keys.slice(-HISTORY_DAYS);
+  return Object.fromEntries(keep.map((k) => [k, history[k]]));
 }
 
 export function recordAnswer(save: DutchSave, id: string, correct: boolean, now = Date.now()): DutchSave {
@@ -67,6 +87,12 @@ export function recordAnswer(save: DutchSave, id: string, correct: boolean, now 
     goalDay = today;
   }
 
+  const prevDay = save.history?.[today] ?? { xp: 0, n: 0, ok: 0 };
+  const history = pruneHistory({
+    ...(save.history ?? {}),
+    [today]: { xp: prevDay.xp + gained, n: prevDay.n + 1, ok: prevDay.ok + (correct ? 1 : 0) },
+  });
+
   return {
     ...save,
     terms: { ...save.terms, [id]: next },
@@ -75,6 +101,7 @@ export function recordAnswer(save: DutchSave, id: string, correct: boolean, now 
     dayXp: after,
     streak,
     goalDay,
+    history,
   };
 }
 
@@ -93,7 +120,7 @@ export function currentStreak(save: DutchSave | null, now = Date.now()): number 
 export function resetProgress(): void {
   if (typeof window === "undefined") return;
   try {
-    window.localStorage.removeItem(KEY);
+    window.localStorage.removeItem(SAVE_KEY);
   } catch {
     /* ignore */
   }
