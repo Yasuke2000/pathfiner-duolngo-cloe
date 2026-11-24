@@ -5,7 +5,7 @@
  * concept it says a lot: nine mistakes spread over the course are noise, nine
  * mistakes on pointers are a topic to sit down and explain.
  */
-export type Level = "basis" | "high" | "low" | "web" | "data" | "ops" | "ai" | "taal";
+export type Level = "basis" | "high" | "low" | "web" | "data" | "ops" | "ai" | "opgave" | "taal";
 
 export interface Concept {
   id: string;
@@ -22,6 +22,7 @@ export const LEVELS: Record<Level, { nl: string; en: string }> = {
   data: { nl: "Data", en: "Data" },
   ops: { nl: "Beheer & tools", en: "Operations & tooling" },
   ai: { nl: "AI", en: "AI" },
+  opgave: { nl: "Opgaven & examens", en: "Assignments & exams" },
   taal: { nl: "Taal", en: "Language" },
 };
 
@@ -73,6 +74,9 @@ export const CONCEPTS: Concept[] = [
   { id: "aiuse", nl: "AI gebruiken", en: "Using AI well", level: "ai" },
   { id: "aimodel", nl: "Hoe taalmodellen werken", en: "How language models work", level: "ai" },
   { id: "airisk", nl: "Risico's van AI", en: "AI risks", level: "ai" },
+
+  { id: "specread", nl: "Een opgave begrijpen", en: "Understanding a task", level: "opgave" },
+  { id: "speccode", nl: "Van opgave naar code", en: "From task to code", level: "opgave" },
 
   { id: "aloud", nl: "Code voorlezen", en: "Reading code aloud", level: "taal" },
 ];

@@ -259,7 +259,9 @@ function Dashboard({ report, onClose }: { report: DutchSave; onClose: () => void
                   <div className="body">
                     <div className="d-codewrap">
                       <span className="d-lang">{m.question.lang}</span>
-                      <pre className={`d-code ${wrapsOnPhone(m.question.lang) ? "wrap" : ""}`}>
+                      <pre
+                        className={`d-code ${wrapsOnPhone(m.question.lang) ? "wrap" : ""} ${m.question.lang === "opgave" ? "prose" : ""}`}
+                      >
                         <code>{m.question.code}</code>
                       </pre>
                     </div>

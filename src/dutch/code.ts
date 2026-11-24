@@ -23,12 +23,15 @@ export type CodeLang =
   | "json"
   | "yaml"
   | "log"
-  | "prompt";
+  | "prompt"
+  | "opgave";
 
 export interface CodeQuestion {
   id: string;
   /** Concept this question tests; older questions are tagged in concepts.ts. */
   concept?: string;
+  /** The options are code, so they are shown in a monospace face. */
+  codeOptions?: boolean;
   lang: CodeLang;
   code: string;
   /** The question, in Dutch. */
@@ -2638,6 +2641,460 @@ Gebruiker:  How do I reset my password?`,
       },
     ],
   },
+  {
+    id: "code-opgave",
+    title: "Opgaven begrijpen",
+    subtitle: "Understanding assignments",
+    blurb: "A sentence from a real Java task: what does it ask you to write?",
+    accent: "48 85% 58%",
+    questions: [
+      {
+        id: "opg-3arg",
+        concept: "specread",
+        lang: "opgave",
+        code: `Een object van deze klasse wordt gemaakt aan de hand van een 3-argumenten-constructor.`,
+        question: "Wat moet je schrijven?",
+        questionEn: "What do you have to write?",
+        options: [
+          "Een constructor met drie parameters.",
+          "Drie verschillende constructors.",
+          "Een methode die drie objecten maakt.",
+          "Een klasse met drie methodes.",
+        ],
+        answer: "Een constructor met drie parameters.",
+        explain:
+          "'Aan de hand van' betekent 'met behulp van'. Een 3-argumenten-constructor is één constructor die drie waarden meekrijgt — hier naam, adres en gemeente.",
+        explainEn:
+          "'Aan de hand van' means 'by means of'. A 3-argumenten-constructor is one constructor that receives three values — here naam, adres and gemeente.",
+      },
+      {
+        id: "opg-setters",
+        concept: "speccode",
+        lang: "opgave",
+        code: `Van een lid houden we de naam, het adres en de gemeente bij.
+Het adres en de gemeente moeten kunnen gewijzigd worden.`,
+        question: "Welke methodes heb je hiervoor nodig?",
+        questionEn: "Which methods do you need for this?",
+        options: [
+          "setAdres en setGemeente, maar geen setNaam.",
+          "setNaam, setAdres en setGemeente.",
+          "Alleen getters, geen setters.",
+          "Een nieuwe constructor.",
+        ],
+        answer: "setAdres en setGemeente, maar geen setNaam.",
+        explain:
+          "'Moeten kunnen gewijzigd worden' = je moet ze kunnen aanpassen, dus een setter. De naam wordt niet genoemd, en krijgt er dus geen. Lees zo'n zin altijd letterlijk: wat er niet staat, wordt niet gevraagd.",
+        explainEn:
+          "'Moeten kunnen gewijzigd worden' = it must be possible to change them, so a setter. The name is not mentioned, so it gets none. Always read such a sentence literally: what is not written is not asked.",
+      },
+      {
+        id: "opg-string",
+        concept: "speccode",
+        codeOptions: true,
+        lang: "opgave",
+        code: `Van een lid houden we de naam bij.
+De gegevens worden als String bijgehouden.`,
+        question: "Welke regel code hoort hierbij?",
+        questionEn: "Which line of code goes with this?",
+        options: ["private String naam;", "private int naam;", "public void naam() { }", "String naam = new Lid();"],
+        answer: "private String naam;",
+        explain:
+          "'Bijhouden' betekent dat de klasse het moet onthouden: een veld. 'Als String' geeft het type. De naam is dus een veld van het type String.",
+        explainEn:
+          "'Bijhouden' means the class has to remember it: a field. 'Als String' gives the type. So the name is a field of type String.",
+      },
+      {
+        id: "opg-id",
+        concept: "speccode",
+        codeOptions: true,
+        lang: "opgave",
+        code: `Ieder boek heeft een uniek identificatienummer dat als een gewone integer wordt bijgehouden.`,
+        question: "Welk veld past hierbij?",
+        questionEn: "Which field fits this?",
+        options: ["private int id;", "private String id;", "private boolean id;", "private static int id;"],
+        answer: "private int id;",
+        explain:
+          "'Een gewone integer' is een int. Niet static: elk boek heeft zijn eigen nummer, dus het is een veld van het object en niet van de klasse.",
+        explainEn:
+          "'Een gewone integer' is an int. Not static: each book has its own number, so it is a field of the object and not of the class.",
+      },
+      {
+        id: "opg-status",
+        concept: "speccode",
+        codeOptions: true,
+        lang: "opgave",
+        code: `Een laatste belangrijk veld houdt de status van een boek bij:
+ofwel is het boek aanwezig, ofwel niet.`,
+        question: "Welk type past het best bij dit veld?",
+        questionEn: "Which type fits this field best?",
+        options: ["private boolean aanwezig;", "private String aanwezig;", "private int aanwezig;", "private Boek aanwezig;"],
+        answer: "private boolean aanwezig;",
+        explain:
+          "'Ofwel … ofwel niet' beschrijft precies twee mogelijkheden: ja of nee. Daarvoor dient een boolean.",
+        explainEn: "'Ofwel … ofwel niet' describes exactly two possibilities: yes or no. That is what a boolean is for.",
+      },
+      {
+        id: "opg-4arg",
+        concept: "specread",
+        lang: "opgave",
+        code: `Van een boek wordt de titel, de auteur en het ISBN-nummer bijgehouden.
+Ieder boek heeft een uniek identificatienummer.
+Een laatste veld houdt de status van een boek bij.
+
+Om een Boek-object te creëren gebruiken we een 4-argumenten-constructor.`,
+        question: "Er zijn vijf velden maar vier argumenten. Welk veld krijgt geen parameter?",
+        questionEn: "There are five fields but four arguments. Which field gets no parameter?",
+        options: [
+          "De status: een nieuw boek is gewoon aanwezig.",
+          "De titel.",
+          "Het identificatienummer.",
+          "Het ISBN-nummer.",
+        ],
+        answer: "De status: een nieuw boek is gewoon aanwezig.",
+        explain:
+          "Tel de velden en vergelijk met het aantal argumenten. Titel, auteur, ISBN en id moet je meegeven; de status hoef je niet te vragen, want een boek dat net toegevoegd wordt, is aanwezig. Zo'n verschil is geen fout in de opgave maar een aanwijzing.",
+        explainEn:
+          "Count the fields and compare with the number of arguments. Title, author, ISBN and id must be passed in; the status need not be asked for, because a book that has just been added is present. Such a difference is not a mistake in the task but a hint.",
+      },
+      {
+        id: "opg-onveranderd",
+        concept: "specread",
+        lang: "opgave",
+        code: `Het moet uiteraard mogelijk zijn om de status van het boek te wijzigen,
+alle andere velden blijven onveranderd na de creatie van het object.`,
+        question: "Wat betekent dit voor je klasse Boek?",
+        questionEn: "What does this mean for your class Boek?",
+        options: [
+          "Alleen de status krijgt een setter; de andere velden niet.",
+          "Elk veld krijgt een setter.",
+          "Geen enkel veld mag veranderen.",
+          "De status mag alleen in de constructor ingesteld worden.",
+        ],
+        answer: "Alleen de status krijgt een setter; de andere velden niet.",
+        explain:
+          "'Blijven onveranderd na de creatie' betekent: na de constructor veranderen ze nooit meer. Je schrijft er dus geen setters voor (en je mag ze final maken). 'Uiteraard' betekent 'natuurlijk'.",
+        explainEn:
+          "'Blijven onveranderd na de creatie' means: after the constructor they never change again. So you write no setters for them (and may make them final). 'Uiteraard' means 'of course'.",
+      },
+      {
+        id: "opg-exemplaren",
+        concept: "specread",
+        lang: "opgave",
+        code: `Het is namelijk mogelijk dat we meerdere exemplaren van een boek in bezit hebben:
+deze exemplaren onderscheiden zich van elkaar via het identificatienummer.`,
+        question: "Waarom is het ISBN-nummer niet genoeg om een boek te herkennen?",
+        questionEn: "Why is the ISBN number not enough to identify a book?",
+        options: [
+          "Twee exemplaren van hetzelfde boek hebben hetzelfde ISBN.",
+          "Een ISBN-nummer is te lang.",
+          "Niet elk boek heeft een titel.",
+          "Het ISBN-nummer verandert bij elke ontlening.",
+        ],
+        answer: "Twee exemplaren van hetzelfde boek hebben hetzelfde ISBN.",
+        explain:
+          "Een exemplaar is één fysiek boek. De bibliotheek kan drie exemplaren van hetzelfde boek hebben: zelfde titel, zelfde ISBN. Alleen het identificatienummer is voor elk exemplaar anders, en daarom werkt brengTerug met het id.",
+        explainEn:
+          "An exemplaar is one physical copy. The library may own three copies of the same book: same title, same ISBN. Only the identification number differs per copy, which is why brengTerug works with the id.",
+      },
+      {
+        id: "opg-datum",
+        concept: "specread",
+        lang: "opgave",
+        code: `Om de complexiteit niet nodeloos aan te zwengelen, houden we voorlopig
+de datum waarop dat gebeurde niet bij.`,
+        question: "Wat moet je met de datum doen?",
+        questionEn: "What should you do with the date?",
+        options: [
+          "Niets: de klasse Ontlening krijgt geen datumveld.",
+          "Een veld datum toevoegen aan Ontlening.",
+          "De datum afdrukken bij elke ontlening.",
+          "De datum meegeven aan de constructor.",
+        ],
+        answer: "Niets: de klasse Ontlening krijgt geen datumveld.",
+        explain:
+          "De kern van de zin is 'houden we … niet bij'. De rest is uitleg: we willen het niet onnodig moeilijk maken. 'Voorlopig' betekent 'voor nu'. Let altijd op het woordje 'niet' — het staat in het Nederlands vaak ver achteraan.",
+        explainEn:
+          "The core of the sentence is 'houden we … niet bij' (we do not store). The rest is explanation: we don't want to make it needlessly hard. 'Voorlopig' means 'for now'. Always watch for the word 'niet' — in Dutch it often comes late in the sentence.",
+      },
+      {
+        id: "opg-container",
+        concept: "speccode",
+        codeOptions: true,
+        lang: "opgave",
+        code: `De balie houdt alle boeken, leden en ontleningen bij.
+Gebruik containers om deze objecten bij te houden.`,
+        question: "Welk veld past in de klasse Balie?",
+        questionEn: "Which field fits in the class Balie?",
+        options: [
+          "private ArrayList<Boek> boeken = new ArrayList<>();",
+          "private Boek boek;",
+          "private int aantalBoeken;",
+          "private String boeken;",
+        ],
+        answer: "private ArrayList<Boek> boeken = new ArrayList<>();",
+        explain:
+          "Een container is een object dat andere objecten bevat, zoals een ArrayList. 'Alle boeken' is meervoud: je hebt een lijst nodig, niet één Boek. Er komen drie zulke lijsten: boeken, leden en ontleningen.",
+        explainEn:
+          "A container is an object that holds other objects, such as an ArrayList. 'Alle boeken' is plural: you need a list, not one Boek. There will be three such lists: books, members and loans.",
+      },
+      {
+        id: "opg-0arg",
+        concept: "specread",
+        lang: "opgave",
+        code: `Een Balie-object wordt gemaakt aan de hand van een 0-argumenten-constructor.`,
+        question: "Hoe ziet het aanmaken van een balie eruit?",
+        questionEn: "What does creating a desk look like?",
+        options: [
+          "new Balie() — zonder iets mee te geven.",
+          "new Balie(0)",
+          "new Balie(boeken, leden)",
+          "Balie.maak()",
+        ],
+        answer: "new Balie() — zonder iets mee te geven.",
+        explain:
+          "Nul argumenten betekent: de constructor krijgt niets mee. De lijsten worden in de klasse zelf leeg aangemaakt en later gevuld met toevoegenBoek en toevoegenLid.",
+        explainEn:
+          "Zero arguments means: the constructor receives nothing. The lists are created empty inside the class and filled later with toevoegenBoek and toevoegenLid.",
+      },
+      {
+        id: "opg-ontleen-sig",
+        concept: "speccode",
+        codeOptions: true,
+        lang: "opgave",
+        code: `ontleen waarbij een boek en een lid als parameter worden meegegeven`,
+        question: "Welke methodekop past hierbij?",
+        questionEn: "Which method header fits this?",
+        options: [
+          "public void ontleen(Boek boek, Lid lid)",
+          "public void ontleen()",
+          "public void ontleen(int id)",
+          "public Boek ontleen(String naam)",
+        ],
+        answer: "public void ontleen(Boek boek, Lid lid)",
+        explain:
+          "'Als parameter meegegeven' = wat tussen de haakjes komt. Er staat 'een boek en een lid', dus twee parameters: een Boek en een Lid.",
+        explainEn:
+          "'Als parameter meegegeven' = what goes between the brackets. It says 'a book and a member', so two parameters: a Boek and a Lid.",
+      },
+      {
+        id: "opg-reeds",
+        concept: "specread",
+        lang: "opgave",
+        code: `er wordt een Ontlening-object aangemaakt en in de betreffende container gestopt;
+indien het boek reeds uitgeleend was, geef dan een passende foutmelding`,
+        question: "Wat moet de methode als eerste doen?",
+        questionEn: "What must the method do first?",
+        options: [
+          "Controleren of het boek nog aanwezig is.",
+          "Altijd een Ontlening-object aanmaken.",
+          "Het boek verwijderen uit de lijst.",
+          "Het programma stoppen.",
+        ],
+        answer: "Controleren of het boek nog aanwezig is.",
+        explain:
+          "'Indien' is het formele woord voor 'als', en 'reeds' voor 'al'. Als het boek al uitgeleend is, mag er geen nieuwe ontlening komen: dan druk je een foutmelding af. De opgave beschrijft eerst het normale geval en pas daarna de uitzondering — in je code staat de controle vooraan.",
+        explainEn:
+          "'Indien' is the formal word for 'als' (if), and 'reeds' for 'al' (already). If the book is already lent out, no new loan may be made: you print an error message. The task describes the normal case first and the exception afterwards — in your code the check comes first.",
+      },
+      {
+        id: "opg-status-aanpassen",
+        concept: "specread",
+        lang: "opgave",
+        code: `ontleen […] vergeet ook niet de status van het boek aan te passen.`,
+        question: "Wat moet er met de status gebeuren bij het ontlenen?",
+        questionEn: "What has to happen to the status when borrowing?",
+        options: [
+          "Het boek wordt op 'niet aanwezig' gezet.",
+          "Het boek wordt op 'aanwezig' gezet.",
+          "De status wordt afgedrukt.",
+          "De status blijft zoals ze was.",
+        ],
+        answer: "Het boek wordt op 'niet aanwezig' gezet.",
+        explain:
+          "'Aanpassen' = wijzigen. De opgave zegt niet naar wat — dat moet je zelf afleiden: een ontleend boek is niet meer in de bibliotheek. Bij brengTerug staat dezelfde zin, en daar is het omgekeerd.",
+        explainEn:
+          "'Aanpassen' = to change. The task does not say to what — you have to work that out: a borrowed book is no longer in the library. The same sentence appears for brengTerug, where it is the other way round.",
+      },
+      {
+        id: "opg-brengterug-sig",
+        concept: "speccode",
+        codeOptions: true,
+        lang: "opgave",
+        code: `brengTerug waarbij het id van het uitgeleend boek als parameter wordt meegegeven`,
+        question: "Welke methodekop past hierbij?",
+        questionEn: "Which method header fits this?",
+        options: [
+          "public void brengTerug(int id)",
+          "public void brengTerug(Boek boek, Lid lid)",
+          "public void brengTerug(String titel)",
+          "public int brengTerug()",
+        ],
+        answer: "public void brengTerug(int id)",
+        explain:
+          "Hier wordt niet het boek zelf meegegeven maar 'het id van het boek'. Het identificatienummer is een int, dus één parameter van het type int. De methode moet zelf het juiste boek opzoeken.",
+        explainEn:
+          "Here it is not the book itself that is passed but 'the id of the book'. The identification number is an int, so one parameter of type int. The method has to find the right book itself.",
+      },
+      {
+        id: "opg-overeenkomstig",
+        concept: "specread",
+        lang: "opgave",
+        code: `vergeet niet de status van het boek aan te passen, en ook het overeenkomstige
+Ontlening-object te verwijderen uit de betreffende container.`,
+        question: "Welk object moet je verwijderen?",
+        questionEn: "Which object do you have to remove?",
+        options: [
+          "De ontlening die bij dit boek hoort, uit de lijst met ontleningen.",
+          "Het boek, uit de lijst met boeken.",
+          "Het lid, uit de lijst met leden.",
+          "Alle ontleningen.",
+        ],
+        answer: "De ontlening die bij dit boek hoort, uit de lijst met ontleningen.",
+        explain:
+          "'Overeenkomstig' = dat erbij hoort. 'De betreffende container' = de lijst waar zulke objecten in zitten. Het boek zelf blijft in de bibliotheek; alleen het bewijs van de ontlening verdwijnt.",
+        explainEn:
+          "'Overeenkomstig' = corresponding. 'De betreffende container' = the list that holds objects of that kind. The book itself stays in the library; only the record of the loan disappears.",
+      },
+      {
+        id: "opg-scherm",
+        concept: "speccode",
+        codeOptions: true,
+        lang: "opgave",
+        code: `printOverzichtAanwezigeBoeken geeft een overzicht van alle aanwezige boeken op het scherm.`,
+        question: "Welke regel staat in de lus van deze methode?",
+        questionEn: "Which line goes inside the loop of this method?",
+        options: [
+          "if (boek.isAanwezig()) System.out.println(boek);",
+          "if (boek.isAanwezig()) return boek;",
+          "boeken.remove(boek);",
+          "boek.setAanwezig(true);",
+        ],
+        answer: "if (boek.isAanwezig()) System.out.println(boek);",
+        explain:
+          "'Op het scherm geven' betekent afdrukken, niet teruggeven. 'Een overzicht van alle aanwezige boeken' = loop over alle boeken en druk alleen die af die aanwezig zijn. println gebruikt daarvoor de toString-methode van Boek.",
+        explainEn:
+          "'Op het scherm geven' means print, not return. 'An overview of all available books' = loop over all books and print only those that are present. println uses Boek's toString method for that.",
+      },
+      {
+        id: "opg-persoon",
+        concept: "speccode",
+        codeOptions: true,
+        lang: "opgave",
+        code: `printOntleendeBoekenVanPersoon waarbij de naam van het lid als parameter wordt meegegeven`,
+        question: "Welke methodekop past hierbij?",
+        questionEn: "Which method header fits this?",
+        options: [
+          "public void printOntleendeBoekenVanPersoon(String naam)",
+          "public void printOntleendeBoekenVanPersoon(Lid lid)",
+          "public void printOntleendeBoekenVanPersoon(int id)",
+          "public String printOntleendeBoekenVanPersoon()",
+        ],
+        answer: "public void printOntleendeBoekenVanPersoon(String naam)",
+        explain:
+          "Er staat 'de naam van het lid', niet 'het lid'. De naam wordt als String bijgehouden, dus de parameter is een String. Vergelijk met ontleen, waar het Lid-object zelf meegegeven wordt.",
+        explainEn:
+          "It says 'the name of the member', not 'the member'. The name is stored as a String, so the parameter is a String. Compare with ontleen, where the Lid object itself is passed.",
+      },
+      {
+        id: "opg-tostring",
+        concept: "speccode",
+        codeOptions: true,
+        lang: "opgave",
+        code: `Schrijf een toString-methode.`,
+        question: "Welke methodekop schrijf je?",
+        questionEn: "Which method header do you write?",
+        options: ["public String toString()", "public void toString()", "public String toString(Boek boek)", "private int toString()"],
+        answer: "public String toString()",
+        explain:
+          "toString geeft een tekst terug die het object beschrijft. Ze drukt zelf niets af en krijgt geen parameters. Java roept ze automatisch aan als je een object afdrukt.",
+        explainEn:
+          "toString returns a text describing the object. It prints nothing itself and takes no parameters. Java calls it automatically when you print an object.",
+      },
+      {
+        id: "opg-tiental",
+        concept: "specread",
+        lang: "opgave",
+        code: `eerst maken we een tiental boeken aan
+daarna een achttal leden`,
+        question: "Hoeveel boeken en leden worden er gevraagd?",
+        questionEn: "How many books and members are asked for?",
+        options: [
+          "Ongeveer tien boeken en ongeveer acht leden.",
+          "Tien keer tien boeken en acht keer acht leden.",
+          "Precies één boek en één lid.",
+          "Dat mag je zelf kiezen; er staat geen aantal.",
+        ],
+        answer: "Ongeveer tien boeken en ongeveer acht leden.",
+        explain:
+          "De uitgang -tal maakt van een getal een ruwe hoeveelheid: een tiental is 'een stuk of tien'. 'Aanmaken' is hier gesplitst: 'maken we … aan'.",
+        explainEn:
+          "The ending -tal turns a number into a rough quantity: 'een tiental' is 'about ten'. 'Aanmaken' is split here: 'maken we … aan'.",
+      },
+      {
+        id: "opg-volgorde",
+        concept: "specread",
+        lang: "opgave",
+        code: `eerst maken we een tiental boeken aan
+daarna een achttal leden
+na het aanmaken van het Balie-object worden de leden en de boeken toegevoegd
+daarna doen we een aantal ontleningen […]
+vervolgens laten we een aantal boeken terugbrengen
+tenslotte geven we een overzicht […]`,
+        question: "Wat gebeurt er vlak voor de ontleningen?",
+        questionEn: "What happens just before the loans?",
+        options: [
+          "De leden en de boeken worden aan de balie toegevoegd.",
+          "Een aantal boeken wordt teruggebracht.",
+          "Er wordt een overzicht afgedrukt.",
+          "De boeken worden aangemaakt.",
+        ],
+        answer: "De leden en de boeken worden aan de balie toegevoegd.",
+        explain:
+          "De volgorde staat in de signaalwoorden: eerst → daarna → daarna → vervolgens → tenslotte. Je main-methode volgt gewoon die volgorde, regel per regel.",
+        explainEn:
+          "The order is in the signal words: eerst (first) → daarna (after that) → daarna → vervolgens (next) → tenslotte (finally). Your main method simply follows that order, line by line.",
+      },
+      {
+        id: "opg-applicatie",
+        concept: "specread",
+        lang: "opgave",
+        code: `Zoals gewoonlijk gebruiken we deze klasse om de bovenstaande klassen uit te testen.
+We schrijven één enkele methode, namelijk main.`,
+        question: "Wat komt er in de klasse Applicatie?",
+        questionEn: "What goes in the class Applicatie?",
+        options: [
+          "Alleen de methode main, waarin de andere klassen getest worden.",
+          "Alle velden van de andere klassen.",
+          "Een constructor met acht parameters.",
+          "Niets: de klasse blijft leeg.",
+        ],
+        answer: "Alleen de methode main, waarin de andere klassen getest worden.",
+        explain:
+          "'Eén enkele methode, namelijk main' = precies één methode, en die heet main. 'Uittesten' = uitproberen of het werkt. 'De bovenstaande klassen' zijn de klassen die hierboven beschreven staan.",
+        explainEn:
+          "'Eén enkele methode, namelijk main' = exactly one method, and it is called main. 'Uittesten' = try out whether it works. 'De bovenstaande klassen' are the classes described above.",
+      },
+      {
+        id: "opg-lid-zijn",
+        concept: "specread",
+        lang: "opgave",
+        code: `Om een boek te kunnen ontlenen moet men uiteraard lid zijn.`,
+        question: "Wat zegt deze zin?",
+        questionEn: "What does this sentence say?",
+        options: [
+          "Alleen leden mogen een boek ontlenen.",
+          "Elk boek heeft een lid.",
+          "Een lid moet altijd een boek ontlenen.",
+          "Boeken kunnen ook lid worden.",
+        ],
+        answer: "Alleen leden mogen een boek ontlenen.",
+        explain:
+          "'Men' is 'iemand in het algemeen' en 'uiteraard' is 'natuurlijk'. In de code zie je dit terug: ontleen krijgt altijd een Lid mee. 'Ontlenen' is het Vlaamse woord; in Nederland zegt men 'lenen'.",
+        explainEn:
+          "'Men' is 'one / people in general' and 'uiteraard' is 'of course'. You see this in the code: ontleen always receives a Lid. 'Ontlenen' is the Flemish word; the Netherlands says 'lenen'.",
+      },
+    ],
+  },
 ];
 
 export const ALL_CODE_QUESTIONS = CODE_UNITS.flatMap((u) => u.questions);
@@ -2649,5 +3106,5 @@ export function conceptOf(q: CodeQuestion): string {
 
 /** Prose-like snippets (chat transcripts, log lines, prompts) read better wrapped than scrolled. */
 export function wrapsOnPhone(lang: CodeLang): boolean {
-  return lang === "tekst" || lang === "prompt" || lang === "log";
+  return lang === "tekst" || lang === "prompt" || lang === "log" || lang === "opgave";
 }

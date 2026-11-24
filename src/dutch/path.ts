@@ -58,7 +58,7 @@ export const GROUPS: Group[] = [
     title: "Lessen, examens & zinnen",
     titleEn: "Lectures, exams & sentences",
     subtitle: "Lecture language, exam wording, and whole sentences for class, code and e-mail.",
-    unitIds: ["auditorium", "examen", "zin-les", "zin-code", "zin-scheidbaar", "zin-mail"],
+    unitIds: ["opgavetaal", "zin-opgave", "auditorium", "examen", "zin-les", "zin-code", "zin-scheidbaar", "zin-mail"],
   },
   {
     id: "it-ops",

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { AssignmentReader } from "./AssignmentReader";
 import { LessonScene, type LessonBuilder } from "./LessonScene";
 import { ProgressTab } from "./ProgressTab";
 import { SettingsProvider, useUi } from "./settings";
@@ -18,6 +19,7 @@ import {
   IconSpeaker,
   IconSun,
 } from "./icons";
+import { ASSIGNMENTS, type Assignment } from "@/dutch/assignments";
 import { ALL_CODE_QUESTIONS, CODE_UNITS, type CodeQuestion, type CodeUnit } from "@/dutch/code";
 import { GRAMMAR } from "@/dutch/grammar";
 import { buildCodeLesson, buildLesson, codeId, type PoolItem } from "@/dutch/lesson";
@@ -26,11 +28,14 @@ import { currentStreak, DAILY_GOAL, loadProgress, todayXp, type DutchSave } from
 import { searchTerms } from "@/dutch/search";
 import { isDue, type ProgressMap } from "@/dutch/srs";
 import { termId, type Term, type Unit } from "@/dutch/types";
-import { ALL_TERMS, TOTAL_TERMS, UNITS } from "@/dutch/vocab";
+import { ALL_TERMS, TOTAL_TERMS, UNIT_BY_ID, UNITS } from "@/dutch/vocab";
 import { canSpeak, onVoicesReady, speakDutch } from "@/lib/speech";
 
 type Tab = "learn" | "dict" | "grammar" | "progress";
-type View = { kind: "home" } | { kind: "lesson"; title: string; build: LessonBuilder; run: number };
+type View =
+  | { kind: "home" }
+  | { kind: "lesson"; title: string; build: LessonBuilder; run: number; from?: Assignment }
+  | { kind: "assignment"; assignment: Assignment };
 
 const seed = () => Math.floor(Math.random() * 1e9);
 const poolOf = (unit: Unit): PoolItem[] => unit.terms.map((term) => ({ unitId: unit.id, term }));
@@ -59,19 +64,21 @@ function App() {
 
   const progress = useMemo(() => save?.terms ?? {}, [save]);
 
-  const startWords = (title: string, pool: PoolItem[]) =>
+  const startWords = (title: string, pool: PoolItem[], from?: Assignment) =>
     setView({
       kind: "lesson",
       title,
       run: 0,
+      from,
       build: (p, a) => buildLesson(pool, { size: 12, seed: seed(), progress: p, audio: a }),
     });
 
-  const startCode = (title: string, questions: CodeQuestion[]) =>
+  const startCode = (title: string, questions: CodeQuestion[], from?: Assignment) =>
     setView({
       kind: "lesson",
       title,
       run: 0,
+      from,
       build: (p) => buildCodeLesson(questions, { size: 8, seed: seed(), progress: p }),
     });
 
@@ -85,7 +92,8 @@ function App() {
             build={view.build}
             onExit={() => {
               refresh();
-              setView({ kind: "home" });
+              // A lesson started from an assignment goes back to that assignment.
+              setView(view.from ? { kind: "assignment", assignment: view.from } : { kind: "home" });
               window.scrollTo({ top: 0 });
             }}
             onAgain={() => setView({ ...view, run: view.run + 1 })}
@@ -186,7 +194,10 @@ function App() {
                 role="tab"
                 aria-selected={tab === id}
                 className={`dk-tab ${tab === id ? "on" : ""}`}
-                onClick={() => setTab(id)}
+                onClick={() => {
+                  setTab(id);
+                  setView({ kind: "home" });
+                }}
               >
                 {label}
               </button>
@@ -196,7 +207,19 @@ function App() {
       </header>
 
       <div className="dk-wrap">
-        {tab === "learn" && (
+        {view.kind === "assignment" && (
+          <AssignmentReader
+            assignment={view.assignment}
+            audio={audio}
+            onBack={() => {
+              setView({ kind: "home" });
+              window.scrollTo({ top: 0 });
+            }}
+            onWords={(title, pool) => startWords(title, pool, view.assignment)}
+            onCode={(title, questions) => startCode(title, questions, view.assignment)}
+          />
+        )}
+        {view.kind === "home" && tab === "learn" && (
           <>
             <div className="dk-meters dk-mobile-meters">{meters}</div>
             <LearnTab
@@ -208,12 +231,16 @@ function App() {
               onReview={startReview}
               onWords={startWords}
               onCode={startCode}
+              onAssignment={(assignment) => {
+                setView({ kind: "assignment", assignment });
+                window.scrollTo({ top: 0 });
+              }}
             />
           </>
         )}
-        {tab === "dict" && <DictionaryTab audio={audio} />}
-        {tab === "grammar" && <GrammarTab />}
-        {tab === "progress" && (
+        {view.kind === "home" && tab === "dict" && <DictionaryTab audio={audio} />}
+        {view.kind === "home" && tab === "grammar" && <GrammarTab />}
+        {view.kind === "home" && tab === "progress" && (
           <ProgressTab
             save={save}
             progress={progress}
@@ -272,6 +299,7 @@ function LearnTab({
   onReview,
   onWords,
   onCode,
+  onAssignment,
 }: {
   save: DutchSave | null;
   progress: ProgressMap;
@@ -281,6 +309,7 @@ function LearnTab({
   onReview: () => void;
   onWords: (title: string, pool: PoolItem[]) => void;
   onCode: (title: string, questions: CodeQuestion[]) => void;
+  onAssignment: (assignment: Assignment) => void;
 }) {
   const { t, pick, track, setTrack } = useUi();
   const [open, setOpen] = useState<string | null>(null);
@@ -412,6 +441,55 @@ function LearnTab({
           </span>
         </button>
       </div>
+
+      <section className="dk-group">
+        <div className="dk-group-head">
+          <span className="dk-step star" aria-hidden>
+            ★
+          </span>
+          <div>
+            <h2>{t("assign.group")}</h2>
+            <p className="dk-muted">{t("assign.group.sub")}</p>
+          </div>
+        </div>
+        <div className="dk-grid">
+          {ASSIGNMENTS.map((a) => {
+            const words = UNIT_BY_ID.get(a.wordsUnit);
+            const sentences = UNIT_BY_ID.get(a.sentencesUnit);
+            const questions = CODE_UNITS.find((u) => u.id === a.questionsUnit);
+            return (
+              <article
+                className="d-unit dk-unit dk-assign-card"
+                key={a.id}
+                style={{ ["--tone" as string]: "48 85% 58%" } as React.CSSProperties}
+              >
+                <div className="dk-unit-head">
+                  <span className="dk-unit-ico">
+                    <UnitIcon unitId="opgavetaal" />
+                  </span>
+                  <div className="dk-unit-titles">
+                    <h3>{pick(a.title, a.titleEn)}</h3>
+                    <p className="dk-unit-sub">{pick(a.titleEn, a.title)}</p>
+                  </div>
+                </div>
+                <p className="dk-unit-count">{a.about}</p>
+                <p className="dk-unit-count">
+                  {t("assign.meta", {
+                    w: words?.terms.length ?? 0,
+                    s: sentences?.terms.length ?? 0,
+                    q: questions?.questions.length ?? 0,
+                  })}
+                </p>
+                <div className="dk-unit-actions">
+                  <button className="dk-btn primary sm" onClick={() => onAssignment(a)}>
+                    {t("assign.read")}
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
 
       {groups.map((group, gi) => {
         const units = unitsOf(group);

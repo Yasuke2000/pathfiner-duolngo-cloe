@@ -2185,3 +2185,240 @@
     color: var(--muted);
   }
 }
+
+/* ======================================================================
+   Reading a real assignment
+   ====================================================================== */
+.dk-step.star {
+  border-color: var(--warn-line);
+  color: var(--warn-text);
+  background: var(--warn-soft);
+}
+.dk-assign {
+  max-width: 820px;
+  margin: 0 auto;
+}
+.dk-assign-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.dk-assign-head {
+  padding: 22px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(80% 160% at 0% 0%, var(--warn-soft), transparent 62%),
+    var(--surface);
+}
+.dk-assign-head h2 {
+  margin: 0 0 4px;
+  font-size: clamp(24px, 4vw, 30px);
+  font-weight: 800;
+}
+.dk-assign-head .dk-muted {
+  margin: 0 0 16px;
+  max-width: 62ch;
+}
+.dk-assign-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dk-assign-bar {
+  position: sticky;
+  top: var(--dk-top-h, 96px);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 14px 0 4px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line-soft);
+  background: var(--surface-2);
+}
+.dk-assign-bar p {
+  margin: 0;
+  font-size: 13px;
+}
+.dk-assign-text {
+  font-size: 16.5px;
+  line-height: 1.75;
+}
+.dk-assign-text section {
+  margin-top: 26px;
+}
+.dk-assign-text h3 {
+  margin: 0 0 8px;
+  font-size: 19px;
+  font-weight: 750;
+}
+.dk-assign-block {
+  margin: 0 0 12px;
+}
+.dk-assign-block p {
+  margin: 0;
+}
+.dk-assign-block.bullet {
+  position: relative;
+  padding-left: 20px;
+}
+.dk-assign-block.bullet::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0.72em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.dk-assign-en {
+  margin-top: 4px !important;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.dk-assign-en.heading {
+  margin: -6px 0 8px !important;
+}
+/* A glossary word inside running text: a dotted underline you can tap. */
+.dk-gloss {
+  font: inherit;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-decoration: underline dotted var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+.dk-gloss:hover,
+.dk-gloss.on {
+  background: var(--accent-soft);
+  border-radius: 4px;
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.dk-gloss-card {
+  margin: 8px 0 4px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.dk-assign-summary {
+  margin-top: 28px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.dk-assign-summary summary {
+  padding: 14px 16px;
+  cursor: pointer;
+}
+.dk-assign-summary summary span {
+  display: inline-grid;
+  vertical-align: top;
+}
+.dk-assign-summary summary small {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.dk-assign-classes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+.dk-assign-classes section {
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line-soft);
+  background: var(--inset);
+  font-size: 14px;
+}
+.dk-assign-classes h4 {
+  margin: 0 0 6px;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 16px;
+}
+.dk-assign-classes .label {
+  margin: 10px 0 2px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.dk-assign-classes p {
+  margin: 0;
+}
+.dk-assign-classes ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.dk-assign-foot {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line-soft);
+}
+.dk-assign-foot h3 {
+  margin: 0 0 12px;
+  font-size: 17px;
+}
+/* Answer options that are code. */
+.d-options.mono .d-option span {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 13.5px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 640px) {
+  .dk-assign-head {
+    padding: 16px;
+  }
+  .dk-assign-text {
+    font-size: 16px;
+  }
+  .dk-assign-bar {
+    top: var(--dk-top-h, 100px);
+  }
+  .dk-assign-actions .dk-btn {
+    width: 100%;
+  }
+  .dk-assign-classes {
+    grid-template-columns: 1fr;
+  }
+  .d-options.mono .d-option span {
+    font-size: 12.5px;
+  }
+}
+
+/* A fragment of an assignment is prose, not code: quote it in the reading face. */
+.d-code.prose {
+  font-family: var(--font-body);
+  font-size: 15.5px;
+  line-height: 1.6;
+  border-left: 3px solid var(--warn-line);
+}
+.d-code.prose code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.dk-assign-bar .dk-btn {
+  flex: none;
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .d-code.prose {
+    font-size: 15px;
+  }
+  .dk-assign-bar p {
+    font-size: 12px;
+  }
+}

@@ -16,7 +16,8 @@ async function expectPhoneFriendly(page: Page, label: string) {
     const vw = window.innerWidth;
     const overflow = document.documentElement.scrollWidth - vw;
     const small: string[] = [];
-    for (const el of Array.from(document.querySelectorAll<HTMLElement>(".dk button, .dk a, .dk summary"))) {
+    // Words inside running text are exempt, as inline links are: they cannot be 40 px tall.
+    for (const el of Array.from(document.querySelectorAll<HTMLElement>(".dk button:not(.dk-gloss), .dk a, .dk summary"))) {
       const b = el.getBoundingClientRect();
       if (b.width === 0 || b.height === 0) continue;
       if (el.closest(scrollers) && b.right > vw) continue; // scrolled out of view
@@ -100,6 +101,22 @@ test("the coach view is readable on a phone", async ({ page }) => {
   await expectPhoneFriendly(page, "coach dashboard");
   // The tables have turned into stacked cards: no header row is shown.
   await expect(page.locator(".dk-table.concept thead")).toBeHidden();
+});
+
+test("an assignment can be read and tapped through on a phone", async ({ page }) => {
+  await page.goto("/dutch");
+  await page.getByRole("button", { name: "Read the assignment" }).tap();
+  await expect(page.getByRole("heading", { name: "De bibliotheek" })).toBeVisible();
+  await expectPhoneFriendly(page, "assignment reader");
+
+  await page.getByRole("button", { name: "uitgeleend" }).first().tap();
+  await expect(page.locator(".dk-gloss-card")).toContainText("uitlenen");
+  await page.getByRole("button", { name: "Show English" }).tap();
+  await expectPhoneFriendly(page, "assignment reader with English and a word open");
+
+  await page.getByRole("button", { name: /What is being asked/ }).first().tap();
+  await expect(page.locator(".d-code.prose")).toBeVisible();
+  await expectPhoneFriendly(page, "assignment question");
 });
 
 test("the menu and the Pathfinder pages do not scroll sideways either", async ({ page }) => {

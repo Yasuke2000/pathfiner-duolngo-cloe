@@ -61,4 +61,7 @@ export const UNIT_ICON: Record<string, string> = {
   "code-terminal": "terminal",
   "code-config": "doc",
   "code-ai": "sparkle",
+  opgavetaal: "doc",
+  "zin-opgave": "lines",
+  "code-opgave": "check",
 };

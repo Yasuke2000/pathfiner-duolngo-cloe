@@ -315,12 +315,15 @@ export function LessonScene({
       </div>
 
       <p className="dk-eyebrow">
-        {title} · {t(`kind.${ex.kind}` as UiKey)}
+        {title} · {t(ex.kind === "code" && ex.q.lang === "opgave" ? "kind.task" : (`kind.${ex.kind}` as UiKey))}
       </p>
       <Prompt ex={ex} audio={audio} t={t} />
 
       {options && (
-        <div className={`d-options ${ex.kind === "code" ? "stack" : ""}`} lang={ex.kind === "code" ? "nl" : answerLang}>
+        <div
+          className={`d-options ${ex.kind === "code" ? "stack" : ""} ${ex.kind === "code" && ex.q.codeOptions ? "mono" : ""}`}
+          lang={ex.kind === "code" ? "nl" : answerLang}
+        >
           {options.map((o, i) => (
             <button
               key={o}
@@ -473,7 +476,7 @@ function Prompt({ ex, audio, t }: { ex: Exercise; audio: boolean; t: T }) {
       <div className="d-prompt">
         <div className="d-codewrap">
           <span className="d-lang">{ex.q.lang}</span>
-          <pre className={`d-code ${wrapsOnPhone(ex.q.lang) ? "wrap" : ""}`}>
+          <pre className={`d-code ${wrapsOnPhone(ex.q.lang) ? "wrap" : ""} ${ex.q.lang === "opgave" ? "prose" : ""}`}>
             <code>{ex.q.code}</code>
           </pre>
         </div>

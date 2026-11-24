@@ -24,6 +24,9 @@ export interface Term {
   note?: string;
   /** A sentence she'd actually hear, used for the word-bank exercise. */
   example?: Example;
+  /** Other shapes the word takes in running text (plural, participle, "te" form),
+   *  so it can be recognised and explained inside a real assignment. */
+  forms?: string[];
 }
 
 /** Everyday survival Dutch, or the computer-science track. */

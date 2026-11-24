@@ -187,7 +187,7 @@ test("the coach view shows what she got wrong, from a report she sent", async ({
   await expect(missed.first().locator("dd.good")).toBeVisible();
 
   // The full concept table, per-type accuracy and the mistake log are there.
-  await expect(coach.locator(".dk-table.concept tbody tr")).toHaveCount(42);
+  await expect(coach.locator(".dk-table.concept tbody tr")).toHaveCount(44);
   await expect(coach.locator(".dk-panel", { hasText: "By exercise type" })).toContainText("Read the code");
   await expect(coach.locator(".dk-table.mistakes tbody tr").first()).toBeVisible();
   await expect(coach.locator(".dk-chart")).toBeVisible();
@@ -229,4 +229,64 @@ test("a learning path narrows the course to one role and is remembered", async (
   // The professional material is really there and runs.
   await page.locator(".d-unit", { hasText: "Working with AI" }).getByRole("button", { name: "Practise" }).click();
   await expect(page.locator(".d-code")).toBeVisible();
+});
+
+test("a real assignment can be read with every hard word explained", async ({ page }) => {
+  await page.goto("/dutch");
+  await expect(page.getByRole("heading", { name: "Real assignments" })).toBeVisible();
+  await page.getByRole("button", { name: "Read the assignment" }).click();
+
+  await expect(page.getByRole("heading", { name: "De bibliotheek" })).toBeVisible();
+  for (const h of ["Inleiding", "De klasse Lid", "De klasse Boek", "De klasse Ontlening", "De klasse Balie", "De klasse Applicatie"]) {
+    await expect(page.getByRole("heading", { name: h, exact: true })).toBeVisible();
+  }
+
+  // Tapping a word explains it in place; tapping again closes it.
+  const word = page.getByRole("button", { name: "bijgehouden" }).first();
+  await word.click();
+  const card = page.locator(".dk-gloss-card");
+  await expect(card).toContainText("bijhouden");
+  await expect(card).toContainText("to keep track of");
+  await expect(card).toContainText("make a field for it");
+  await word.click();
+  await expect(card).toHaveCount(0);
+
+  // The formal words that trip people up are all tappable.
+  for (const w of ["indien", "reeds", "betreffende", "overeenkomstige", "aangezien", "uiteraard"]) {
+    // Case-insensitive: "Aangezien" opens its sentence with a capital.
+    await expect(page.getByRole("button", { name: new RegExp(`^${w}$`, "i") }).first()).toBeVisible();
+  }
+
+  // English is hidden until asked for.
+  await expect(page.getByText("The data is stored as Strings.")).toHaveCount(0);
+  await page.getByRole("button", { name: "Show English" }).click();
+  await expect(page.getByText("The data is stored as Strings.").first()).toBeVisible();
+
+  // The summary spells out what is asked, class by class.
+  await page.getByText("Check your reading: what you are asked to build").click();
+  await expect(page.locator(".dk-assign-classes section")).toHaveCount(5);
+  await expect(page.locator(".dk-assign-classes")).toContainText("brengTerug(int id)");
+});
+
+test("the assignment leads to questions, and back again", async ({ page }) => {
+  await page.goto("/dutch");
+  await page.getByRole("button", { name: "Read the assignment" }).click();
+  await page.getByRole("button", { name: /What is being asked/ }).first().click();
+
+  await expect(page.locator(".d-code.prose")).toBeVisible();
+  await expect(page.getByText(/Read the task/)).toBeVisible();
+  await page.locator(".d-option").first().click();
+  await page.getByRole("button", { name: "Check" }).click();
+  await expect(page.locator(".d-feedback .d-def")).toBeVisible();
+
+  // Leaving the lesson returns to the assignment, not to the overview.
+  await page.getByRole("button", { name: "Stop the lesson" }).click();
+  await expect(page.getByRole("heading", { name: "De bibliotheek" })).toBeVisible();
+
+  // The word list and the sentences are one tap away too.
+  await page.getByRole("button", { name: /^The words/ }).first().click();
+  await expect(page.locator(".d-lesson")).toBeVisible();
+  await page.getByRole("button", { name: "Stop the lesson" }).click();
+  await page.getByRole("button", { name: "← Back to overview" }).click();
+  await expect(page.getByRole("button", { name: "Read the assignment" })).toBeVisible();
 });
