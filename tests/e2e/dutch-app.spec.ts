@@ -1,5 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
 
+// pre-accept the consent notice so the feature tests below are not blocked by the
+// first-visit modal; the consent notice has its own tests at the bottom.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    try { localStorage.setItem("dutch-consent-v1", JSON.stringify({ version: 1, at: "2026-01-01" })); } catch {}
+  });
+});
+
 /** Give up on every question of the lesson that is open, then return to the overview. */
 async function giveUpOnAll(page: Page) {
   for (let i = 0; i < 150; i++) {
@@ -289,4 +297,38 @@ test("the assignment leads to questions, and back again", async ({ page }) => {
   await page.getByRole("button", { name: "Stop the lesson" }).click();
   await page.getByRole("button", { name: "← Back to overview" }).click();
   await expect(page.getByRole("button", { name: "Read the assignment" })).toBeVisible();
+});
+
+test.describe("the consent notice", () => {
+  // These tests want the real first-visit behaviour, so they clear the pre-accept.
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      try { localStorage.removeItem("dutch-consent-v1"); } catch {}
+    });
+  });
+
+  test("shows the key fact up front, before any button, and only once", async ({ page }) => {
+    await page.goto("/dutch");
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    // The sharing fact is visible without opening anything.
+    await expect(dialog.getByText(/shared with your coach/)).toBeVisible();
+    // The full legal text is hidden until asked for.
+    await expect(page.getByRole("heading", { name: "Sharing with a coach" })).toHaveCount(0);
+    await page.getByRole("button", { name: "Read the full terms, privacy & cookies" }).click();
+    await expect(page.getByRole("heading", { name: "Sharing with a coach" })).toBeVisible();
+
+    await page.getByRole("button", { name: "I understand" }).click();
+    await expect(dialog).toBeHidden();
+    // It does not come back on reload.
+    await page.reload();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+  });
+
+  test("links to a full legal page that names what is shared", async ({ page }) => {
+    await page.goto("/dutch/legal");
+    await expect(page.getByRole("heading", { name: "Sharing with a coach" })).toBeVisible();
+    await expect(page.getByText(/shared with your coach/)).toBeVisible();
+    await expect(page.getByText(/Draft/)).toBeVisible();
+  });
 });

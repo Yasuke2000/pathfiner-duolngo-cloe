@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { AssignmentReader } from "./AssignmentReader";
+import { ConsentGate } from "./ConsentGate";
 import { LessonScene, type LessonBuilder } from "./LessonScene";
 import { ProgressTab } from "./ProgressTab";
 import { SettingsProvider, useUi } from "./settings";
@@ -159,6 +160,7 @@ function App() {
 
   return (
     <div className="dk" data-theme={theme}>
+      <ConsentGate />
       <header className="dk-top">
         <div className="dk-wrap">
           <div className="dk-top-row">
