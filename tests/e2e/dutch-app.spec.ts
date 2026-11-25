@@ -1,5 +1,14 @@
 import { expect, test, type Page } from "@playwright/test";
 
+/** Manually created contexts don't get the beforeEach hook; pre-accept the notice on their page. */
+async function preaccept(page: Page) {
+  await page.addInitScript(() => {
+    try {
+      localStorage.setItem("dutch-consent-v1", JSON.stringify({ version: 1, at: "2026-01-01" }));
+    } catch {}
+  });
+}
+
 // pre-accept the consent notice so the feature tests below are not blocked by the
 // first-visit modal; the consent notice has its own tests at the bottom.
 test.beforeEach(async ({ page }) => {
@@ -126,6 +135,7 @@ test("a backup file restores progress after everything was erased", async ({ pag
 test("a transfer code moves progress to a clean browser", async ({ browser }) => {
   const a = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"] });
   const laptop = await a.newPage();
+  await preaccept(laptop);
   await laptop.goto("/dutch");
   await failOneLesson(laptop);
   await laptop.getByRole("tab", { name: "Progress" }).click();
@@ -137,6 +147,7 @@ test("a transfer code moves progress to a clean browser", async ({ browser }) =>
   // A second, completely separate browser profile: the "phone".
   const b = await browser.newContext();
   const phone = await b.newPage();
+  await preaccept(phone);
   await phone.goto("/dutch");
   await phone.getByRole("tab", { name: "Progress" }).click();
   await expect(phone.locator(".dk-kpi").first()).toContainText("0");
@@ -156,6 +167,7 @@ test("the coach view shows what she got wrong, from a report she sent", async ({
   // Her browser: miss a vocabulary lesson and a low-level code lesson, then export.
   const hers = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"] });
   const her = await hers.newPage();
+  await preaccept(her);
   await her.goto("/dutch");
   await failOneLesson(her);
   await failLowLevelCode(her);
@@ -167,6 +179,7 @@ test("the coach view shows what she got wrong, from a report she sent", async ({
   // The owner's browser: nothing of hers is stored here.
   const mine = await browser.newContext();
   const coach = await mine.newPage();
+  await preaccept(coach);
   await coach.goto("/dutch/coach");
   await expect(coach.getByRole("heading", { name: "Coach view" }).first()).toBeVisible();
 
