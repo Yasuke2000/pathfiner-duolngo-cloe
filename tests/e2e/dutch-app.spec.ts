@@ -1,22 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
 
-/** Manually created contexts don't get the beforeEach hook; pre-accept the notice on their page. */
-async function preaccept(page: Page) {
-  await page.addInitScript(() => {
-    try {
-      localStorage.setItem("dutch-consent-v1", JSON.stringify({ version: 1, at: "2026-01-01" }));
-    } catch {}
-  });
-}
-
-// pre-accept the consent notice so the feature tests below are not blocked by the
-// first-visit modal; the consent notice has its own tests at the bottom.
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => {
-    try { localStorage.setItem("dutch-consent-v1", JSON.stringify({ version: 1, at: "2026-01-01" })); } catch {}
-  });
-});
-
 /** Give up on every question of the lesson that is open, then return to the overview. */
 async function giveUpOnAll(page: Page) {
   for (let i = 0; i < 150; i++) {
@@ -135,7 +118,6 @@ test("a backup file restores progress after everything was erased", async ({ pag
 test("a transfer code moves progress to a clean browser", async ({ browser }) => {
   const a = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"] });
   const laptop = await a.newPage();
-  await preaccept(laptop);
   await laptop.goto("/dutch");
   await failOneLesson(laptop);
   await laptop.getByRole("tab", { name: "Progress" }).click();
@@ -147,7 +129,6 @@ test("a transfer code moves progress to a clean browser", async ({ browser }) =>
   // A second, completely separate browser profile: the "phone".
   const b = await browser.newContext();
   const phone = await b.newPage();
-  await preaccept(phone);
   await phone.goto("/dutch");
   await phone.getByRole("tab", { name: "Progress" }).click();
   await expect(phone.locator(".dk-kpi").first()).toContainText("0");
@@ -167,7 +148,6 @@ test("the coach view shows what she got wrong, from a report she sent", async ({
   // Her browser: miss a vocabulary lesson and a low-level code lesson, then export.
   const hers = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"] });
   const her = await hers.newPage();
-  await preaccept(her);
   await her.goto("/dutch");
   await failOneLesson(her);
   await failLowLevelCode(her);
@@ -179,7 +159,6 @@ test("the coach view shows what she got wrong, from a report she sent", async ({
   // The owner's browser: nothing of hers is stored here.
   const mine = await browser.newContext();
   const coach = await mine.newPage();
-  await preaccept(coach);
   await coach.goto("/dutch/coach");
   await expect(coach.getByRole("heading", { name: "Coach view" }).first()).toBeVisible();
 
@@ -312,36 +291,3 @@ test("the assignment leads to questions, and back again", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Read the assignment" })).toBeVisible();
 });
 
-test.describe("the consent notice", () => {
-  // These tests want the real first-visit behaviour, so they clear the pre-accept.
-  test.beforeEach(async ({ page }) => {
-    await page.addInitScript(() => {
-      try { localStorage.removeItem("dutch-consent-v1"); } catch {}
-    });
-  });
-
-  test("shows the key fact up front, before any button, and only once", async ({ page }) => {
-    await page.goto("/dutch");
-    const dialog = page.getByRole("dialog");
-    await expect(dialog).toBeVisible();
-    // The sharing fact is visible without opening anything.
-    await expect(dialog.getByText(/shared with your coach/)).toBeVisible();
-    // The full legal text is hidden until asked for.
-    await expect(page.getByRole("heading", { name: "Sharing with a coach" })).toHaveCount(0);
-    await page.getByRole("button", { name: "Read the full terms, privacy & cookies" }).click();
-    await expect(page.getByRole("heading", { name: "Sharing with a coach" })).toBeVisible();
-
-    await page.getByRole("button", { name: "I understand" }).click();
-    await expect(dialog).toBeHidden();
-    // It does not come back on reload.
-    await page.reload();
-    await expect(page.getByRole("dialog")).toHaveCount(0);
-  });
-
-  test("links to a full legal page that names what is shared", async ({ page }) => {
-    await page.goto("/dutch/legal");
-    await expect(page.getByRole("heading", { name: "Sharing with a coach" })).toBeVisible();
-    await expect(page.getByText(/shared with your coach/)).toBeVisible();
-    await expect(page.getByText(/Draft/)).toBeVisible();
-  });
-});

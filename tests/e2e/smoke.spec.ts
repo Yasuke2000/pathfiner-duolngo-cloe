@@ -195,7 +195,6 @@ test("the capstone fight uses YOUR built character, not the pregen", async ({ pa
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     window.localStorage.setItem("dutch-ui-v1", JSON.stringify({ lang: "nl", theme: "dark" }));
-    try { window.localStorage.setItem("dutch-consent-v1", JSON.stringify({ version: 1, at: "2026-01-01" })); } catch {}
   });
 });
 

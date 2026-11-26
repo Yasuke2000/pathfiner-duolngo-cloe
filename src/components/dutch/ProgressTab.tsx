@@ -249,12 +249,7 @@ function SharePanel({ onChanged }: { onChanged: () => void }) {
       )}
 
       <div className="dk-backup-foot">
-        <span>
-          {t("backup.privacy")}{" "}
-          <Link className="dk-link" href="/dutch/legal">
-            {t("consent.page")}
-          </Link>
-        </span>
+        <span>{t("backup.privacy")}</span>
         <button className="dk-link danger" onClick={reset}>
           {t("backup.reset")}
         </button>

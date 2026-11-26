@@ -6,12 +6,6 @@ import { expect, test, type Page } from "@playwright/test";
  * nothing may scroll sideways, every control must be big enough for a thumb,
  * and no text field may be small enough to make iOS zoom the page.
  */
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => {
-    try { localStorage.setItem("dutch-consent-v1", JSON.stringify({ version: 1, at: "2026-01-01" })); } catch {}
-  });
-});
-
 test.use({ viewport: { width: 360, height: 740 }, hasTouch: true, isMobile: true });
 
 /** Elements the page itself scrolls sideways on purpose. */
